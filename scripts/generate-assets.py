@@ -284,9 +284,47 @@ def make_social_card() -> Image.Image:
     return image
 
 
-def make_favicons(avatar: Image.Image) -> None:
+def make_tornado_icon(size: int = 1024) -> Image.Image:
+    """Lucide tornado (ISC) on the Rememoi blue tile."""
+    yy, xx = np.mgrid[0:size, 0:size]
+    t = (xx + yy) / (2 * (size - 1))
+    start = np.array(hex_to_rgb("#659EB9"), dtype=float)
+    end = np.array(hex_to_rgb("#2E6B85"), dtype=float)
+    rgb = start + (end - start) * t[..., None]
+    image = Image.fromarray(rgb.astype(np.uint8), "RGB").convert("RGBA")
+
+    mask = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(mask).rounded_rectangle(
+        (0, 0, size - 1, size - 1), radius=round(size * 0.25), fill=255
+    )
+    image.putalpha(mask)
+
+    draw = ImageDraw.Draw(image)
+    pad = size / 8
+    scale = (size - 2 * pad) / 24
+    stroke = 2 * scale
+    lines = [
+        ((21, 4), (3, 4)),
+        ((18, 8), (6, 8)),
+        ((19, 12), (9, 12)),
+        ((16, 16), (10, 16)),
+        ((11, 20), (9, 20)),
+    ]
+    color = "#FCFCFD"
+    for (x1, y1), (x2, y2) in lines:
+        a = (pad + x1 * scale, pad + y1 * scale)
+        b = (pad + x2 * scale, pad + y2 * scale)
+        draw.line((a, b), fill=color, width=round(stroke))
+        radius = stroke / 2
+        for x, y in (a, b):
+            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color)
+    return image
+
+
+def make_favicons() -> None:
     favicon_dir = PUBLIC / "favicon"
     favicon_dir.mkdir(parents=True, exist_ok=True)
+    icon = make_tornado_icon()
     sizes = {
         "android-chrome-512x512.png": 512,
         "android-chrome-192x192.png": 192,
@@ -295,13 +333,12 @@ def make_favicons(avatar: Image.Image) -> None:
         "favicon-16x16.png": 16,
     }
     for name, size in sizes.items():
-        avatar.resize((size, size), Image.LANCZOS).save(favicon_dir / name)
-    avatar.resize((64, 64), Image.LANCZOS).save(
-        favicon_dir / "favicon.ico",
-        sizes=[(16, 16), (32, 32), (48, 48), (64, 64)],
-    )
+        icon.resize((size, size), Image.LANCZOS).save(favicon_dir / name)
+
+    ico_sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+    icon.resize((256, 256), Image.LANCZOS).save(favicon_dir / "favicon.ico", sizes=ico_sizes)
     # Next.js serves this one from /favicon.ico
-    avatar.resize((64, 64), Image.LANCZOS).save(PUBLIC / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+    icon.resize((256, 256), Image.LANCZOS).save(PUBLIC / "favicon.ico", sizes=ico_sizes)
     manifest = {
         "name": "Rememoi",
         "short_name": "Rememoi",
@@ -314,7 +351,6 @@ def make_favicons(avatar: Image.Image) -> None:
         "display": "standalone",
     }
     (favicon_dir / "site.webmanifest").write_text(json.dumps(manifest, indent=2) + "\n")
-
 
 COVERS = {
     "hello-rememoi": ("#659EB9", 1, False),
@@ -334,7 +370,7 @@ def main() -> None:
     avatar = make_avatar(512)
     avatar.resize((256, 256), Image.LANCZOS).save(images_dir / "avatar.png", optimize=True)
     make_social_card().save(images_dir / "social-card.jpg", quality=90, optimize=True, progressive=True)
-    make_favicons(avatar)
+    make_favicons()
 
     for slug, (color, variant, dark) in COVERS.items():
         abstract_cover(BLOG_MEDIA / slug / "cover.png", 1600, 1000, color, variant, dark)

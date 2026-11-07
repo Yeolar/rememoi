@@ -392,3 +392,5 @@ Set the environment variables from the table above. By default uploaded images l
 The visual design, component structure and much of the CSS are derived from [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure) by [CWorld](https://github.com/cworld1), licensed under Apache-2.0. This Next.js implementation is released under the same license; see [LICENSE](LICENSE).
 
 The avatar, covers and social card are generated procedurally for this project. Demo posts are written for Rememoi.
+
+The tornado mark is from [Lucide](https://lucide.dev/icons/tornado) and is used under the ISC License; see [LICENSES/lucide.txt](LICENSES/lucide.txt).

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components/icons/Icon'
+import { TornadoMark } from '@/components/icons/TornadoMark'
 import siteConfig from '@/config/site'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
@@ -87,13 +88,14 @@ export function Header() {
     >
       <Link
         className={cn(
-          'z-30 text-xl font-medium transition-[margin] duration-300',
+          'z-30 flex items-center gap-2 text-xl font-medium transition-[margin] duration-300',
           notTop && 'ms-2 sm:ms-3'
         )}
         href='/'
-        aria-label='Brand'
+        aria-label='Rememoi home'
       >
-        {siteConfig.title}
+        <TornadoMark className='size-6' />
+        <span>{siteConfig.title}</span>
       </Link>
 
       <div className='flex items-center gap-x-2'>
