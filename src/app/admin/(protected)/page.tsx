@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { DeletePostButton } from '@/components/admin/DeletePostButton'
 import { LocalizedDate } from '@/components/i18n/LocalizedDate'
 import { Trans } from '@/components/i18n/Trans'
-import { Icon } from '@/components/icons/Icon'
+import { CirclePlusMark } from '@/components/icons/CirclePlusMark'
 import { POST_STATUS_LABELS } from '@/lib/post-status'
 import { listAdminPosts } from '@/lib/admin-posts'
 
@@ -31,7 +31,7 @@ export default async function AdminDashboardPage() {
           href='/admin/posts/new'
           className='flex items-center gap-2 rounded-lg border bg-foreground px-4 py-2 text-sm font-medium text-background no-underline transition-opacity hover:opacity-90'
         >
-          <Icon name='document' className='size-4' />
+          <CirclePlusMark className='size-4' />
           <Trans en='New post' zh='新建文章' />
         </Link>
       </div>
