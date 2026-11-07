@@ -33,7 +33,7 @@ export default async function HomePage() {
       <Highlight color='#659EB9' />
       <main className='flex w-full flex-col items-center'>
         <section className='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
-          <TornadoLogo className='size-28' />
+          <TornadoLogo className='size-24' />
 
           <div className='flex flex-col items-center gap-y-4'>
             <h1 className='text-3xl font-medium'>{siteConfig.author}</h1>

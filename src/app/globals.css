@@ -93,8 +93,6 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-sans);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
   }
 
   a {
@@ -325,11 +323,11 @@
 
 .prose :is(h1, h2, h3, h4, h5, h6) {
   scroll-margin-top: 4rem;
-  font-weight: 500;
 }
 
 .prose :is(h1, h2, h3, h4, h5, h6) > a.anchor {
   margin-inline-start: 0.75rem;
+  font-weight: 500;
   color: hsl(var(--muted-foreground));
   text-decoration: none;
   opacity: 0;

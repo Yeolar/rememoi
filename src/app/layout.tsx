@@ -76,7 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel='preconnect' href='https://cdn.fontshare.com' crossOrigin='anonymous' />
         <link
           rel='stylesheet'
-          href='https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap'
+          href='https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap'
         />
         <ThemeScript />
       </head>
