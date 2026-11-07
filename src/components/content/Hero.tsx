@@ -31,7 +31,7 @@ export function Hero({ post, descriptionSlot }: HeroProps) {
               <div className='flex items-center gap-1'>
                 <span> / </span>
                 <span>
-                  <Trans en='Update' zh='更新于' /> <FormattedDate date={updatedDate} dateTimeOptions={{ month: 'short' }} />
+                  <Trans en='Update ' zh='更新于' /><FormattedDate date={updatedDate} dateTimeOptions={{ month: 'short' }} />
                 </span>
               </div>
             )}
