@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { logout } from '@/app/admin/actions'
+import { AdminLogOutButton } from '@/components/admin/AdminLogOutButton'
 import { LocaleButton } from '@/components/i18n/LocaleButton'
 import { Trans } from '@/components/i18n/Trans'
 
@@ -33,14 +33,7 @@ export function AdminShell({ user, provider, children }: AdminShellProps) {
             <Trans en='View site ↗' zh='查看站点 ↗' />
           </Link>
           <LocaleButton />
-          <form action={logout}>
-            <button
-              type='submit'
-              className='cursor-pointer rounded-lg border bg-muted px-2 py-1 text-xs transition-colors hover:bg-card'
-            >
-              <Trans en='Sign out' zh='退出登录' />
-            </button>
-          </form>
+          <AdminLogOutButton />
         </div>
       </header>
       {children}
