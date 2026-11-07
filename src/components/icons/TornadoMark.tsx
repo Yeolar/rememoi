@@ -4,14 +4,20 @@ import { cn } from '@/lib/utils'
  * Tornado icon from Lucide (https://lucide.dev/icons/tornado), ISC License.
  * See LICENSES/lucide.txt for the full notice.
  */
-export function TornadoMark({ className, title }: { className?: string; title?: string }) {
+type TornadoMarkProps = {
+  className?: string
+  title?: string
+  strokeWidth?: number
+}
+
+export function TornadoMark({ className, title, strokeWidth = 2 }: TornadoMarkProps) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 24 24'
       fill='none'
       stroke='currentColor'
-      strokeWidth={2}
+      strokeWidth={strokeWidth}
       strokeLinecap='round'
       strokeLinejoin='round'
       className={cn('shrink-0', className)}
