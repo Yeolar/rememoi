@@ -33,7 +33,7 @@ export default function TermsPage() {
       <h2 id='privacy-policy'>Privacy Policy</h2>
       <p>
         This site does not set advertising cookies or use third-party tracking pixels. The only
-        persisted browser state is your theme preference, stored locally in your browser.
+        persisted browser state is your theme and language preference, stored locally in your browser.
       </p>
       <p>
         If comments are enabled, the Waline comment service stores the name, email address and

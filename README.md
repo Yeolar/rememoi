@@ -1,12 +1,12 @@
 # Rememoi
 
-A quiet personal blog built with **Next.js 16**, inspired by the design of [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure). The original theme is a beautiful Astro project; this repository is a Next.js port that keeps the visual language and adds a database-backed admin editor and a small JSON API.
+A long-term memory site for agent conversations, built with **Next.js 16** and inspired by the design of [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure). It records and organizes session notes, decisions and occasional essays, with a database-backed admin editor and a small JSON API.
 
 ![Rememoi home page](docs/preview-home.jpg)
 
 ## What is inside
 
-- **Faithful design port** — the same design tokens, typography scale, sticky scroll-aware header, animated post previews, table of contents, code blocks, tags and archive views.
+- **Faithful design port** — the same design tokens, typography scale, animated post previews, table of contents, code blocks, tags and archive views.
 - **Markdown & MDX** — GFM, footnotes, tables, task lists, KaTeX math, Shiki syntax highlighting with dual themes, line highlight/diff notation, titles, copy buttons and automatic code collapse.
 - **Content pipeline** — posts live in a libSQL/SQLite database. `content/blog/**` is used to seed the database on first run.
 - **Writing admin** — GitHub OAuth (or a local development login), post CRUD, drafts, private posts, publishing, cover and inline image uploads, a Markdown editor and a real site preview.

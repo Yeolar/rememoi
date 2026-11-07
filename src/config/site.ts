@@ -50,10 +50,6 @@ export type SiteConfig = {
     share: Array<'weibo' | 'x' | 'bluesky'>
   }
   integrations: {
-    quote: {
-      server: string
-      fallback: string[]
-    }
     mediumZoom: {
       enable: boolean
       selector: string
@@ -79,7 +75,7 @@ export const siteConfig: SiteConfig = {
   // [Basic]
   title: 'Rememoi',
   author: 'Yeolar',
-  description: '把值得记住的，留在这里。',
+  description: 'Agent 会话的长期记忆：记录、整理，并在需要时重新发现。',
   url: siteUrl,
   titleDelimiter: '•',
   locale: {
@@ -126,16 +122,6 @@ export const siteConfig: SiteConfig = {
 
   // [Integrations]
   integrations: {
-    quote: {
-      server: 'https://dummyjson.com/quotes/random',
-      fallback: [
-        'Stay hungry, stay foolish.',
-        'Remember, remember, the days we keep.',
-        'The best way to predict the future is to invent it.',
-        'Simplicity is the ultimate sophistication.',
-        'What we remember becomes who we are.'
-      ]
-    },
     mediumZoom: {
       enable: true,
       selector: '.prose .zoomable'

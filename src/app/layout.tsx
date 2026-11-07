@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.author }],
   creator: siteConfig.author,
   publisher: siteConfig.author,
-  keywords: ['Rememoi', 'blog', 'Next.js', 'Astro Theme Pure', 'Yeolar'],
+  keywords: ['Rememoi', 'agent memory', 'AI memory', 'conversation archive', 'agent sessions', 'long-term memory', '长期记忆', '会话记录'],
   alternates: {
     canonical: '/',
     types: {

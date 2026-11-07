@@ -182,7 +182,7 @@ def abstract_cover(
     )
     draw.text(
         (int(width * 0.055), int(height * 0.86)),
-        "REMEMOI",
+        "REMEMOI · AGENT MEMORY",
         font=font,
         fill=(255, 255, 255, 100),
     )
@@ -256,7 +256,7 @@ def make_social_card() -> Image.Image:
     draw.rounded_rectangle((left, 185, left + 10, 215), radius=5, fill=accent)
     draw.text(
         (left + 30, 166),
-        "REMEMOI",
+        "REMEMOI · AGENT MEMORY",
         font=ImageFont.truetype(LATIN_FONT, 22, index=5),
         fill=(101, 158, 185),
     )
@@ -267,10 +267,10 @@ def make_social_card() -> Image.Image:
         fill=(16, 18, 22),
     )
     cjk = ImageFont.truetype(CJK_FONT, 38)
-    draw.text((left, 390), "把值得记住的，留在这里。", font=cjk, fill=(60, 66, 74))
+    draw.text((left, 390), "Agent 会话的长期记忆。", font=cjk, fill=(60, 66, 74))
     draw.text(
         (left, 470),
-        "A personal blog · Next.js · Design inspired by Astro Theme Pure",
+        "Recorded, organized, rediscovered · Next.js",
         font=ImageFont.truetype(LATIN_FONT, 21, index=5),
         fill=(110, 118, 126),
     )

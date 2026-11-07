@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type LabelProps = {
-  title: string
+  title: ReactNode
   href?: string
   className?: string
   icon?: ReactNode

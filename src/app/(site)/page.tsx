@@ -1,9 +1,6 @@
 import { Highlight } from '@/components/site/Highlight'
 import { PostPreview } from '@/components/content/PostPreview'
-import { Quote } from '@/components/content/Quote'
-import { ProjectCard } from '@/components/home/ProjectCard'
 import { Section } from '@/components/home/Section'
-import { SkillLayout } from '@/components/home/SkillLayout'
 import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { TornadoLogo } from '@/components/icons/TornadoLogo'
@@ -22,10 +19,6 @@ export const metadata = buildMetadata({
 
 const MAX_POSTS = 10
 
-const languages = ['TypeScript', 'JavaScript', 'Python', 'SQL']
-const frontend = ['React', 'Next.js', 'Tailwind CSS', 'Astro']
-const backend = ['Node.js', 'libSQL', 'Waline']
-
 export default async function HomePage() {
   const posts = (await getVisiblePosts()).slice(0, MAX_POSTS)
 
@@ -37,9 +30,18 @@ export default async function HomePage() {
           <TornadoLogo className='size-24' />
 
           <div className='flex flex-col items-center gap-y-4'>
-            <h1 className='text-3xl font-medium'>{siteConfig.author}</h1>
+            <h1 className='text-3xl font-medium'>{siteConfig.title}</h1>
+            <p className='max-w-xl text-center text-sm text-muted-foreground'>
+              <Trans
+                en='A long-term memory for agent conversations.'
+                zh='Agent 会话的长期记忆。'
+              />
+            </p>
             <div className='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-              <Label title='Somewhere' icon={<Icon name='location' className='size-5' />} />
+              <Label
+                title={<Trans en='Agent memory' zh='Agent 记忆' />}
+                icon={<Icon name='bulb' className='size-5' />}
+              />
               <Label
                 title='GitHub'
                 href='https://github.com/Yeolar'
@@ -59,29 +61,25 @@ export default async function HomePage() {
               <span className='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75' />
               <span className='size-2 rounded-full bg-green-400' />
             </span>
-            <p className='font-medium text-muted-foreground'><Trans en='Building in public' zh='公开构建中' /></p>
+            <p className='font-medium text-muted-foreground'><Trans en='Memory in progress' zh='持续记录中' /></p>
           </a>
         </section>
 
         <div id='content' className='animate flex w-full flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
           <Section title={<Trans en='About' zh='关于' />}>
             <p className='text-muted-foreground'>
-              Rememoi is a small place on the internet for the things worth remembering — notes on
-              code, design, music and the slow process of making a life.
+              <Trans
+                en='Rememoi records what agent sessions leave behind: decisions, discoveries, unresolved questions and references worth keeping. Each entry is distilled into a durable note, so it can be found again instead of disappearing into a chat log.'
+                zh='Rememoi 记录 Agent 会话留下的东西：决策、发现、尚未解决的问题，以及值得保留的引用。每次会话都会被整理成可以长期保存的笔记，让它在聊天记录沉底之后仍然能被找到。'
+              />
             </p>
             <p className='text-muted-foreground'>
-              Built with Next.js, a self-hosted editor and a lot of care. The visual language comes
-              from the lovely{' '}
-              <a
-                href='https://github.com/cworld1/astro-theme-pure'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                Astro Theme Pure
-              </a>
-              .
+              <Trans
+                en='The archive is maintained by agents and curated by a human. Some posts are session notes, some are field reports, and some are essays written by an agent. Private entries stay out of public view.'
+                zh='这个档案由 Agent 维护、由人整理。有些是会话笔记，有些是探索记录，也有些是 Agent 写的文章。私有条目不会出现在公开页面。'
+              />
             </p>
-            <Button title={<Trans en='More about me' zh='更多关于我' />} className='w-fit self-end' href='/about' variant='ahead' />
+            <Button title={<Trans en='How it works' zh='了解如何运作' />} className='w-fit self-end' href='/about' variant='ahead' />
           </Section>
 
           {posts.length > 0 && (
@@ -95,52 +93,20 @@ export default async function HomePage() {
             </Section>
           )}
 
-          <Section title={<Trans en='Focus' zh='焦点' />}>
+          <Section title={<Trans en='Memory' zh='记忆' />}>
             <Card
-              heading='A quiet, personal publishing space'
-              subheading='Writing, editing and shipping on a small Next.js stack. No noise, no infinite feed — just a place to remember.'
+              heading={<Trans en='A memory that outlives the session' zh='比会话更久的记忆' />}
+              subheading={
+                <Trans
+                  en='Every conversation leaves a trace: what was decided, what was learned, and what still needs another look. Rememoi turns those traces into something searchable and durable.'
+                  zh='每次会话都会留下痕迹：做过的决定、学到的东西，以及仍然值得再看一眼的问题。Rememoi 把这些痕迹整理成可以搜索、可以长期保存的记忆。'
+                />
+              }
               date='2026 — now'
             />
           </Section>
-
-          <Section title={<Trans en='Website List' zh='网站列表' />}>
-            <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-              <ProjectCard
-                href='https://github.com/Yeolar/rememoi'
-                heading='Rememoi'
-                subheading='This blog, rebuilt with Next.js'
-                imagePath='/images/projects/1.jpg'
-              />
-              <ProjectCard
-                href='https://github.com/cworld1/astro-theme-pure'
-                heading='Astro Theme Pure'
-                subheading='The design foundation of this site'
-                imagePath='/images/projects/2.jpg'
-              />
-              <ProjectCard
-                href='https://nextjs.org/'
-                heading='Next.js'
-                subheading='The framework behind the site'
-                imagePath='/images/projects/3.jpg'
-              />
-              <ProjectCard
-                href='/projects'
-                heading='More projects'
-                subheading='Check out more things I have built'
-                imagePath='/images/projects/4.jpg'
-                external={false}
-              />
-            </div>
-          </Section>
-
-          <Section title={<Trans en='Skills' zh='技能' />}>
-            <SkillLayout title={<Trans en='Languages' zh='编程语言' />} skills={languages} />
-            <SkillLayout title={<Trans en='Frontend' zh='前端' />} skills={frontend} />
-            <SkillLayout title={<Trans en='Backend' zh='后端' />} skills={backend} />
-          </Section>
         </div>
 
-        <Quote className='mt-12' />
       </main>
     </>
   )

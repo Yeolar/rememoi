@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 type CardProps = {
   as?: 'div' | 'a'
   href?: string
-  heading?: string
-  subheading?: string
-  date?: string
+  heading?: ReactNode
+  subheading?: ReactNode
+  date?: ReactNode
   className?: string
   children?: ReactNode
   target?: string

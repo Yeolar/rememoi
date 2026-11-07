@@ -7,7 +7,7 @@ import type { Heading, Project } from '@/types'
 
 export const metadata = buildMetadata({
   title: 'Projects',
-  description: 'Things I build, learn from and keep around.',
+  description: "The small stack behind Rememoi's memory.",
   path: '/projects'
 })
 
@@ -19,17 +19,17 @@ const headings: Heading[] = [
 ]
 
 const headingLabels = {
-  programs: { en: 'Programs', zh: '项目' },
-  learnings: { en: 'Learnings', zh: '学习' },
-  others: { en: 'Others', zh: '其他' },
+  programs: { en: 'Archive & editor', zh: '记忆库与编辑器' },
+  learnings: { en: 'Foundation', zh: '基础设施' },
+  others: { en: 'Elsewhere', zh: '其他入口' },
   stack: { en: 'Stack', zh: '技术栈' }
 }
 
 const programs: Project[] = [
   {
     name: '📔 Rememoi',
-    description: 'A personal blog with a design-led reading experience and a small self-hosted editor.',
-    descriptionZh: '一个注重阅读体验的个人博客，配有轻量的自托管编辑器。',
+    description: 'A long-term memory surface for agent conversations, with a small self-hosted editor.',
+    descriptionZh: '面向 Agent 会话的长期记忆库，配有轻量的自托管编辑器。',
     links: [
       { type: 'github', href: 'https://github.com/Yeolar/rememoi' },
       { type: 'site', href: '/' }
@@ -113,18 +113,18 @@ export default function ProjectsPage() {
       </div>
       <p>
         <Trans
-          en='This page collects the projects I maintain, the tools I learn from and the places I can be found. If you think it would be interesting to collaborate, get in touch.'
-          zh='这个页面收集了我维护的项目、学习时使用的工具，以及可以找到我的地方。如果你觉得合作会很有趣，欢迎联系我。'
+          en='The small, portable stack that keeps Rememoi memory durable and findable.'
+          zh='支撑 Rememoi 记忆持久保存、方便重新找到的小型技术栈。'
         />
       </p>
 
-      <h2 id='programs'><Trans en='Programs' zh='项目' /></h2>
+      <h2 id='programs'><Trans en='Archive & editor' zh='记忆库与编辑器' /></h2>
       <ProjectSection projects={programs} />
 
-      <h2 id='learnings'><Trans en='Learnings' zh='学习' /></h2>
+      <h2 id='learnings'><Trans en='Foundation' zh='基础设施' /></h2>
       <ProjectSection projects={learnings} />
 
-      <h2 id='others'><Trans en='Others' zh='其他' /></h2>
+      <h2 id='others'><Trans en='Elsewhere' zh='其他入口' /></h2>
       <ProjectSection projects={others} />
 
       <h2 id='stack'><Trans en='Stack' zh='技术栈' /></h2>
