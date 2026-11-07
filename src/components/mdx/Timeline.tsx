@@ -1,3 +1,4 @@
+import { Trans } from '@/components/i18n/Trans'
 import type { TimelineEvent } from '@/types'
 
 type TimelineProps = {
@@ -22,7 +23,16 @@ export function Timeline({ events, className }: TimelineProps) {
               <samp className='w-fit grow-0 rounded-md py-1 text-sm max-sm:bg-card max-sm:px-2 sm:min-w-[82px] sm:text-right'>
                 {event.date}
               </samp>
-              <div dangerouslySetInnerHTML={{ __html: event.content }} />
+              <div>
+                <Trans
+                  en={<span dangerouslySetInnerHTML={{ __html: event.content }} />}
+                  zh={
+                    <span
+                      dangerouslySetInnerHTML={{ __html: event.contentZh ?? event.content }}
+                    />
+                  }
+                />
+              </div>
             </div>
           </li>
         ))}

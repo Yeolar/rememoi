@@ -217,8 +217,8 @@ const posts = await getVisiblePosts() // [!code highlight]
 
 The interface supports English and Chinese. On a first visit it follows the
 browser language (`navigator.languages`); the button in the header toggles the
-locale and stores the choice in `localStorage`. Only UI labels are translated —
-article and page body content keeps its original language.
+locale and stores the choice in `localStorage`. UI labels and the About and
+Projects page copy are translated; article body content keeps its original language.
 
 ## API
 

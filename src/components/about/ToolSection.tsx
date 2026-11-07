@@ -1,12 +1,17 @@
+import type { ReactNode } from 'react'
+
+import { Trans } from '@/components/i18n/Trans'
+
 type Tool = {
   name: string
   description: string
+  descriptionZh?: string
   href: string
   icon: string
 }
 
 type ToolSectionProps = {
-  title: string
+  title: ReactNode
   tools: Tool[]
   className?: string
 }
@@ -32,7 +37,9 @@ export function ToolSection({ title, tools, className }: ToolSectionProps) {
               </div>
               <div className='z-20 flex flex-col'>
                 <div className='font-medium text-foreground'>{tool.name}</div>
-                <div className='font-normal'>{tool.description}</div>
+                <div className='font-normal'>
+                  <Trans en={tool.description} zh={tool.descriptionZh ?? tool.description} />
+                </div>
               </div>
             </div>
           </a>

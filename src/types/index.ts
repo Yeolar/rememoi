@@ -74,7 +74,9 @@ export type ProjectLink = {
 
 export type Project = {
   name: string
+  nameZh?: string
   description: string
+  descriptionZh?: string
   image?: string
   links: ProjectLink[]
 }
@@ -82,6 +84,7 @@ export type Project = {
 export type TimelineEvent = {
   date: string
   content: string
+  contentZh?: string
 }
 
 export type CardListItem = {

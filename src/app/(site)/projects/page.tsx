@@ -18,10 +18,18 @@ const headings: Heading[] = [
   { depth: 2, slug: 'stack', text: 'Stack' }
 ]
 
+const headingLabels = {
+  programs: { en: 'Programs', zh: '项目' },
+  learnings: { en: 'Learnings', zh: '学习' },
+  others: { en: 'Others', zh: '其他' },
+  stack: { en: 'Stack', zh: '技术栈' }
+}
+
 const programs: Project[] = [
   {
     name: '📔 Rememoi',
     description: 'A personal blog with a design-led reading experience and a small self-hosted editor.',
+    descriptionZh: '一个注重阅读体验的个人博客，配有轻量的自托管编辑器。',
     links: [
       { type: 'github', href: 'https://github.com/Yeolar/rememoi' },
       { type: 'site', href: '/' }
@@ -29,7 +37,9 @@ const programs: Project[] = [
   },
   {
     name: '✍️ Rememoi Admin',
+    nameZh: '✍️ Rememoi 管理后台',
     description: 'The editing surface: Markdown drafts, image uploads, publish controls and API access.',
+    descriptionZh: '创作后台：Markdown 草稿、图片上传、发布控制和 API 访问。',
     links: [{ type: 'github', href: 'https://github.com/Yeolar/rememoi/tree/main/src/app/admin' }]
   }
 ]
@@ -38,6 +48,7 @@ const learnings: Project[] = [
   {
     name: '🎨 Astro Theme Pure',
     description: 'The clean Astro blog theme whose design language this site is built on.',
+    descriptionZh: '简洁的 Astro 博客主题，本站的设计语言正建立在它之上。',
     links: [
       { type: 'github', href: 'https://github.com/cworld1/astro-theme-pure' },
       { type: 'site', href: 'https://astro-pure.js.org/' },
@@ -47,6 +58,7 @@ const learnings: Project[] = [
   {
     name: '▲ Next.js',
     description: 'The App Router, server components and route handlers power this site.',
+    descriptionZh: 'App Router、服务端组件和路由处理器为本站提供动力。',
     links: [
       { type: 'github', href: 'https://github.com/vercel/next.js' },
       { type: 'site', href: 'https://nextjs.org/' },
@@ -56,6 +68,7 @@ const learnings: Project[] = [
   {
     name: '🌈 Shiki',
     description: 'Beautiful syntax highlighting, with dual themes and line-level transformers.',
+    descriptionZh: '优雅的语法高亮，支持明暗双主题和行级转换器。',
     links: [
       { type: 'github', href: 'https://github.com/shikijs/shiki' },
       { type: 'doc', href: 'https://shiki.style/' }
@@ -66,12 +79,16 @@ const learnings: Project[] = [
 const others: Project[] = [
   {
     name: 'Yeolar on GitHub',
+    nameZh: 'Yeolar 的 GitHub',
     description: 'Code, experiments and the occasional unfinished idea.',
+    descriptionZh: '代码、实验，以及偶尔尚未完成的想法。',
     links: [{ type: 'github', href: 'https://github.com/Yeolar' }]
   },
   {
     name: 'RSS feed',
+    nameZh: 'RSS 订阅',
     description: 'Follow new posts without an account.',
+    descriptionZh: '无需账号，即可订阅新文章。',
     links: [{ type: 'site', href: '/rss.xml' }]
   }
 ]
@@ -80,7 +97,7 @@ export default function ProjectsPage() {
   return (
     <ContentLayout
       backHref='/'
-      sidebar={<Toc headings={headings} />}
+      sidebar={<Toc headings={headings} labels={headingLabels} />}
       header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'><Trans en='Projects' zh='项目' /></h1>}
     >
       <div className='not-prose flex justify-center'>
@@ -95,39 +112,47 @@ export default function ProjectsPage() {
         </a>
       </div>
       <p>
-        This page collects the projects I maintain, the tools I learn from and the places I can be
-        found. If you think it would be interesting to collaborate, get in touch.
+        <Trans
+          en='This page collects the projects I maintain, the tools I learn from and the places I can be found. If you think it would be interesting to collaborate, get in touch.'
+          zh='这个页面收集了我维护的项目、学习时使用的工具，以及可以找到我的地方。如果你觉得合作会很有趣，欢迎联系我。'
+        />
       </p>
 
-      <h2 id='programs'>Programs</h2>
+      <h2 id='programs'><Trans en='Programs' zh='项目' /></h2>
       <ProjectSection projects={programs} />
 
-      <h2 id='learnings'>Learnings</h2>
+      <h2 id='learnings'><Trans en='Learnings' zh='学习' /></h2>
       <ProjectSection projects={learnings} />
 
-      <h2 id='others'>Others</h2>
+      <h2 id='others'><Trans en='Others' zh='其他' /></h2>
       <ProjectSection projects={others} />
 
-      <h2 id='stack'>Stack</h2>
-      <p>The site is deliberately small and portable:</p>
+      <h2 id='stack'><Trans en='Stack' zh='技术栈' /></h2>
+      <p><Trans en='The site is deliberately small and portable:' zh='本站刻意保持小而便于迁移：' /></p>
       <ul>
         <li>
-          <strong>Framework:</strong> Next.js App Router with React server components
+          <Trans en='Framework: ' zh='框架：' />
+          <Trans en='Next.js App Router with React server components' zh='Next.js App Router 与 React 服务端组件' />
         </li>
         <li>
-          <strong>Content:</strong> Markdown/MDX in libSQL (SQLite locally, Turso in production)
+          <Trans en='Content: ' zh='内容：' />
+          <Trans en='Markdown/MDX in libSQL (SQLite locally, Turso in production)' zh='libSQL 中的 Markdown/MDX（本地 SQLite，生产 Turso）' />
         </li>
         <li>
-          <strong>Editing:</strong> a password/GitHub-protected admin area with draft previews
+          <Trans en='Editing: ' zh='编辑：' />
+          <Trans en='a password/GitHub-protected admin area with draft previews' zh='密码/GitHub 保护的管理后台，支持草稿预览' />
         </li>
         <li>
-          <strong>Styling:</strong> Tailwind CSS v4, design tokens ported from Astro Theme Pure
+          <Trans en='Styling: ' zh='样式：' />
+          <Trans en='Tailwind CSS v4, design tokens ported from Astro Theme Pure' zh='Tailwind CSS v4，设计 token 移植自 Astro Theme Pure' />
         </li>
         <li>
-          <strong>Highlighting:</strong> Shiki with the GitHub light/dark themes
+          <Trans en='Highlighting: ' zh='高亮：' />
+          <Trans en='Shiki with the GitHub light/dark themes' zh='Shiki，使用 GitHub 明暗主题' />
         </li>
         <li>
-          <strong>Comments:</strong> Waline (optional)
+          <Trans en='Comments: ' zh='评论：' />
+          <Trans en='Waline (optional)' zh='Waline（可选）' />
         </li>
       </ul>
     </ContentLayout>

@@ -1,3 +1,4 @@
+import { Trans } from '@/components/i18n/Trans'
 import type { IconsType } from '@/components/icons/Icon'
 import { Icon } from '@/components/icons/Icon'
 import { cn } from '@/lib/utils'
@@ -45,10 +46,10 @@ export function ProjectSection({ projects, className }: ProjectSectionProps) {
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                {project.name}
+                <Trans en={project.name} zh={project.nameZh ?? project.name} />
               </a>
               <div className='line-clamp-2 leading-snug text-muted-foreground sm:h-12'>
-                {project.description}
+                <Trans en={project.description} zh={project.descriptionZh ?? project.description} />
               </div>
               <div className='flex flex-row items-center gap-x-2 sm:gap-x-3'>
                 {project.links.map((link) => (

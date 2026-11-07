@@ -6,7 +6,17 @@ import { Trans } from '@/components/i18n/Trans'
 import { cn, generateToc } from '@/lib/utils'
 import type { Heading, TocItem } from '@/types'
 
-function TocLinks({ items, depth = 0 }: { items: TocItem[]; depth?: number }) {
+type TocLabels = Record<string, { en: string; zh: string }>
+
+function TocLinks({
+  items,
+  depth = 0,
+  labels
+}: {
+  items: TocItem[]
+  depth?: number
+  labels?: TocLabels
+}) {
   return (
     <ul>
       {items.map((item) => (
@@ -21,17 +31,30 @@ function TocLinks({ items, depth = 0 }: { items: TocItem[]; depth?: number }) {
               )}
               href={`#${item.slug}`}
             >
-              {item.text}
+              <Trans
+                en={labels?.[item.slug]?.en ?? item.text}
+                zh={labels?.[item.slug]?.zh ?? item.text}
+              />
             </a>
           </div>
-          {item.subheadings.length > 0 && <TocLinks items={item.subheadings} depth={depth + 1} />}
+          {item.subheadings.length > 0 && (
+            <TocLinks items={item.subheadings} depth={depth + 1} labels={labels} />
+          )}
         </li>
       ))}
     </ul>
   )
 }
 
-export function Toc({ headings, className }: { headings: Heading[]; className?: string }) {
+export function Toc({
+  headings,
+  className,
+  labels
+}: {
+  headings: Heading[]
+  className?: string
+  labels?: TocLabels
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const toc = generateToc(headings)
 
@@ -123,7 +146,7 @@ export function Toc({ headings, className }: { headings: Heading[]; className?: 
     <div ref={containerRef} className={className}>
       <h2 className='text-base font-medium'><Trans en='TABLE OF CONTENTS' zh='目录' /></h2>
       <div className='mt-4'>
-        <TocLinks items={toc} />
+        <TocLinks items={toc} labels={labels} />
       </div>
     </div>
   )

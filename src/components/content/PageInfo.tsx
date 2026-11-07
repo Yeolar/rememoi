@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef } from 'react'
 
+import { Trans } from '@/components/i18n/Trans'
 import siteConfig from '@/config/site'
 import { cn } from '@/lib/utils'
 
@@ -58,12 +59,12 @@ export function PageInfo({ comment, className }: PageInfoProps) {
       className={cn('text-sm text-muted-foreground', className)}
       data-server-url={config.server}
     >
-      <span className='waline-pageview-count' /> views
+      <span className='waline-pageview-count' /> <Trans en='views' zh='次浏览' />
       {comment && (
         <>
           <span> | </span>
           <a href='#waline'>
-            <span className='waline-comment-count' /> comments
+            <span className='waline-comment-count' /> <Trans en='comments' zh='条评论' />
           </a>
         </>
       )}
