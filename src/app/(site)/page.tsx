@@ -38,7 +38,7 @@ export default async function HomePage() {
               />
               <Label
                 title='GitHub'
-                href='https://github.com/Yeolar'
+                href='https://github.com/Yeolar/rememoi'
                 target='_blank'
                 icon={<Icon name='github' className='size-5' />}
               />
