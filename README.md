@@ -61,6 +61,13 @@ The local login is **disabled in production** unless you explicitly set `ENABLE_
 | `ADMIN_GITHUB_LOGINS` | production | Comma-separated GitHub usernames allowed into `/admin`. |
 | `ADMIN_DEV_PASSWORD` | no | Password for the local development login. Defaults to `rememoi`. |
 | `ENABLE_DEV_LOGIN` | no | Set to `true` to enable the local login in production. |
+| `MEDIA_DRIVER` | no | Image store: `db` (default) or `cos`. |
+| `COS_SECRET_ID` | for COS | Tencent Cloud secret ID. Server-only. |
+| `COS_SECRET_KEY` | for COS | Tencent Cloud secret key. Server-only. |
+| `COS_BUCKET` | for COS | Bucket name including APPID, e.g. `rememoi-1250000000`. |
+| `COS_REGION` | for COS | Bucket region, e.g. `ap-guangzhou`. |
+| `COS_PUBLIC_BASE_URL` | recommended for COS | CDN/public base URL for objects. Falls back to the bucket's default URL. |
+| `COS_KEY_PREFIX` | no | Object key prefix. Defaults to `rememoi/media`. |
 | `NEXT_PUBLIC_WALINE_SERVER` | no | Waline server URL. Comments stay hidden when empty. |
 
 > `NEXT_PUBLIC_*` variables are inlined at build time. Set them before `pnpm build`. Server-only variables such as `AUTH_SECRET` are read at runtime.
@@ -82,8 +89,39 @@ Go to `/admin`, create a post, write in Markdown or MDX, upload a cover image, s
 
 - **Drafts** are excluded from the public site in production. During development they are visible on the public site with a `(Draft)` badge, matching the original theme's behavior.
 - **Preview** (`/preview/[id]`) is protected and renders the real article layout, including interactions.
-- **Uploads** are stored in the database and served through `/api/media/[id]` with immutable caching. This keeps media portable across hosts; for very large media consider swapping in object storage.
+- **Uploads** use the database by default and are served through `/api/media/[id]` with immutable caching. Set `MEDIA_DRIVER=cos` to put new images in Tencent COS and serve them from a CDN; old database-backed images keep working. See [Object storage (COS)](#object-storage-cos).
 - **Publishing** invalidates the public pages, RSS, search index and sitemap with `revalidatePath`.
+
+### Object storage (COS)
+
+For production, images can live in Tencent COS and be served through a CDN. The database keeps only metadata (`storage`, `storage_key`, MIME type, size, dimensions); the bytes go to COS.
+
+```dotenv
+MEDIA_DRIVER=cos
+COS_SECRET_ID=...
+COS_SECRET_KEY=...
+COS_BUCKET=rememoi-1250000000
+COS_REGION=ap-guangzhou
+COS_PUBLIC_BASE_URL=https://cdn.example.com
+COS_KEY_PREFIX=rememoi/media
+```
+
+Setup:
+
+1. Create a COS bucket and, preferably, a CDN domain in front of it.
+2. Keep the bucket private and use a CDN with origin authentication, or use a public-read bucket only for public media.
+3. Grant the server identity only `cos:PutObject` and `cos:DeleteObject` on the configured prefix.
+4. Set the environment variables **before `pnpm build`** — `next.config.ts` derives the allowed `next/image` host from `COS_PUBLIC_BASE_URL` (or `COS_BUCKET` + `COS_REGION`) at build time.
+5. Restart the app; new uploads return a COS/CDN URL and are written to the `images` table with `storage='cos'` and the object key.
+
+Notes:
+
+- Object keys use `COS_KEY_PREFIX/<year>/<month>/<uuid>.<ext>`; keys are immutable, so CDN caching is safe.
+- `GET /api/media/<id>` continues to work for all images: database-backed rows return the blob, COS-backed rows redirect to the CDN URL.
+- Existing database images are **not** moved automatically. They continue to be served from the database; add a backfill script if you want to migrate them.
+- With a private bucket, the fallback URL is not publicly readable; set `COS_PUBLIC_BASE_URL` to the CDN domain.
+- Uploads are server-side; COS CORS is only needed if you later add direct browser-to-COS uploads.
+- There is no image-delete endpoint yet, so objects are not automatically removed. Use COS lifecycle rules or a cleanup script if needed.
 
 ### Seeding from Markdown
 
@@ -187,7 +225,7 @@ const posts = await getVisiblePosts() // [!code highlight]
 | `GET` | `/rss.xml` | RSS 2.0 feed with full post HTML. |
 | `GET` | `/sitemap.xml` | Sitemap for static pages, posts and tags. |
 | `GET` | `/robots.txt` | Robots rules (admin and admin APIs are disallowed). |
-| `GET` | `/api/media/<id>` | Image uploaded through the admin editor. |
+| `GET` | `/api/media/<id>` | Image uploaded through the admin editor. Redirects to the CDN for COS-backed images. |
 
 ### Write API (authenticated)
 
@@ -199,7 +237,7 @@ const posts = await getVisiblePosts() // [!code highlight]
 | `GET` | `/api/admin/posts/<id>` | One post with body. |
 | `PATCH` | `/api/admin/posts/<id>` | Update a post by id. |
 | `DELETE` | `/api/admin/posts/<id>` | Delete a post. |
-| `POST` | `/api/admin/upload` | `multipart/form-data` with a `file` field. JPEG/PNG/WebP/GIF/AVIF, max 8 MB. |
+| `POST` | `/api/admin/upload` | `multipart/form-data` with a `file` field. JPEG/PNG/WebP/GIF/AVIF, max 8 MB. Returns `data.url`, which may be `/api/media/<id>` or a COS/CDN URL. |
 
 Write requests accept either the Auth.js admin session cookie (the browser editor) or a server-side bearer token:
 
@@ -291,7 +329,7 @@ src/
   auth.ts               Auth.js configuration
   components/           UI, site chrome, content and MDX components
   config/               Site + links configuration
-  lib/                  Database, posts service, markdown pipeline, validation, utilities
+  lib/                  Database, posts service, media storage, markdown pipeline, validation, utilities
   types/                Shared types
 ```
 
@@ -327,7 +365,7 @@ pnpm build
 pnpm start
 ```
 
-Set the environment variables from the table above. Uploaded images live in the database, so they survive redeploys as long as the database does.
+Set the environment variables from the table above. By default uploaded images live in the database; with `MEDIA_DRIVER=cos` they live in COS and the database stores only metadata.
 
 ## Customisation
 
@@ -344,6 +382,7 @@ Set the environment variables from the table above. Uploaded images live in the 
 - Keep `AUTH_SECRET` secret and always set `ADMIN_GITHUB_LOGINS`; without an allowlist GitHub sign-in is denied.
 - The local credentials login is a development convenience. Only enable it in production when you understand the risk (`ENABLE_DEV_LOGIN=true` + a strong `ADMIN_DEV_PASSWORD`).
 - Uploaded files are limited to raster image types, parsed with sharp, and capped at 8 MB. SVG uploads are intentionally rejected.
+- COS credentials are server-only. Use a least-privilege key, keep the bucket private behind a CDN, and never expose `COS_SECRET_ID` / `COS_SECRET_KEY` to the browser or commit them.
 - Admin content is trusted: MDX expressions run on the server. Do not grant admin access to untrusted authors.
 - `REMEMOI_API_TOKEN` grants full write access (create, update, upload, delete via admin endpoints). Keep it server-side, send it over HTTPS only, rotate it if leaked, and never expose it in client bundles or committed files.
 - The API has no CORS layer and is intended for server-side automation; browser callers use the session cookie instead.

@@ -76,6 +76,8 @@ const DDL = [
     width INTEGER,
     height INTEGER,
     data BLOB NOT NULL,
+    storage TEXT NOT NULL DEFAULT 'db',
+    storage_key TEXT,
     created_at INTEGER NOT NULL
   )`
 ]
@@ -96,12 +98,30 @@ function isLockedError(error: unknown) {
   return /busy|locked|SQLITE_BUSY/i.test(message)
 }
 
+async function migrateImageColumns() {
+  const client = getClient()
+  const result = await client.execute('PRAGMA table_info(images)')
+  const columns = new Set(result.rows.map((row) => String(row.name)))
+  const statements: string[] = []
+  if (!columns.has('storage')) {
+    statements.push("ALTER TABLE images ADD COLUMN storage TEXT NOT NULL DEFAULT 'db'")
+  }
+  if (!columns.has('storage_key')) {
+    statements.push('ALTER TABLE images ADD COLUMN storage_key TEXT')
+  }
+  if (statements.length === 0) return
+
+  try {
+    await client.batch(statements, 'write')
+  } catch (error) {
+    // Another build worker may have added the columns concurrently.
+    const message = error instanceof Error ? error.message : String(error)
+    if (!/duplicate column|already exists/i.test(message)) throw error
+  }
+}
+
 async function createSchema() {
   const client = getClient()
-
-  // Fast path: `pnpm db:setup` has already created the tables. This avoids
-  // concurrent DDL writes when Next.js spawns several build workers.
-  if (await schemaExists()) return
 
   try {
     await client.execute('PRAGMA busy_timeout = 5000')
@@ -109,9 +129,18 @@ async function createSchema() {
     // Remote libSQL may not expose PRAGMA execution; retries below still help.
   }
 
+  // Fast path: `pnpm db:setup` has already created the tables. This avoids
+  // concurrent DDL writes when Next.js spawns several build workers. Existing
+  // deployments still get the media storage columns added in place.
+  if (await schemaExists()) {
+    await migrateImageColumns()
+    return
+  }
+
   for (let attempt = 1; attempt <= 4; attempt += 1) {
     try {
       await client.batch(DDL, 'write')
+      await migrateImageColumns()
       return
     } catch (error) {
       if (attempt === 4 || !isLockedError(error)) throw error

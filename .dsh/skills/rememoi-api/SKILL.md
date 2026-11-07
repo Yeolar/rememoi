@@ -118,11 +118,13 @@ working, so confirm with the user before doing this.
 node "$SKILL_DIR/scripts/rememoi.mjs" upload ./cover.jpg
 ```
 
-The response contains `data.url`, `data.width`, and `data.height`. Use those in
-a post payload:
+The response contains `data.url`, `data.storage`, `data.width`, and
+`data.height`. `url` is `/api/media/<id>` when images are stored in the database,
+or a COS/CDN URL when `MEDIA_DRIVER=cos`. Use the returned URL directly in a post
+payload:
 
 ```json
-{ "heroImage": { "src": "/api/media/<id>", "width": 1600, "height": 1000 } }
+{ "heroImage": { "src": "<data.url>", "width": 1600, "height": 1000 } }
 ```
 
 For inline images, insert `![alt](/api/media/<id>)` into the body.
@@ -141,7 +143,7 @@ Use these if the CLI is unavailable.
 | `GET` | `/api/admin/posts/<id>` | write | Full post incl. body |
 | `PATCH` | `/api/admin/posts/<id>` | write | Update by id |
 | `DELETE` | `/api/admin/posts/<id>` | write | Delete by id (ask first) |
-| `POST` | `/api/admin/upload` | write | Multipart image upload |
+| `POST` | `/api/admin/upload` | write | Multipart image upload; returns `/api/media/<id>` or a COS/CDN URL |
 
 Write auth is either:
 

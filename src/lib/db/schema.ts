@@ -37,6 +37,8 @@ export const images = sqliteTable('images', {
   width: integer('width'),
   height: integer('height'),
   data: blob('data').notNull(),
+  storage: text('storage', { enum: ['db', 'cos'] }).notNull().default('db'),
+  storageKey: text('storage_key'),
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull()
 })
 
