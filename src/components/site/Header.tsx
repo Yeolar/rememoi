@@ -34,28 +34,13 @@ function applyTheme(theme: Theme, persist: boolean) {
 
 export function Header() {
   const themeButtonRef = useRef<HTMLButtonElement>(null)
-  const [notTop, setNotTop] = useState(false)
-  const [show, setShow] = useState(true)
   const [expanded, setExpanded] = useState(false)
-  const previousScroll = useRef(0)
 
   useEffect(() => {
     const stored = (localStorage.getItem('theme') as Theme | null) ?? 'system'
     const next = THEMES.includes(stored) ? stored : 'system'
     if (themeButtonRef.current) themeButtonRef.current.dataset.theme = next
     applyTheme(next, false)
-  }, [])
-
-  useEffect(() => {
-    const onScroll = () => {
-      const current = window.scrollY
-      setNotTop(current > 20)
-      setShow(current < 350 || current < previousScroll.current)
-      previousScroll.current = current
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {
@@ -80,17 +65,10 @@ export function Header() {
 
   return (
     <header
-      className={cn(
-        'site-header group sticky top-4 z-50 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl max-md:z-30',
-        notTop && 'not-top',
-        !show && !expanded && 'header-hidden'
-      )}
+      className='site-header group relative z-50 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl max-md:z-30'
     >
       <Link
-        className={cn(
-          'z-30 flex items-center gap-2 text-xl font-medium transition-[margin] duration-300',
-          notTop && 'ms-2 sm:ms-3'
-        )}
+        className='z-30 flex items-center gap-2 text-xl font-medium'
         href='/'
         aria-label='Rememoi home'
       >
