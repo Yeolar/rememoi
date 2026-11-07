@@ -7,7 +7,7 @@ export function TornadoLogo({ className }: { className?: string }) {
       role='img'
       aria-label='Rememoi'
       className={cn(
-        'flex items-center justify-center rounded-full bg-gradient-to-br from-[#659EB9] to-[#2E6B85] text-[#FCFCFD] shadow-sm ring-1 ring-black/5 dark:ring-white/10',
+        'flex items-center justify-center rounded-full bg-gradient-to-br from-[#659EB9] to-[#2E6B85] text-[#243640] shadow-sm ring-1 ring-black/5 dark:ring-white/10',
         className
       )}
     >
