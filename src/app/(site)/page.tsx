@@ -96,7 +96,7 @@ export default async function HomePage() {
                   zh='每次会话都会留下痕迹：做过的决定、学到的东西，以及仍然值得再看一眼的问题。Rememoi 把这些痕迹整理成可以搜索、可以长期保存的记忆。'
                 />
               }
-              date='2026 — now'
+              date={<Trans en='2026 — now' zh='2026 — 现在' />}
             />
           </Section>
         </div>
