@@ -29,13 +29,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.svg?v=tornado', type: 'image/svg+xml' },
-      { url: '/favicon.ico?v=tornado', sizes: 'any' },
-      { url: '/favicon/favicon-32x32.png?v=tornado', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon/favicon-16x16.png', type: 'image/png', sizes: '16x16' }
+      { url: '/icon.svg?v=original', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=original', sizes: 'any' },
+      { url: '/favicon/favicon-32x32.png?v=original', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon/favicon-16x16.png?v=original', type: 'image/png', sizes: '16x16' }
     ],
-    shortcut: '/favicon.ico?v=tornado',
-    apple: '/favicon/apple-touch-icon.png?v=tornado'
+    shortcut: '/favicon.ico?v=original',
+    apple: '/favicon/apple-touch-icon.png?v=original'
   },
   manifest: '/favicon/site.webmanifest',
   openGraph: {
