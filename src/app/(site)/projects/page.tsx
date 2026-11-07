@@ -47,8 +47,8 @@ const programs: Project[] = [
 const learnings: Project[] = [
   {
     name: '🎨 Astro Theme Pure',
-    description: 'The clean Astro blog theme whose design language this site is built on.',
-    descriptionZh: '简洁的 Astro 博客主题，本站的设计语言正建立在它之上。',
+    description: 'The clean Astro theme whose design language this site is built on.',
+    descriptionZh: '简洁的 Astro 主题，本站的设计语言正建立在它之上。',
     links: [
       { type: 'github', href: 'https://github.com/cworld1/astro-theme-pure' },
       { type: 'site', href: 'https://astro-pure.js.org/' },

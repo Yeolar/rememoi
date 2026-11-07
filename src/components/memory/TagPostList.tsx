@@ -21,7 +21,7 @@ export function TagPostList({ tag, posts, currentPage, totalPages }: TagPostList
 
   return (
     <>
-      <Button title={<Trans en='Back' zh='返回' />} href='/blog' variant='back' />
+      <Button title={<Trans en='Back' zh='返回' />} href='/memory' variant='back' />
       <main className='mt-6 lg:mt-10'>
         <div id='content-header' className='animate'>
           <h1 className='mb-6 mt-6 flex items-end gap-x-2 text-3xl font-medium sm:mt-10'>
@@ -29,7 +29,7 @@ export function TagPostList({ tag, posts, currentPage, totalPages }: TagPostList
           </h1>
         </div>
 
-        <section id='content' className='animate' aria-label='Blog post list'>
+        <section id='content' className='animate' aria-label='Memory entries list'>
           {posts.length === 0 ? (
             <p><Trans en='No posts with this tag yet.' zh='该标签下暂无文章。' /></p>
           ) : (

@@ -18,7 +18,7 @@ export default async function TagsPage() {
 
   return (
     <>
-      <Button title={<Trans en='Back' zh='返回' />} href='/blog' variant='back' />
+      <Button title={<Trans en='Back' zh='返回' />} href='/memory' variant='back' />
       <main className='mt-6 lg:mt-10'>
         <div id='content-header' className='animate'>
           <h1 className='mb-6 text-3xl font-medium'><Trans en='Tags' zh='标签' /></h1>

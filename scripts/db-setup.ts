@@ -77,7 +77,7 @@ async function main() {
       .onConflictDoNothing()
   }
 
-  console.log(`[db] seeded ${seeds.length} post(s) from content/blog`)
+  console.log(`[db] seeded ${seeds.length} post(s) from content/memory`)
   await normalizeStoredLanguages()
 }
 

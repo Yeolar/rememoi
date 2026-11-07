@@ -13,7 +13,7 @@ export async function GET() {
 
   const items = await Promise.all(
     posts.map(async (post) => {
-      const url = absoluteUrl(`/blog/${post.slug}`)
+      const url = absoluteUrl(`/memory/${post.slug}`)
       const html = await renderMarkdownToHtml(post.body, post.slug)
       const image = post.heroImage?.src ? absoluteUrl(post.heroImage.src) : absoluteUrl(siteConfig.socialCard)
       return `<item>

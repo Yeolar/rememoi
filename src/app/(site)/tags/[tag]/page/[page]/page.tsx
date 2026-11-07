@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { TagPostList } from '@/components/blog/TagPostList'
+import { TagPostList } from '@/components/memory/TagPostList'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
@@ -15,7 +15,7 @@ export async function generateStaticParams() {
   const tags = getAllTags(posts)
   return tags.flatMap(([tag]) => {
     const tagPosts = posts.filter((post) => post.tags.includes(tag))
-    const totalPages = Math.max(1, Math.ceil(tagPosts.length / siteConfig.content.blogPageSize))
+    const totalPages = Math.max(1, Math.ceil(tagPosts.length / siteConfig.content.memoryPageSize))
     return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => ({
       tag,
       page: String(index + 2)
@@ -42,7 +42,7 @@ export default async function TagPageN({ params }: TagPageProps) {
   const posts = await getPostsByTag(decoded)
   if (posts.length === 0) notFound()
 
-  const pagination = paginate(posts, pageNumber, siteConfig.content.blogPageSize)
+  const pagination = paginate(posts, pageNumber, siteConfig.content.memoryPageSize)
   if (pagination.currentPage !== pageNumber) notFound()
 
   return (

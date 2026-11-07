@@ -157,7 +157,7 @@ export async function getAdjacentPosts(slug: string) {
 export function paginate<T>(
   items: T[],
   page: number,
-  pageSize = siteConfig.content.blogPageSize
+  pageSize = siteConfig.content.memoryPageSize
 ) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
   const currentPage = Math.min(Math.max(1, page), totalPages)

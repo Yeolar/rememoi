@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { PostArticle } from '@/components/blog/PostArticle'
+import { PostArticle } from '@/components/memory/PostArticle'
 import siteConfig from '@/config/site'
 import { getOpenGraphLocale } from '@/lib/languages'
 import { buildMetadata } from '@/lib/metadata'
@@ -23,12 +23,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params
   const post = await getPostBySlug(toSlug(slug))
-  if (!post) return buildMetadata({ title: 'Post not found', path: '/blog' })
+  if (!post) return buildMetadata({ title: 'Post not found', path: '/memory' })
 
   return buildMetadata({
     title: post.title,
     description: post.description,
-    path: `/blog/${post.slug}`,
+    path: `/memory/${post.slug}`,
     ogImage: post.heroImage?.src ?? siteConfig.socialCard,
     ogLocale: getOpenGraphLocale(post.language),
     contentLanguage: post.language,

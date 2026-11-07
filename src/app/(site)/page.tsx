@@ -83,7 +83,7 @@ export default async function HomePage() {
                   <PostPreview key={post.id} post={post} />
                 ))}
               </ul>
-              <Button title={<Trans en='More posts' zh='更多文章' />} className='w-fit self-end' href='/blog' variant='ahead' />
+              <Button title={<Trans en='More posts' zh='更多文章' />} className='w-fit self-end' href='/memory' variant='ahead' />
             </Section>
           )}
 

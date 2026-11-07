@@ -88,7 +88,7 @@ export function PostPreview({ post, detailed = false, className }: PostPreviewPr
               {post.pin && <span className='me-1 text-primary'><Trans en='[Pin]' zh='[置顶]' /></span>}
               {post.draft && <span className='me-1 text-red-500'><Trans en='(Draft)' zh='(草稿)' /></span>}
               <Link
-                href={`/blog/${post.slug}`}
+                href={`/memory/${post.slug}`}
                 className='text-foreground after:absolute after:inset-0 after:z-0 group-hover:text-inherit'
               >
                 {post.title}

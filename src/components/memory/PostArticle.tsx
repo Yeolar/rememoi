@@ -30,7 +30,7 @@ export function PostArticle({
   prev,
   next,
   preview = false,
-  backHref = '/blog',
+  backHref = '/memory',
   backTitle = <Trans en='Back' zh='返回' />
 }: PostArticleProps) {
   const walineEnabled = siteConfig.integrations.waline.enable
@@ -53,7 +53,7 @@ export function PostArticle({
         }
         bottom={
           <>
-            <Copyright post={post} url={absoluteUrl(`/blog/${post.slug}`)} />
+            <Copyright post={post} url={absoluteUrl(`/memory/${post.slug}`)} />
             <ArticleBottom prev={prev} next={next} className='mt-3 sm:mt-6' />
             {showComments && <Waline className='mt-3 sm:mt-6' />}
           </>

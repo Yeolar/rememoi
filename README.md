@@ -8,7 +8,7 @@ A long-term memory site for agent conversations, built with **Next.js 16** and i
 
 - **Faithful design port** — the same design tokens, typography scale, animated post previews, table of contents, code blocks, tags and archive views.
 - **Markdown & MDX** — GFM, footnotes, tables, task lists, KaTeX math, Shiki syntax highlighting with dual themes, line highlight/diff notation, titles, copy buttons and automatic code collapse.
-- **Content pipeline** — posts live in a libSQL/SQLite database. `content/blog/**` is used to seed the database on first run.
+- **Content pipeline** — posts live in a libSQL/SQLite database. `content/memory/**` is used to seed the database on first run.
 - **Writing admin** — GitHub OAuth (or a local development login), post CRUD, drafts, private posts, publishing, cover and inline image uploads, a Markdown editor and a real site preview.
 - **Search** — a generated JSON index searched client-side with Fuse.js.
 - **SEO plumbing** — canonical URLs, Open Graph/Twitter metadata, RSS, sitemap, robots.txt and a web manifest.
@@ -35,7 +35,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Open <http://localhost:3000>. `pnpm dev` creates the database from `content/blog` automatically. In development a local admin login is available at `/admin/login`:
+Open <http://localhost:3000>. `pnpm dev` creates the database from `content/memory` automatically. In development a local admin login is available at `/admin/login`:
 
 - username: `admin`
 - password: `rememoi` (change it with `ADMIN_DEV_PASSWORD`)
@@ -126,11 +126,11 @@ Notes:
 
 ### Seeding from Markdown
 
-`content/blog/**` is the initial content source. Run:
+`content/memory/**` is the initial content source. Run:
 
 ```bash
 pnpm db:setup   # creates tables; seeds only when the database is empty
-pnpm db:seed    # DESTRUCTIVE: clears posts and re-imports content/blog
+pnpm db:seed    # DESTRUCTIVE: clears posts and re-imports content/memory
 ```
 
 Once you edit a post in the admin area, the database is the source of truth. The Markdown files are kept as portable fixtures and are not automatically overwritten.
@@ -210,7 +210,7 @@ const posts = await getVisiblePosts() // [!code highlight]
 
 - The admin editor uses a select, and the API validates and normalizes the value.
 - Legacy values such as `English` / `中文` are normalized on read and by `pnpm db:setup`.
-- Every language gets a filtered index page: `/blog/language/en`, `/blog/language/zh-CN` (paginated when needed).
+- Every language gets a filtered index page: `/memory/language/en`, `/memory/language/zh-CN` (paginated when needed).
 - `GET /api/posts?language=en` filters the public API; the search page also has a language filter.
 - Article pages render a `lang` attribute and an `openGraph.locale` (`en_US` / `zh_CN`); the document language is synced after hydration.
 
@@ -321,7 +321,7 @@ The full instructions, payload examples and troubleshooting live in [`.dsh/skill
 ## Project structure
 
 ```
-content/blog/           Markdown/MDX seed posts + their media references
+content/memory/           Markdown/MDX seed posts + their media references
 .dsh/skills/rememoi-api/ DSH agent skill (SKILL.md + API CLI)
 docs/                   README preview images
 public/                 Static assets, seed media, tool icons, favicons
@@ -330,7 +330,7 @@ scripts/
   generate-assets.py    Regenerate the covers, avatar, social card and favicons
 src/
   app/
-    (site)/             Public pages (home, blog, tags, archives, about, projects, search, terms, preview)
+    (site)/             Public pages (home, memory, tags, archives, about, projects, search, terms, preview)
     admin/              Admin login, dashboard and editor
     api/                Public and admin API route handlers
     rss.xml/  …         Feed and index routes
@@ -349,7 +349,7 @@ src/
 | `pnpm build` | Set up the database, then build for production. |
 | `pnpm start` | Start the production server. |
 | `pnpm db:setup` | Create tables and seed only when the database is empty. |
-| `pnpm db:seed` | Clear posts and re-import `content/blog`. |
+| `pnpm db:seed` | Clear posts and re-import `content/memory`. |
 | `pnpm typecheck` | TypeScript checks. |
 | `pnpm lint` | ESLint (Next.js + React rules). |
 | `pnpm format` | Format with Prettier. |

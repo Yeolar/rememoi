@@ -8,11 +8,11 @@ import { resolveMediaSrc } from '@/lib/media'
 import type { PostFrontmatter, PostImage } from '@/types'
 
 /**
- * Markdown files under content/blog are the seed source for the database.
+ * Markdown files under content/memory are the seed source for the database.
  * Once a post has been imported, the admin editor is the source of truth.
  */
 
-export const CONTENT_ROOT = path.join(process.cwd(), 'content', 'blog')
+export const CONTENT_ROOT = path.join(process.cwd(), 'content', 'memory')
 const MARKDOWN_EXTENSIONS = new Set(['.md', '.mdx'])
 
 export type SeedPost = {

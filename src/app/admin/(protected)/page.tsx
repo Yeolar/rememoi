@@ -41,8 +41,8 @@ export default async function AdminDashboardPage() {
           <p className='text-lg font-medium'><Trans en='No posts yet' zh='还没有文章' /></p>
           <p className='mt-1 text-sm text-muted-foreground'>
             <Trans
-              en={<>Create your first post, or run <code className='rounded bg-muted px-1.5 py-0.5'>pnpm db:seed</code> to import the Markdown files from <code className='rounded bg-muted px-1.5 py-0.5'>content/blog</code>.</>}
-              zh={<>创建第一篇文章，或运行 <code className='rounded bg-muted px-1.5 py-0.5'>pnpm db:seed</code> 从 <code className='rounded bg-muted px-1.5 py-0.5'>content/blog</code> 导入 Markdown 文件。</>}
+              en={<>Create your first post, or run <code className='rounded bg-muted px-1.5 py-0.5'>pnpm db:seed</code> to import the Markdown files from <code className='rounded bg-muted px-1.5 py-0.5'>content/memory</code>.</>}
+              zh={<>创建第一篇文章，或运行 <code className='rounded bg-muted px-1.5 py-0.5'>pnpm db:seed</code> 从 <code className='rounded bg-muted px-1.5 py-0.5'>content/memory</code> 导入 Markdown 文件。</>}
             />
           </p>
           <Link
@@ -85,7 +85,7 @@ export default async function AdminDashboardPage() {
                   </Link>
                 </div>
                 <p className='mt-1 truncate text-xs text-muted-foreground'>
-                  /blog/{post.slug} · <Trans en='updated ' zh='更新于 ' />
+                  /memory/{post.slug} · <Trans en='updated ' zh='更新于 ' />
                   <LocalizedDate date={post.updatedAt} /> ·{' '}
                   {post.tags.length > 0 ? post.tags.join(', ') : <Trans en='no tags' zh='无标签' />}
                 </p>
@@ -106,7 +106,7 @@ export default async function AdminDashboardPage() {
                 </Link>
                 {post.status === 'published' && (
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/memory/${post.slug}`}
                     target='_blank'
                     className='rounded-lg border px-2 py-1 text-xs text-muted-foreground no-underline transition-colors hover:bg-muted'
                   >

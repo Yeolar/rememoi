@@ -158,7 +158,7 @@ export function SearchClient() {
           {results.map((result) => (
             <li key={result.slug}>
               <Link
-                href={`/blog/${result.slug}`}
+                href={`/memory/${result.slug}`}
                 className='group block rounded-2xl border bg-background px-5 py-4 no-underline transition-colors hover:bg-muted'
               >
                 <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground'>

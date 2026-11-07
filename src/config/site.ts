@@ -43,7 +43,7 @@ export type SiteConfig = {
     social: SocialLink[]
   }
   content: {
-    blogPageSize: number
+    memoryPageSize: number
     externalLinks: {
       content: string
     }
@@ -94,7 +94,7 @@ export const siteConfig: SiteConfig = {
   // [Header]
   header: {
     menu: [
-      { title: 'Blog', link: '/blog' },
+      { title: 'Memory', link: '/memory' },
       { title: 'Archive', link: '/archives' },
       { title: 'Projects', link: '/projects' },
       { title: 'About', link: '/about' }
@@ -113,7 +113,7 @@ export const siteConfig: SiteConfig = {
 
   // [Content]
   content: {
-    blogPageSize: 6,
+    memoryPageSize: 6,
     externalLinks: {
       content: ' ↗'
     },

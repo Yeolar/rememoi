@@ -52,7 +52,7 @@ export function Hero({ post, descriptionSlot }: HeroProps) {
               {tags.map((tag, index) => (
                 <span key={tag} className='flex items-center gap-1'>
                   <a
-                    aria-label={`View more blogs with the tag ${tag}`}
+                    aria-label={`View more memories with the tag ${tag}`}
                     className='hover:underline hover:underline-offset-4'
                     data-pagefind-filter='tag'
                     href={`/tags/${encodeURIComponent(tag)}`}

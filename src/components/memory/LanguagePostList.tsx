@@ -21,16 +21,16 @@ export function LanguagePostList({
   totalPages,
   totalItems
 }: LanguagePostListProps) {
-  const basePath = `/blog/language/${encodeURIComponent(language)}`
+  const basePath = `/memory/language/${encodeURIComponent(language)}`
   const pagination = paginationProps(basePath, currentPage, totalPages, {
-    prev: <Trans en='← Previous Posts' zh='← 上一页文章' />,
-    next: <Trans en='Next Posts →' zh='下一页文章 →' />
+    prev: <Trans en='← Previous entries' zh='← 上一页' />,
+    next: <Trans en='Next entries →' zh='下一页' />
   })
   const label = getLanguageLabel(language)
 
   return (
     <>
-      <Button title={<Trans en='Back' zh='返回' />} href='/blog' variant='back' />
+      <Button title={<Trans en='Back' zh='返回' />} href='/memory' variant='back' />
       <main className='mt-6 lg:mt-10'>
         <div id='content-header' className='animate'>
           <h1 className='mb-6 mt-6 flex flex-wrap items-end gap-x-2 text-3xl font-medium sm:mt-10'>
@@ -45,7 +45,7 @@ export function LanguagePostList({
           </p>
         </div>
 
-        <section id='content' className='animate' aria-label='Blog post list'>
+        <section id='content' className='animate' aria-label='Memory entries list'>
           {posts.length === 0 ? (
             <p><Trans en='No posts in this language yet.' zh='该语言暂无文章。' /></p>
           ) : (

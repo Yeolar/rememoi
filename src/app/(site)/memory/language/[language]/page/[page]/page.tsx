@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { LanguagePostList } from '@/components/blog/LanguagePostList'
+import { LanguagePostList } from '@/components/memory/LanguagePostList'
 import siteConfig from '@/config/site'
 import { getLanguageLabel, normalizeLanguage } from '@/lib/languages'
 import { buildMetadata } from '@/lib/metadata'
@@ -17,7 +17,7 @@ export async function generateStaticParams() {
     const languagePosts = posts.filter((post) => normalizeLanguage(post.language) === language)
     const totalPages = Math.max(
       1,
-      Math.ceil(languagePosts.length / siteConfig.content.blogPageSize)
+      Math.ceil(languagePosts.length / siteConfig.content.memoryPageSize)
     )
     return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => ({
       language,
@@ -29,12 +29,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: LanguagePageProps) {
   const { language, page } = await params
   const code = normalizeLanguage(safeDecode(language))
-  if (!code) return buildMetadata({ title: 'Language', path: '/blog' })
+  if (!code) return buildMetadata({ title: 'Language', path: '/memory' })
   const label = getLanguageLabel(code)
   return buildMetadata({
     title: `Language: ${label} · Page ${page}`,
     description: `All Rememoi posts written in ${label}.`,
-    path: `/blog/language/${encodeURIComponent(code)}/page/${page}`,
+    path: `/memory/language/${encodeURIComponent(code)}/page/${page}`,
     contentLanguage: code
   })
 }
@@ -50,7 +50,7 @@ export default async function LanguagePageN({ params }: LanguagePageProps) {
   const posts = await getPostsByLanguage(code)
   if (posts.length === 0) notFound()
 
-  const pagination = paginate(posts, pageNumber, siteConfig.content.blogPageSize)
+  const pagination = paginate(posts, pageNumber, siteConfig.content.memoryPageSize)
   if (pagination.currentPage !== pageNumber) notFound()
 
   return (

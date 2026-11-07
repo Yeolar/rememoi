@@ -10,12 +10,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPublishedPosts()
   const tags = getAllTags(posts)
   const languages = getAllLanguages(posts)
-  const pageSize = siteConfig.content.blogPageSize
+  const pageSize = siteConfig.content.memoryPageSize
   const totalPages = Math.max(1, Math.ceil(posts.length / pageSize))
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: absoluteUrl('/'), priority: 1, changeFrequency: 'weekly' },
-    { url: absoluteUrl('/blog'), priority: 0.9, changeFrequency: 'weekly' },
+    { url: absoluteUrl('/memory'), priority: 0.9, changeFrequency: 'weekly' },
     { url: absoluteUrl('/archives'), priority: 0.6, changeFrequency: 'monthly' },
     { url: absoluteUrl('/tags'), priority: 0.5, changeFrequency: 'monthly' },
     { url: absoluteUrl('/about'), priority: 0.6, changeFrequency: 'monthly' },
@@ -24,17 +24,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl('/terms'), priority: 0.3, changeFrequency: 'yearly' }
   ]
 
-  const blogRoutes: MetadataRoute.Sitemap = Array.from(
+  const memoryRoutes: MetadataRoute.Sitemap = Array.from(
     { length: Math.max(0, totalPages - 1) },
     (_, index) => ({
-      url: absoluteUrl(`/blog/page/${index + 2}`),
+      url: absoluteUrl(`/memory/page/${index + 2}`),
       priority: 0.5,
       changeFrequency: 'weekly' as const
     })
   )
 
   const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: absoluteUrl(`/blog/${post.slug}`),
+    url: absoluteUrl(`/memory/${post.slug}`),
     lastModified: post.updatedDate ?? post.publishDate,
     priority: 0.8,
     changeFrequency: 'monthly'
@@ -61,17 +61,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const languagePages = Math.max(1, Math.ceil(count / pageSize))
     return [
       {
-        url: absoluteUrl(`/blog/language/${encodeURIComponent(language)}`),
+        url: absoluteUrl(`/memory/language/${encodeURIComponent(language)}`),
         priority: 0.4,
         changeFrequency: 'monthly' as const
       },
       ...Array.from({ length: Math.max(0, languagePages - 1) }, (_, index) => ({
-        url: absoluteUrl(`/blog/language/${encodeURIComponent(language)}/page/${index + 2}`),
+        url: absoluteUrl(`/memory/language/${encodeURIComponent(language)}/page/${index + 2}`),
         priority: 0.3,
         changeFrequency: 'monthly' as const
       }))
     ]
   })
 
-  return [...staticRoutes, ...blogRoutes, ...postRoutes, ...tagRoutes, ...languageRoutes]
+  return [...staticRoutes, ...memoryRoutes, ...postRoutes, ...tagRoutes, ...languageRoutes]
 }

@@ -18,7 +18,7 @@ const ICON_BUTTON_CLASS =
   'box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border sm:rounded-xl'
 
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
-  Blog: { en: 'Blog', zh: '博客' },
+  Memory: { en: 'Memory', zh: '记忆' },
   Archive: { en: 'Archive', zh: '归档' },
   Projects: { en: 'Projects', zh: '项目' },
   About: { en: 'About', zh: '关于' }

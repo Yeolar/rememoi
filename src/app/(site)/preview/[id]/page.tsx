@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
 import { auth, isAuthConfigured } from '@/auth'
-import { PostArticle } from '@/components/blog/PostArticle'
+import { PostArticle } from '@/components/memory/PostArticle'
 import { Trans } from '@/components/i18n/Trans'
 import { getAdminPost } from '@/lib/admin-posts'
 import { POST_STATUS_LABELS } from '@/lib/post-status'

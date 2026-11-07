@@ -312,7 +312,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
           <span className='field-label'><Trans en='Slug' zh='Slug' /></span>
           <div className='flex items-stretch overflow-hidden rounded-lg border bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10'>
             <span className='flex items-center border-r bg-muted px-3 text-sm text-muted-foreground'>
-              /blog/
+              /memory/
             </span>
             <input
               className='w-full bg-transparent px-3 py-2 text-sm outline-none'
@@ -502,7 +502,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
             )}
             {status === 'published' && postId && (
               <Link
-                href={`/blog/${slug}`}
+                href={`/memory/${slug}`}
                 target='_blank'
                 className='text-center text-sm text-muted-foreground underline-offset-4 hover:underline'
               >
@@ -561,7 +561,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               checked={pinned}
               onChange={(event) => setPinned(event.target.checked)}
             />
-            <Trans en='Pin to the top of the blog' zh='置顶到博客列表' />
+            <Trans en='Pin to the top of memory' zh='置顶到记忆列表' />
           </label>
           <label className='flex items-center gap-2 text-sm'>
             <input

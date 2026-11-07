@@ -1,21 +1,21 @@
-import { BlogListView } from '@/components/blog/BlogListView'
+import { MemoryListView } from '@/components/memory/MemoryListView'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
 import { getAllLanguages, getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
 
 export const metadata = buildMetadata({
-  title: 'Blog',
+  title: 'Memory',
   description: 'Notes, essays and experiments worth remembering.',
-  path: '/blog'
+  path: '/memory'
 })
 
-export default async function BlogPage() {
+export default async function MemoryPage() {
   const posts = await getVisiblePosts()
   const tags = getAllTags(posts)
-  const pagination = paginate(posts, 1, siteConfig.content.blogPageSize)
+  const pagination = paginate(posts, 1, siteConfig.content.memoryPageSize)
 
   return (
-    <BlogListView
+    <MemoryListView
       posts={pagination.items}
       tags={tags}
       languages={getAllLanguages(posts)}

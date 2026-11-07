@@ -16,7 +16,7 @@ export default async function ArchivesPage() {
 
   return (
     <>
-      <Button title={<Trans en='Back' zh='返回' />} href='/blog' variant='back' />
+      <Button title={<Trans en='Back' zh='返回' />} href='/memory' variant='back' />
       <main className='mt-6 lg:mt-10'>
         <div id='content-header' className='animate'>
           <h1 className='mb-6 text-3xl font-medium'><Trans en='Archives' zh='归档' /></h1>
@@ -24,7 +24,7 @@ export default async function ArchivesPage() {
 
         {posts.length === 0 && <p><Trans en='No posts yet.' zh='暂无文章。' /></p>}
 
-        <section id='content' className='animate' aria-label='Blog post list'>
+        <section id='content' className='animate' aria-label='Memory entries list'>
           {byYear.map(([year, yearPosts]) => (
             <div key={year} className='relative mt-20'>
               <h2

@@ -1,12 +1,12 @@
 ---
 name: rememoi-api
-description: List, read, create, and update Rememoi blog posts through the HTTP API. Reads are public; writes require an admin session or a REMEMOI_API_TOKEN bearer token.
-whenToUse: Use when the user asks to inspect, draft, publish, create, or edit a post on the Rememoi blog, or to automate post management through its API.
+description: List, read, create, and update Rememoi memory entries through the HTTP API. Reads are public; writes require an admin session or a REMEMOI_API_TOKEN bearer token.
+whenToUse: Use when the user asks to inspect, draft, publish, create, or edit a post on Rememoi, or to automate entry management through its API.
 ---
 
 # Rememoi API
 
-This skill wraps the Rememoi blog post API. It works against a running Rememoi
+This skill wraps the Rememoi memory API. It works against a running Rememoi
 site (default `http://localhost:3000`) and uses the bundled CLI at
 `scripts/rememoi.mjs` — the file next to this `SKILL.md`.
 

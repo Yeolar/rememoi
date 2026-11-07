@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { TagPostList } from '@/components/blog/TagPostList'
+import { TagPostList } from '@/components/memory/TagPostList'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
@@ -31,7 +31,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const posts = await getPostsByTag(decoded)
   if (posts.length === 0) notFound()
 
-  const pagination = paginate(posts, 1, siteConfig.content.blogPageSize)
+  const pagination = paginate(posts, 1, siteConfig.content.memoryPageSize)
 
   return (
     <TagPostList
