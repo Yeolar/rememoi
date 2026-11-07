@@ -102,7 +102,6 @@ export const siteConfig: SiteConfig = {
       { title: 'Blog', link: '/blog' },
       { title: 'Archive', link: '/archives' },
       { title: 'Projects', link: '/projects' },
-      { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' }
     ]
   },

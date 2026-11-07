@@ -21,7 +21,6 @@ const NAV_LABELS: Record<string, { en: string; zh: string }> = {
   Blog: { en: 'Blog', zh: '博客' },
   Archive: { en: 'Archive', zh: '归档' },
   Projects: { en: 'Projects', zh: '项目' },
-  Links: { en: 'Links', zh: '友链' },
   About: { en: 'About', zh: '关于' }
 }
 

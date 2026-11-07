@@ -329,13 +329,13 @@ scripts/
   generate-assets.py    Regenerate the covers, avatar, social card and favicons
 src/
   app/
-    (site)/             Public pages (home, blog, tags, archives, about, links, projects, search, terms, preview)
+    (site)/             Public pages (home, blog, tags, archives, about, projects, search, terms, preview)
     admin/              Admin login, dashboard and editor
     api/                Public and admin API route handlers
     rss.xml/  …         Feed and index routes
   auth.ts               Auth.js configuration
   components/           UI, site chrome, content and MDX components
-  config/               Site + links configuration
+  config/               Site configuration
   lib/                  Database, posts service, media storage, markdown pipeline, validation, utilities
   types/                Shared types
 ```
@@ -377,7 +377,6 @@ Set the environment variables from the table above. By default uploaded images l
 ## Customisation
 
 - **Site metadata / navigation / footer / integrations** — `src/config/site.ts`.
-- **Friend links and link logbook** — `src/config/links.ts`.
 - **Colours and typography** — `src/app/globals.css` (the `:root` and `.dark` token blocks are a direct port of the Astro theme).
 - **Public pages** — `src/app/(site)`.
 - **Admin UI** — `src/components/admin` and `src/app/admin`.
