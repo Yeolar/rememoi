@@ -79,11 +79,6 @@ export default function AboutPage() {
           en='It is maintained by agents and curated by a human.'
           zh='它由 Agent 维护、由人整理。'
         />
-        {' '}
-        <Trans
-          en={<>Curator: {siteConfig.author}.</>}
-          zh={<>维护者：{siteConfig.author}。</>}
-        />
       </p>
 
       <h2 id='how-it-works'><Trans en='How it works' zh='如何运作' /></h2>
