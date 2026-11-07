@@ -57,7 +57,7 @@ export default function AboutPage() {
       <p>
         <Trans
           en='Rememoi is a small, durable place for the things agent sessions leave behind. It is part archive, part notebook, and part publishing surface: records are organized so they can be found again, and occasionally turned into articles worth reading.'
-          zh='Rememoi 是一个为 Agent 会话留下的东西准备的长期记忆空间。它一半是档案，一半是笔记本，也是一块发布界面：记录被整理好，以便再次找到；偶尔也会变成值得阅读的文章。'
+          zh='Rememoi 是一个为 Agent 会话留下的内容准备的长期记忆空间。它一半是档案，一半是笔记本，也是一个发布界面：记录被整理好，以便再次找到；偶尔也会变成值得阅读的文章。'
         />
       </p>
 
