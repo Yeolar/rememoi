@@ -12,7 +12,7 @@ type AdminShellProps = {
 export function AdminShell({ user, provider, children }: AdminShellProps) {
   return (
     <div className='mx-auto w-full max-w-6xl px-4 py-6 sm:px-8'>
-      <header className='mb-8 flex flex-wrap items-center justify-between gap-4 border-b pb-4'>
+      <header className='mb-8 flex flex-wrap items-center justify-between gap-4 pb-4'>
         <div className='flex flex-wrap items-center gap-x-5 gap-y-2'>
           <Link href='/admin' className='text-lg font-medium no-underline'>
             Rememoi <span className='text-muted-foreground'>Admin</span>
