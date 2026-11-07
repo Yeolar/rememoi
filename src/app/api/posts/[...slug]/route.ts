@@ -30,7 +30,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   if ('error' in guard) return guard.error
 
   const { slug } = await params
-  const post = await getPostBySlug(slug.map(safeDecode).join('/'))
+  const post = await getPostBySlug(slug.map(safeDecode).join('/'), { includePrivate: true })
   if (!post) return Response.json({ error: 'not_found' }, { status: 404 })
 
   const body = await request.json().catch(() => null)

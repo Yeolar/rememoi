@@ -1,3 +1,5 @@
+export type PostStatus = 'draft' | 'published' | 'private'
+
 export type PostImage = {
   src: string
   alt?: string
@@ -49,7 +51,8 @@ export type Post = {
   tags: string[]
   language?: string
   draft: boolean
-  status: 'draft' | 'published'
+  private: boolean
+  status: PostStatus
   pin: boolean
   comment: boolean
   minutesRead: string
@@ -112,7 +115,7 @@ export type AdminPostDTO = {
   description: string
   body: string
   format: 'md' | 'mdx'
-  status: 'draft' | 'published'
+  status: PostStatus
   pinned: boolean
   commentsEnabled: boolean
   language: string | null
@@ -134,7 +137,7 @@ export type AdminPostInput = {
   description: string
   body: string
   format: 'md' | 'mdx'
-  status: 'draft' | 'published'
+  status: PostStatus
   pinned: boolean
   commentsEnabled: boolean
   language: string | null

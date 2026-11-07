@@ -9,7 +9,7 @@ A quiet personal blog built with **Next.js 16**, inspired by the design of [Astr
 - **Faithful design port** — the same design tokens, typography scale, sticky scroll-aware header, animated post previews, table of contents, code blocks, tags and archive views.
 - **Markdown & MDX** — GFM, footnotes, tables, task lists, KaTeX math, Shiki syntax highlighting with dual themes, line highlight/diff notation, titles, copy buttons and automatic code collapse.
 - **Content pipeline** — posts live in a libSQL/SQLite database. `content/blog/**` is used to seed the database on first run.
-- **Writing admin** — GitHub OAuth (or a local development login), post CRUD, drafts, publishing, cover and inline image uploads, a Markdown editor and a real site preview.
+- **Writing admin** — GitHub OAuth (or a local development login), post CRUD, drafts, private posts, publishing, cover and inline image uploads, a Markdown editor and a real site preview.
 - **Search** — a generated JSON index searched client-side with Fuse.js.
 - **SEO plumbing** — canonical URLs, Open Graph/Twitter metadata, RSS, sitemap, robots.txt and a web manifest.
 - **Optional comments** — Waline, disabled until you provide a server URL.
@@ -85,9 +85,10 @@ If the auth variables are missing, `/admin` shows a setup card instead of the ed
 
 ### In the admin editor
 
-Go to `/admin`, create a post, write in Markdown or MDX, upload a cover image, save it as a draft, open the preview, and publish when it is ready.
+Go to `/admin`, create a post, write in Markdown or MDX, upload a cover image, save it as a draft or private post, open the preview, and publish when it is ready.
 
 - **Drafts** are excluded from the public site in production. During development they are visible on the public site with a `(Draft)` badge, matching the original theme's behavior.
+- **Private posts** are hidden everywhere public: site lists, article URLs, feeds, search and sitemap. They remain available in the admin area and through the protected preview.
 - **Preview** (`/preview/[id]`) is protected and renders the real article layout, including interactions.
 - **Uploads** use the database by default and are served through `/api/media/[id]` with immutable caching. Set `MEDIA_DRIVER=cos` to put new images in Tencent COS and serve them from a CDN; old database-backed images keep working. See [Object storage (COS)](#object-storage-cos).
 - **Publishing** invalidates the public pages, RSS, search index and sitemap with `revalidatePath`.
@@ -240,7 +241,7 @@ Projects page copy are translated; article body content keeps its original langu
 | --- | --- | --- |
 | `POST` | `/api/posts` | Create a post. JSON body validated with Zod. |
 | `PATCH` | `/api/posts/<slug>` | Partially update a post. Omitted fields are preserved. |
-| `GET` | `/api/admin/posts` | All posts, including drafts (summaries). |
+| `GET` | `/api/admin/posts` | All posts, including drafts and private posts (summaries). |
 | `GET` | `/api/admin/posts/<id>` | One post with body. |
 | `PATCH` | `/api/admin/posts/<id>` | Update a post by id. |
 | `DELETE` | `/api/admin/posts/<id>` | Delete a post. |
@@ -274,7 +275,7 @@ Create/patch payload:
 }
 ```
 
-`PATCH` accepts any subset of these fields. Slugs are validated against `^[a-z0-9]+(?:-[a-z0-9]+)*$` and made unique automatically.
+`PATCH` accepts any subset of these fields. `status` is one of `draft`, `published` or `private`; private posts are never exposed publicly. Slugs are validated against `^[a-z0-9]+(?:-[a-z0-9]+)*$` and made unique automatically.
 
 ```bash
 export REMEMOI_API_TOKEN=<long-random-value>

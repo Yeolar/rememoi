@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, inArray, ne } from 'drizzle-orm'
 
 import siteConfig from '@/config/site'
 import { ensureSchema, getDb } from '@/lib/db'
@@ -23,7 +23,8 @@ function rowToPost(row: PostRow): Post {
     heroImage: row.heroImage ?? undefined,
     tags: row.tags ?? [],
     language: normalizeLanguage(row.language) ?? row.language ?? undefined,
-    draft: row.status !== 'published',
+    draft: row.status === 'draft',
+    private: row.status === 'private',
     status: row.status,
     pin: row.pinned,
     comment: row.commentsEnabled,
@@ -48,7 +49,11 @@ export async function getVisiblePosts(): Promise<Post[]> {
   const rows = await getDb()
     .select()
     .from(posts)
-    .where(isDevelopment ? undefined : eq(posts.status, 'published'))
+    .where(
+      isDevelopment
+        ? inArray(posts.status, ['draft', 'published'])
+        : eq(posts.status, 'published')
+    )
     .orderBy(desc(posts.pinned), desc(posts.publishDate))
   return rows.map(rowToPost)
 }
@@ -64,9 +69,15 @@ export async function getPublishedPosts(): Promise<Post[]> {
   return rows.map(rowToPost)
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | undefined> {
+export async function getPostBySlug(
+  slug: string,
+  options: { includePrivate?: boolean } = {}
+): Promise<Post | undefined> {
   await ensureSchema()
-  const [row] = await getDb().select().from(posts).where(eq(posts.slug, slug)).limit(1)
+  const condition = options.includePrivate
+    ? eq(posts.slug, slug)
+    : and(eq(posts.slug, slug), ne(posts.status, 'private'))
+  const [row] = await getDb().select().from(posts).where(condition).limit(1)
   return row ? rowToPost(row) : undefined
 }
 

@@ -10,7 +10,8 @@ export const dynamic = 'force-dynamic'
 export default async function AdminDashboardPage() {
   const posts = await listAdminPosts()
   const published = posts.filter((post) => post.status === 'published').length
-  const drafts = posts.length - published
+  const drafts = posts.filter((post) => post.status === 'draft').length
+  const privatePosts = posts.filter((post) => post.status === 'private').length
 
   return (
     <div>
@@ -18,7 +19,7 @@ export default async function AdminDashboardPage() {
         <div>
           <h1 className='text-2xl font-medium'>Posts</h1>
           <p className='mt-1 text-sm text-muted-foreground'>
-            {posts.length} total · {published} published · {drafts} draft{drafts === 1 ? '' : 's'}
+            {posts.length} total · {published} published · {drafts} draft{drafts === 1 ? '' : 's'} · {privatePosts} private
           </p>
         </div>
         <Link
@@ -58,7 +59,9 @@ export default async function AdminDashboardPage() {
                     className={
                       post.status === 'published'
                         ? 'rounded-full border border-green-500/30 bg-green-500/10 px-2 py-0.5 text-xs text-green-700 dark:text-green-300'
-                        : 'rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-700 dark:text-amber-300'
+                        : post.status === 'private'
+                          ? 'rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-0.5 text-xs text-slate-700 dark:text-slate-300'
+                          : 'rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-700 dark:text-amber-300'
                     }
                   >
                     {post.status}

@@ -54,7 +54,7 @@ node .dsh/skills/rememoi-api/scripts/rememoi.mjs list --limit 5
 node "$SKILL_DIR/scripts/rememoi.mjs" list
 node "$SKILL_DIR/scripts/rememoi.mjs" list --tag design --limit 20
 node "$SKILL_DIR/scripts/rememoi.mjs" list --language zh-CN
-node "$SKILL_DIR/scripts/rememoi.mjs" list --all                 # includes drafts, needs token
+node "$SKILL_DIR/scripts/rememoi.mjs" list --all                 # includes drafts/private, needs token
 ```
 
 ### Read a post
@@ -68,7 +68,7 @@ node "$SKILL_DIR/scripts/rememoi.mjs" get draft-notes --draft    # draft, needs 
 
 Write a JSON file, then create it. `publishDate` defaults to now if omitted;
 `slug` is generated from the title if omitted. The API defaults to
-`status: "draft"` and `format: "mdx"`, so set those explicitly when needed.
+`status: "draft"` and `format: "mdx"`, so set those explicitly when needed. `status` can be `draft`, `published` or `private`.
 
 ```bash
 cat > /tmp/rememoi-post.json <<'JSON'
@@ -139,7 +139,7 @@ Use these if the CLI is unavailable.
 | `GET` | `/api/posts/<slug>` | public | Published post detail |
 | `POST` | `/api/posts` | write | Create a post |
 | `PATCH` | `/api/posts/<slug>` | write | Partially update a post |
-| `GET` | `/api/admin/posts` | write | All posts incl. drafts (summaries) |
+| `GET` | `/api/admin/posts` | write | All posts incl. drafts/private (summaries) |
 | `GET` | `/api/admin/posts/<id>` | write | Full post incl. body |
 | `PATCH` | `/api/admin/posts/<id>` | write | Update by id |
 | `DELETE` | `/api/admin/posts/<id>` | write | Delete by id (ask first) |
@@ -155,7 +155,7 @@ or an Auth.js admin session cookie. Prefer the bearer token in automation.
 
 ## Rules
 
-- Default new posts to `status: "draft"`; publish only when the user asks.
+- Default new posts to `status: "draft"`; publish only when the user asks. Use `status: "private"` when the post must stay hidden from the public site.
 - Use canonical `language` codes: `zh-CN` (中文) or `en` (English). The server also accepts legacy aliases such as `English` / `中文`, but prefer the codes.
 - Always include a meaningful `title`, `description`, and `slug`.
 - Validate before writing: a `422` response contains `issues` with the exact
@@ -175,5 +175,5 @@ or an Auth.js admin session cookie. Prefer the bearer token in automation.
 | `401 unauthorized` | Token missing/wrong, or the admin session expired. |
 | `503 auth_not_configured` | Server has no `AUTH_SECRET` and no `REMEMOI_API_TOKEN`; set the token on the server and restart. |
 | `422 validation_error` | Read the `issues` array; fix required fields or the slug format. |
-| `404 not_found` | Check the slug; drafts are only visible with `--draft` and a token. |
+| `404 not_found` | Check the slug; drafts are visible with `--draft` and a token; private posts stay out of all public routes. |
 | `ECONNREFUSED` | The site is not running at `REMEMOI_BASE_URL`. |

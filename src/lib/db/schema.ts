@@ -11,7 +11,7 @@ export const posts = sqliteTable(
     description: text('description').notNull(),
     body: text('body').notNull(),
     format: text('format', { enum: ['md', 'mdx'] }).notNull(),
-    status: text('status', { enum: ['draft', 'published'] }).notNull(),
+    status: text('status', { enum: ['draft', 'published', 'private'] }).notNull(),
     pinned: integer('pinned', { mode: 'boolean' }).notNull(),
     commentsEnabled: integer('comments_enabled', { mode: 'boolean' }).notNull(),
     language: text('language'),

@@ -10,7 +10,7 @@ import { LANGUAGE_OPTIONS } from '@/lib/languages'
 import { fallbackSlug, slugify } from '@/lib/slug'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import type { AdminPostDTO, PostImage } from '@/types'
+import type { AdminPostDTO, PostImage, PostStatus } from '@/types'
 
 type PostEditorProps = {
   mode: 'create' | 'edit'
@@ -53,7 +53,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
   const [description, setDescription] = useState(post?.description ?? '')
   const [body, setBody] = useState(post?.body ?? '')
   const [format, setFormat] = useState<'md' | 'mdx'>(post?.format ?? 'mdx')
-  const [status, setStatus] = useState<'draft' | 'published'>(post?.status ?? 'draft')
+  const [status, setStatus] = useState<PostStatus>(post?.status ?? 'draft')
   const [pinned, setPinned] = useState(post?.pinned ?? false)
   const [commentsEnabled, setCommentsEnabled] = useState(post?.commentsEnabled ?? true)
   const [language, setLanguage] = useState(post?.language ?? '')
@@ -62,7 +62,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
     post ? toDateInput(post.publishDate) : localToday()
   )
   const [heroImage, setHeroImage] = useState<PostImage | null>(post?.heroImage ?? null)
-  const [saving, setSaving] = useState<'draft' | 'published' | null>(null)
+  const [saving, setSaving] = useState<PostStatus | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState<Message | null>(null)
 
@@ -149,7 +149,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
     }
   }
 
-  const save = async (targetStatus: 'draft' | 'published') => {
+  const save = async (targetStatus: PostStatus) => {
     setMessage(null)
     if (!title.trim()) {
       setMessage({ type: 'error', text: 'A title is required before saving.' })
@@ -210,11 +210,14 @@ export function PostEditor({ mode, post }: PostEditorProps) {
       setPostId(saved.id)
       setSlug(saved.slug)
       setStatus(saved.status)
-      setMessage({
-        type: 'success',
-        text: saved.status === 'published' ? 'Published successfully.' : 'Draft saved.'
-      })
-      showToast({ message: saved.status === 'published' ? 'Published.' : 'Draft saved.' })
+      const savedLabel =
+        saved.status === 'published'
+          ? 'Published'
+          : saved.status === 'private'
+            ? 'Marked private'
+            : 'Draft saved'
+      setMessage({ type: 'success', text: `${savedLabel} successfully.` })
+      showToast({ message: `${savedLabel}.` })
       if (created) router.replace(`/admin/posts/${saved.id}`)
       router.refresh()
     } catch (error) {
@@ -244,7 +247,9 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               'rounded-full border px-3 py-1 text-xs',
               status === 'published'
                 ? 'border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300'
-                : 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                : status === 'private'
+                  ? 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-300'
+                  : 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300'
             )}
           >
             {status}
@@ -411,6 +416,17 @@ export function PostEditor({ mode, post }: PostEditorProps) {
             >
               {saving === 'draft' ? 'Saving…' : status === 'published' ? 'Unpublish' : 'Save draft'}
             </button>
+            <button
+              type='button'
+              onClick={() => save('private')}
+              disabled={busy}
+              className='cursor-pointer rounded-lg border bg-muted px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              {saving === 'private' ? 'Saving…' : status === 'private' ? 'Private' : 'Make private'}
+            </button>
+            <p className='text-xs text-muted-foreground'>
+              Private posts are hidden from the public site and feeds.
+            </p>
             {previewHref ? (
               <Link
                 href={previewHref}

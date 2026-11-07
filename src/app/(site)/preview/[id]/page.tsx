@@ -27,14 +27,14 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   const adminPost = await getAdminPost(id)
   if (!adminPost) notFound()
 
-  const post = await getPostBySlug(adminPost.slug)
+  const post = await getPostBySlug(adminPost.slug, { includePrivate: true })
   if (!post) notFound()
 
   return (
     <>
       <div className='mt-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-800 dark:text-amber-200'>
         <span>
-          Preview mode · {post.draft ? 'draft' : 'published'} · {post.title}
+          Preview mode · {post.status} · {post.title}
         </span>
         <span className='text-xs opacity-80'>Only you can see this page.</span>
       </div>
