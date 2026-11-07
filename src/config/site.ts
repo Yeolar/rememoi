@@ -34,12 +34,6 @@ export type SiteConfig = {
   }
   favicon: string
   socialCard: string
-  logo: {
-    src: string
-    alt: string
-    width: number
-    height: number
-  }
   header: {
     menu: NavItem[]
   }
@@ -101,12 +95,6 @@ export const siteConfig: SiteConfig = {
   },
   favicon: '/favicon.ico',
   socialCard: '/images/social-card.jpg',
-  logo: {
-    src: '/images/avatar.png',
-    alt: 'Rememoi avatar',
-    width: 256,
-    height: 256
-  },
 
   // [Header]
   header: {

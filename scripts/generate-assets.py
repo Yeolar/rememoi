@@ -284,7 +284,9 @@ def make_social_card() -> Image.Image:
     return image
 
 
-def make_tornado_icon(size: int = 1024) -> Image.Image:
+def make_tornado_icon(
+    size: int = 1024, stroke_units: float = 2.0, pad_ratio: float = 0.125
+) -> Image.Image:
     """Lucide tornado (ISC) on the Rememoi blue tile."""
     yy, xx = np.mgrid[0:size, 0:size]
     t = (xx + yy) / (2 * (size - 1))
@@ -300,9 +302,9 @@ def make_tornado_icon(size: int = 1024) -> Image.Image:
     image.putalpha(mask)
 
     draw = ImageDraw.Draw(image)
-    pad = size / 8
+    pad = size * pad_ratio
     scale = (size - 2 * pad) / 24
-    stroke = 2 * scale
+    stroke = stroke_units * scale
     lines = [
         ((21, 4), (3, 4)),
         ((18, 8), (6, 8)),
@@ -325,6 +327,7 @@ def make_favicons() -> None:
     favicon_dir = PUBLIC / "favicon"
     favicon_dir.mkdir(parents=True, exist_ok=True)
     icon = make_tornado_icon()
+    bold = make_tornado_icon(stroke_units=3.0, pad_ratio=0.08)
     sizes = {
         "android-chrome-512x512.png": 512,
         "android-chrome-192x192.png": 192,
@@ -333,12 +336,15 @@ def make_favicons() -> None:
         "favicon-16x16.png": 16,
     }
     for name, size in sizes.items():
-        icon.resize((size, size), Image.LANCZOS).save(favicon_dir / name)
+        source = bold if name in {"favicon-32x32.png", "favicon-16x16.png"} else icon
+        source.resize((size, size), Image.LANCZOS).save(favicon_dir / name)
 
     ico_sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
-    icon.resize((256, 256), Image.LANCZOS).save(favicon_dir / "favicon.ico", sizes=ico_sizes)
+    bold.resize((256, 256), Image.LANCZOS).save(
+        favicon_dir / "favicon.ico", sizes=ico_sizes
+    )
     # Next.js serves this one from /favicon.ico
-    icon.resize((256, 256), Image.LANCZOS).save(PUBLIC / "favicon.ico", sizes=ico_sizes)
+    bold.resize((256, 256), Image.LANCZOS).save(PUBLIC / "favicon.ico", sizes=ico_sizes)
     manifest = {
         "name": "Rememoi",
         "short_name": "Rememoi",

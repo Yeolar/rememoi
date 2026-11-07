@@ -5,6 +5,7 @@ import { ProjectCard } from '@/components/home/ProjectCard'
 import { Section } from '@/components/home/Section'
 import { SkillLayout } from '@/components/home/SkillLayout'
 import { Icon } from '@/components/icons/Icon'
+import { TornadoLogo } from '@/components/icons/TornadoLogo'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Label } from '@/components/ui/Label'
@@ -32,14 +33,7 @@ export default async function HomePage() {
       <Highlight color='#659EB9' />
       <main className='flex w-full flex-col items-center'>
         <section className='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
-          <img
-            src={siteConfig.logo.src}
-            alt={siteConfig.logo.alt}
-            width={siteConfig.logo.width}
-            height={siteConfig.logo.height}
-            loading='eager'
-            className='h-28 w-auto rounded-full border p-1'
-          />
+          <TornadoLogo className='size-28' />
 
           <div className='flex flex-col items-center gap-y-4'>
             <h1 className='text-3xl font-medium'>{siteConfig.author}</h1>
