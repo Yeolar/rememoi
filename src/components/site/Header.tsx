@@ -14,6 +14,9 @@ import { cn } from '@/lib/utils'
 type Theme = 'system' | 'light' | 'dark'
 const THEMES: Theme[] = ['system', 'dark', 'light']
 
+const ICON_BUTTON_CLASS =
+  'box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border sm:rounded-xl'
+
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
   Blog: { en: 'Blog', zh: '博客' },
   Archive: { en: 'Archive', zh: '归档' },
@@ -162,7 +165,7 @@ export function Header() {
             id='toggleLocale'
             onClick={toggleLocale}
             aria-label='Switch language'
-            className='box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border'
+            className={ICON_BUTTON_CLASS}
           >
             <LanguagesMark className='size-5' />
           </button>
@@ -172,7 +175,7 @@ export function Header() {
             id='toggleDarkMode'
             data-theme='system'
             onClick={cycleTheme}
-            className='theme-toggle box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border sm:rounded-xl'
+            className={`theme-toggle ${ICON_BUTTON_CLASS}`}
           >
             <span className='sr-only'>Dark Theme</span>
             <Icon className='icon-system size-5 hover:text-primary' name='computer' />
