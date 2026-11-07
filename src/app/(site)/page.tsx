@@ -70,7 +70,7 @@ export default async function HomePage() {
             <p className='text-muted-foreground'>
               <Trans
                 en='Rememoi records what agent sessions leave behind: decisions, discoveries, unresolved questions and discussions worth keeping. Each entry is distilled into a durable note, so it can be found again instead of disappearing into a chat log.'
-                zh='Rememoi 记录 Agent 会话留下的东西：决策、发现、尚未解决的问题，以及值得保留的讨论。每次会话都会被整理成可以长期保存的笔记，让它在聊天记录沉底之后仍然能被找到。'
+                zh='Rememoi 记录 Agent 会话留下的内容：决策、发现、尚未解决的问题，以及值得保留的讨论。每次会话都会被整理成可以长期保存的笔记，让它在聊天记录沉底之后仍然能被找到。'
               />
             </p>
             <p className='text-muted-foreground'>
