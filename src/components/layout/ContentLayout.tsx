@@ -11,6 +11,7 @@ type ContentLayoutProps = {
   bottomSidebar?: ReactNode
   backHref?: string
   backTitle?: string
+  lang?: string
   className?: string
   children: ReactNode
 }
@@ -22,6 +23,7 @@ export function ContentLayout({
   bottomSidebar,
   backHref = '/',
   backTitle = 'Back',
+  lang,
   className,
   children
 }: ContentLayoutProps) {
@@ -45,7 +47,7 @@ export function ContentLayout({
           style={{ display: 'none', backgroundColor: '#00000091', zIndex: 31 }}
         />
 
-        <article data-pagefind-body className='min-w-0 grow'>
+        <article data-pagefind-body lang={lang} className='min-w-0 grow'>
           <div id='content-header' className='animate'>
             {header}
           </div>

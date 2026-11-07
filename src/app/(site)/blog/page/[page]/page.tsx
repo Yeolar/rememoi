@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { BlogListView } from '@/components/blog/BlogListView'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
-import { getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
+import { getAllLanguages, getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
 
 type PageProps = {
   params: Promise<{ page: string }>
@@ -39,6 +39,7 @@ export default async function BlogPageN({ params }: PageProps) {
     <BlogListView
       posts={pagination.items}
       tags={getAllTags(posts)}
+      languages={getAllLanguages(posts)}
       currentPage={pagination.currentPage}
       totalPages={pagination.totalPages}
       totalItems={pagination.totalItems}

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { FormattedDate } from '@/components/ui/FormattedDate'
 import { Icon } from '@/components/icons/Icon'
+import { getLanguageLabel } from '@/lib/languages'
 import { cn } from '@/lib/utils'
 import type { PostSummary } from '@/types'
 
@@ -114,7 +115,7 @@ export function PostPreview({ post, detailed = false, className }: PostPreviewPr
               {post.language && (
                 <span className='flex items-center gap-1'>
                   <Icon name='earth' className='size-4' />
-                  {post.language}
+                  {getLanguageLabel(post.language)}
                 </span>
               )}
             </div>

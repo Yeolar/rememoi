@@ -3,6 +3,7 @@ import path from 'node:path'
 
 import matter from 'gray-matter'
 
+import { normalizeLanguage } from '@/lib/languages'
 import { resolveMediaSrc } from '@/lib/media'
 import type { PostFrontmatter, PostImage } from '@/types'
 
@@ -110,7 +111,7 @@ function readSeedPost(filePath: string): SeedPost {
     status: frontmatter.draft ? 'draft' : 'published',
     pinned: Boolean(frontmatter.pin),
     commentsEnabled: frontmatter.comment !== false,
-    language: frontmatter.language ?? null,
+    language: normalizeLanguage(frontmatter.language) ?? null,
     tags: normalizeTags(frontmatter.tags),
     heroImage,
     publishDate,

@@ -105,7 +105,7 @@ description: 'A small place for the things worth remembering.'
 publishDate: 2026-11-02
 updatedDate: 2026-11-06
 tags: [notes, personal]
-language: 'English'
+language: 'en'
 pin: true
 comment: true
 heroImage: { src: './cover.jpg', color: '#659EB9', width: 1600, height: 1000 }
@@ -160,13 +160,28 @@ const posts = await getVisiblePosts() // [!code highlight]
 ```
 ````
 
+### Languages
+
+`language` is a canonical code, not free text:
+
+| Code | Label | Aliases |
+| --- | --- | --- |
+| `zh-CN` | 中文 | `zh`, `cn`, `chinese`, `中文`, `简体中文` |
+| `en` | English | `en-US`, `english`, `英文` |
+
+- The admin editor uses a select, and the API validates and normalizes the value.
+- Legacy values such as `English` / `中文` are normalized on read and by `pnpm db:setup`.
+- Every language gets a filtered index page: `/blog/language/en`, `/blog/language/zh-CN` (paginated when needed).
+- `GET /api/posts?language=en` filters the public API; the search page also has a language filter.
+- Article pages render a `lang` attribute and an `openGraph.locale` (`en_US` / `zh_CN`); the document language is synced after hydration.
+
 ## API
 
 ### Public
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/posts?tag=&page=1&limit=10` | Published posts, paginated. `limit` is capped at 50. |
+| `GET` | `/api/posts?tag=&language=&page=1&limit=10` | Published posts, paginated. `language` accepts `zh-CN` or `en`; `limit` is capped at 50. |
 | `GET` | `/api/posts/<slug>` | A published post, including rendered headings and reading time. |
 | `GET` | `/search-index.json` | Search index used by `/search`. |
 | `GET` | `/rss.xml` | RSS 2.0 feed with full post HTML. |
@@ -206,7 +221,7 @@ Create/patch payload:
   "status": "draft",
   "pinned": false,
   "commentsEnabled": true,
-  "language": "English",
+  "language": "en",
   "tags": ["notes", "nextjs"],
   "heroImage": { "src": "/api/media/<id>", "width": 1600, "height": 1000, "color": "#659EB9" },
   "publishDate": "2026-11-07T12:00:00.000Z",

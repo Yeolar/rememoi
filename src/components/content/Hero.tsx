@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { HeroImage } from '@/components/content/HeroImage'
 import { Icon } from '@/components/icons/Icon'
 import { FormattedDate } from '@/components/ui/FormattedDate'
+import { getLanguageLabel } from '@/lib/languages'
 import type { Post } from '@/types'
 
 type HeroProps = {
@@ -41,7 +42,7 @@ export function Hero({ post, descriptionSlot }: HeroProps) {
           {language && (
             <span className='flex items-center gap-1'>
               <Icon name='earth' className='size-5' />
-              {language}
+              {getLanguageLabel(language)}
             </span>
           )}
           {tags.length > 0 && (

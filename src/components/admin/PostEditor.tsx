@@ -6,6 +6,7 @@ import { useRef, useState } from 'react'
 
 import { DeletePostButton } from '@/components/admin/DeletePostButton'
 import { Icon } from '@/components/icons/Icon'
+import { LANGUAGE_OPTIONS } from '@/lib/languages'
 import { fallbackSlug, slugify } from '@/lib/slug'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
@@ -471,12 +472,21 @@ export function PostEditor({ mode, post }: PostEditorProps) {
           </label>
           <label className='field'>
             <span className='field-label'>Language</span>
-            <input
+            <select
               className='field-input'
               value={language}
               onChange={(event) => setLanguage(event.target.value)}
-              placeholder='English / 中文'
-            />
+            >
+              <option value=''>Unspecified</option>
+              {LANGUAGE_OPTIONS.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label} ({option.code})
+                </option>
+              ))}
+            </select>
+            <span className='text-xs text-muted-foreground'>
+              Used for the language badge and filters.
+            </span>
           </label>
           <label className='flex items-center gap-2 text-sm'>
             <input

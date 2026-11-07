@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 
 import { FormattedDate } from '@/components/ui/FormattedDate'
+import { getLanguageLabel } from '@/lib/languages'
 import type { SearchDocument } from '@/types'
 
 export function SearchClient() {
@@ -12,6 +13,7 @@ export function SearchClient() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
+  const [language, setLanguage] = useState('all')
   const deferredQuery = useDeferredValue(query)
 
   useEffect(() => {
@@ -38,9 +40,28 @@ export function SearchClient() {
     }
   }, [])
 
+  const languageOptions = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const document of documents) {
+      if (!document.language) continue
+      counts.set(document.language, (counts.get(document.language) ?? 0) + 1)
+    }
+    return [...counts.entries()].sort((a, b) =>
+      getLanguageLabel(a[0]).localeCompare(getLanguageLabel(b[0]))
+    )
+  }, [documents])
+
+  const filteredDocuments = useMemo(
+    () =>
+      language === 'all'
+        ? documents
+        : documents.filter((document) => document.language === language),
+    [documents, language]
+  )
+
   const fuse = useMemo(
     () =>
-      new Fuse(documents, {
+      new Fuse(filteredDocuments, {
         keys: [
           { name: 'title', weight: 0.5 },
           { name: 'description', weight: 0.2 },
@@ -52,7 +73,7 @@ export function SearchClient() {
         ignoreLocation: true,
         minMatchCharLength: 2
       }),
-    [documents]
+    [filteredDocuments]
   )
 
   const results = useMemo(() => {
@@ -75,6 +96,39 @@ export function SearchClient() {
         />
       </label>
 
+      {languageOptions.length > 0 && (
+        <div className='mt-4 flex flex-wrap items-center gap-2 text-sm' role='group' aria-label='Filter by language'>
+          <span className='text-muted-foreground'>Language:</span>
+          <button
+            type='button'
+            onClick={() => setLanguage('all')}
+            aria-pressed={language === 'all'}
+            className={
+              language === 'all'
+                ? 'cursor-pointer rounded-full border bg-foreground px-3 py-1 text-background'
+                : 'cursor-pointer rounded-full border bg-muted px-3 py-1 text-muted-foreground transition-colors hover:text-foreground'
+            }
+          >
+            All ({documents.length})
+          </button>
+          {languageOptions.map(([code, count]) => (
+            <button
+              key={code}
+              type='button'
+              onClick={() => setLanguage(code)}
+              aria-pressed={language === code}
+              className={
+                language === code
+                  ? 'cursor-pointer rounded-full border bg-foreground px-3 py-1 text-background'
+                  : 'cursor-pointer rounded-full border bg-muted px-3 py-1 text-muted-foreground transition-colors hover:text-foreground'
+              }
+            >
+              {getLanguageLabel(code)} ({count})
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className='mt-3 min-h-6 text-sm text-muted-foreground'>
         {loading && <p>Loading the index…</p>}
         {error && <p className='text-red-500'>{error}</p>}
@@ -84,7 +138,10 @@ export function SearchClient() {
           </p>
         )}
         {!loading && !error && query.trim().length === 0 && (
-          <p>{documents.length} posts indexed. Try a tag, a title or a phrase.</p>
+          <p>
+            {filteredDocuments.length} post{filteredDocuments.length === 1 ? '' : 's'} indexed. Try
+            a tag, a title or a phrase.
+          </p>
         )}
       </div>
 
@@ -98,6 +155,11 @@ export function SearchClient() {
               >
                 <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground'>
                   <FormattedDate date={result.publishDate} />
+                  {result.language && (
+                    <span className='rounded-full border px-2 py-0.5'>
+                      {getLanguageLabel(result.language)}
+                    </span>
+                  )}
                   {result.tags.slice(0, 4).map((tag) => (
                     <span key={tag} className='rounded-full border px-2 py-0.5'>
                       {tag}

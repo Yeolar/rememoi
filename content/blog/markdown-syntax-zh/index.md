@@ -6,7 +6,7 @@ updatedDate: 2026-09-18
 tags:
   - markdown
   - 中文
-language: '中文'
+language: 'zh-CN'
 heroImage: { src: './cover.jpg', color: '#C3B2C8', width: 1600, height: 1000, alt: '淡紫色抽象封面' }
 ---
 

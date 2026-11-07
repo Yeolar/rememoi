@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { PostArticle } from '@/components/blog/PostArticle'
 import siteConfig from '@/config/site'
+import { getOpenGraphLocale } from '@/lib/languages'
 import { buildMetadata } from '@/lib/metadata'
 import { getAdjacentPosts, getPostBySlug, getVisiblePosts } from '@/lib/posts'
 
@@ -29,6 +30,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     description: post.description,
     path: `/blog/${post.slug}`,
     ogImage: post.heroImage?.src ?? siteConfig.socialCard,
+    ogLocale: getOpenGraphLocale(post.language),
+    contentLanguage: post.language,
     article: {
       publishedTime: post.publishDateISO,
       modifiedTime: post.updatedDateISO,

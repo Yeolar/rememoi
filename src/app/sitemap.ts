@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import siteConfig from '@/config/site'
-import { getAllTags, getPublishedPosts } from '@/lib/posts'
+import { getAllLanguages, getAllTags, getPublishedPosts } from '@/lib/posts'
 import { absoluteUrl } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPublishedPosts()
   const tags = getAllTags(posts)
+  const languages = getAllLanguages(posts)
   const pageSize = siteConfig.content.blogPageSize
   const totalPages = Math.max(1, Math.ceil(posts.length / pageSize))
 
@@ -57,5 +58,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]
   })
 
-  return [...staticRoutes, ...blogRoutes, ...postRoutes, ...tagRoutes]
+  const languageRoutes: MetadataRoute.Sitemap = languages.flatMap(([language, count]) => {
+    const languagePages = Math.max(1, Math.ceil(count / pageSize))
+    return [
+      {
+        url: absoluteUrl(`/blog/language/${encodeURIComponent(language)}`),
+        priority: 0.4,
+        changeFrequency: 'monthly' as const
+      },
+      ...Array.from({ length: Math.max(0, languagePages - 1) }, (_, index) => ({
+        url: absoluteUrl(`/blog/language/${encodeURIComponent(language)}/page/${index + 2}`),
+        priority: 0.3,
+        changeFrequency: 'monthly' as const
+      }))
+    ]
+  })
+
+  return [...staticRoutes, ...blogRoutes, ...postRoutes, ...tagRoutes, ...languageRoutes]
 }

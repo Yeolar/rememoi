@@ -13,17 +13,35 @@ for (const file of ['.env.local', '.env']) {
 }
 
 async function main() {
+  const { eq } = await import('drizzle-orm')
   const { ensureSchema, getDb } = await import('../src/lib/db/index')
   const { posts } = await import('../src/lib/db/schema')
   const { readSeedPosts } = await import('../src/lib/content-files')
+  const { normalizeLanguage } = await import('../src/lib/languages')
 
   await ensureSchema()
+
+  /** One-time in-place migration for legacy values such as `English` / `中文`. */
+  async function normalizeStoredLanguages() {
+    const rows = await getDb()
+      .select({ id: posts.id, language: posts.language })
+      .from(posts)
+    let changed = 0
+    for (const row of rows) {
+      const normalized = normalizeLanguage(row.language)
+      if (!normalized || normalized === row.language) continue
+      await getDb().update(posts).set({ language: normalized }).where(eq(posts.id, row.id))
+      changed += 1
+    }
+    if (changed > 0) console.log(`[db] normalized language on ${changed} post(s)`)
+  }
 
   const force = process.argv.includes('--force')
   const existing = await getDb().select({ id: posts.id }).from(posts).limit(1)
 
   if (existing.length > 0 && !force) {
     console.log(`[db] database already contains posts — skipping seed (use --force to reseed)`)
+    await normalizeStoredLanguages()
     return
   }
 
@@ -60,6 +78,7 @@ async function main() {
   }
 
   console.log(`[db] seeded ${seeds.length} post(s) from content/blog`)
+  await normalizeStoredLanguages()
 }
 
 main().catch((error) => {

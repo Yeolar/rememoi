@@ -4,6 +4,7 @@ import siteConfig from '@/config/site'
 import { ensureSchema, getDb } from '@/lib/db'
 import { posts, type PostRow } from '@/lib/db/schema'
 import { derivePostContent } from '@/lib/markdown-utils'
+import { getLanguageLabel, normalizeLanguage } from '@/lib/languages'
 import type { Post, PostSummary } from '@/types'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -21,7 +22,7 @@ function rowToPost(row: PostRow): Post {
     updatedDateISO: row.updatedDate?.toISOString(),
     heroImage: row.heroImage ?? undefined,
     tags: row.tags ?? [],
-    language: row.language ?? undefined,
+    language: normalizeLanguage(row.language) ?? row.language ?? undefined,
     draft: row.status !== 'published',
     status: row.status,
     pin: row.pinned,
@@ -90,6 +91,24 @@ export function sortPosts(postsToSort: Post[]) {
     if (a.pin !== b.pin) return Number(b.pin) - Number(a.pin)
     return b.publishDate.valueOf() - a.publishDate.valueOf()
   })
+}
+
+export function getAllLanguages(postList: Post[]) {
+  const counts = new Map<string, number>()
+  for (const post of postList) {
+    const code = normalizeLanguage(post.language)
+    if (!code) continue
+    counts.set(code, (counts.get(code) ?? 0) + 1)
+  }
+  return [...counts.entries()].sort((a, b) =>
+    getLanguageLabel(a[0]).localeCompare(getLanguageLabel(b[0]))
+  )
+}
+
+export async function getPostsByLanguage(language: string) {
+  const code = normalizeLanguage(language)
+  if (!code) return []
+  return (await getVisiblePosts()).filter((post) => normalizeLanguage(post.language) === code)
 }
 
 export function getAllTags(postList: Post[]) {

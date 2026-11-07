@@ -5,7 +5,7 @@ publishDate: 2026-07-05
 tags:
   - music
   - technology
-language: 'English'
+language: 'en'
 heroImage: { src: './cover.jpg', color: '#4891B2', width: 1600, height: 1000, alt: 'Deep blue abstract cover' }
 ---
 

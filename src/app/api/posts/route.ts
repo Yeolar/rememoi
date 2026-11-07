@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 
 import { createAdminPost } from '@/lib/admin-posts'
+import { LANGUAGE_CODES, normalizeLanguage } from '@/lib/languages'
 import { requireAdmin } from '@/lib/auth-guards'
 import { getPublishedPosts, paginate, toPostSummary } from '@/lib/posts'
 import { revalidatePublicSite } from '@/lib/revalidate'
@@ -12,11 +13,24 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const tag = searchParams.get('tag')?.trim().toLowerCase() || undefined
+  const languageParam = searchParams.get('language')?.trim() || undefined
+  const language = languageParam ? normalizeLanguage(languageParam) : undefined
+  if (languageParam && !language) {
+    return Response.json(
+      {
+        error: 'invalid_language',
+        message: `Unsupported language. Use one of: ${LANGUAGE_CODES.join(', ')}.`
+      },
+      { status: 400 }
+    )
+  }
+
   const page = Math.max(1, Number(searchParams.get('page') ?? 1) || 1)
   const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit') ?? 10) || 10))
 
   let posts = await getPublishedPosts()
   if (tag) posts = posts.filter((post) => post.tags.includes(tag))
+  if (language) posts = posts.filter((post) => normalizeLanguage(post.language) === language)
 
   const result = paginate(posts, page, limit)
   return Response.json({
@@ -26,7 +40,8 @@ export async function GET(request: NextRequest) {
       pageSize: result.pageSize,
       total: result.totalItems,
       totalPages: result.totalPages,
-      tag: tag ?? null
+      tag: tag ?? null,
+      language: language ?? null
     }
   })
 }

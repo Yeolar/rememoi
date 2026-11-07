@@ -8,6 +8,10 @@ type MetaInput = {
   description?: string
   path: string
   ogImage?: string
+  /** Open Graph locale, e.g. zh_CN / en_US. */
+  ogLocale?: string
+  /** Emitted as a content-language meta tag. */
+  contentLanguage?: string
   article?: {
     publishedTime: string
     modifiedTime?: string
@@ -21,6 +25,8 @@ export function buildMetadata({
   description = siteConfig.description,
   path,
   ogImage = siteConfig.socialCard,
+  ogLocale,
+  contentLanguage,
   article
 }: MetaInput): Metadata {
   const url = absoluteUrl(path)
@@ -41,7 +47,7 @@ export function buildMetadata({
       title,
       description,
       siteName: siteConfig.title,
-      locale: siteConfig.locale.attrs,
+      locale: ogLocale ?? siteConfig.locale.attrs,
       images: [{ url: image, width: 1200, height: 630, alt: title }],
       ...(article
         ? {
@@ -57,6 +63,11 @@ export function buildMetadata({
       title,
       description,
       images: [image]
-    }
+    },
+    ...(contentLanguage && {
+      other: {
+        'content-language': contentLanguage
+      }
+    })
   }
 }

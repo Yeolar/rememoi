@@ -2,7 +2,7 @@
 /**
  * Rememoi post API CLI.
  *
- *   node rememoi.mjs list [--tag design] [--page 1] [--limit 10] [--all]
+ *   node rememoi.mjs list [--tag design] [--language zh-CN] [--page 1] [--limit 10] [--all]
  *   node rememoi.mjs get <slug> [--draft]
  *   node rememoi.mjs create --file post.json
  *   node rememoi.mjs update <slug> --file patch.json
@@ -60,16 +60,20 @@ function usage() {
   console.log(`Rememoi post API CLI
 
 Usage:
-  node rememoi.mjs list [--tag <tag>] [--page <n>] [--limit <n>] [--all]
+  node rememoi.mjs list [--tag <tag>] [--language <zh-CN|en>] [--page <n>] [--limit <n>] [--all]
   node rememoi.mjs get <slug> [--draft]
   node rememoi.mjs create --file <post.json>
   node rememoi.mjs update <slug> --file <patch.json>
   node rememoi.mjs upload <image>
 
 Options:
-  --base <url>   override REMEMOI_BASE_URL
-  --all          list all posts including drafts (requires REMEMOI_API_TOKEN)
-  --draft        get a draft by slug (requires REMEMOI_API_TOKEN)
+  --base <url>        override REMEMOI_BASE_URL
+  --tag <tag>         filter the list by tag
+  --language <code>   filter the list by language (zh-CN or en)
+  --page <n>          page number for the public list
+  --limit <n>         page size for the public list
+  --all               list all posts including drafts (requires REMEMOI_API_TOKEN)
+  --draft             get a draft by slug (requires REMEMOI_API_TOKEN)
 
 Environment:
   REMEMOI_BASE_URL   site URL, default http://localhost:3000
@@ -175,12 +179,17 @@ async function list() {
       const tag = String(flags.tag).toLowerCase()
       data = data.filter((post) => Array.isArray(post.tags) && post.tags.includes(tag))
     }
+    if (flags.language) {
+      const language = String(flags.language)
+      data = data.filter((post) => post.language === language)
+    }
     console.log(JSON.stringify({ data, meta: { total: data.length, all: true } }, null, 2))
     return
   }
 
   const params = new URLSearchParams()
   if (flags.tag) params.set('tag', String(flags.tag))
+  if (flags.language) params.set('language', String(flags.language))
   if (flags.page) params.set('page', String(flags.page))
   if (flags.limit) params.set('limit', String(flags.limit))
   const query = params.toString()

@@ -107,6 +107,7 @@ export type SearchDocument = {
   title: string
   description: string
   tags: string[]
+  language?: string
   headings: string[]
   content: string
   publishDate: string

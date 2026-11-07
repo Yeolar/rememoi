@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { and, desc, eq, ne } from 'drizzle-orm'
 
 import { ensureSchema, getDb } from '@/lib/db'
+import { normalizeLanguage } from '@/lib/languages'
 import { posts, type PostRow } from '@/lib/db/schema'
 import type { PostInput, PostUpdateInput } from '@/lib/validation'
 import type { AdminPostDTO, PostImage } from '@/types'
@@ -33,7 +34,7 @@ export function toAdminPost(row: PostRow): AdminPostDTO {
     status: row.status,
     pinned: row.pinned,
     commentsEnabled: row.commentsEnabled,
-    language: row.language ?? null,
+    language: normalizeLanguage(row.language) ?? row.language ?? null,
     tags: row.tags ?? [],
     heroImage: row.heroImage ?? null,
     publishDate: row.publishDate.toISOString(),
@@ -110,7 +111,7 @@ export async function createAdminPost(input: PostInput): Promise<AdminPostDTO> {
       status: input.status,
       pinned: input.pinned,
       commentsEnabled: input.commentsEnabled,
-      language: input.language || null,
+      language: normalizeLanguage(input.language) ?? null,
       tags: normalizeTags(input.tags),
       heroImage: normalizeHeroImage(input.heroImage),
       publishDate: input.publishDate,
@@ -138,7 +139,7 @@ export async function updateAdminPost(
   if (input.status !== undefined) values.status = input.status
   if (input.pinned !== undefined) values.pinned = input.pinned
   if (input.commentsEnabled !== undefined) values.commentsEnabled = input.commentsEnabled
-  if (input.language !== undefined) values.language = input.language || null
+  if (input.language !== undefined) values.language = normalizeLanguage(input.language) ?? null
   if (input.tags !== undefined) values.tags = normalizeTags(input.tags)
   if (input.heroImage !== undefined) values.heroImage = normalizeHeroImage(input.heroImage)
   if (input.publishDate !== undefined) values.publishDate = input.publishDate

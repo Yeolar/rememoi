@@ -4,12 +4,14 @@ import { PostPreview } from '@/components/content/PostPreview'
 import { Icon } from '@/components/icons/Icon'
 import { Button } from '@/components/ui/Button'
 import { Paginator } from '@/components/ui/Paginator'
+import { getLanguageLabel } from '@/lib/languages'
 import { pageUrl, paginationProps } from '@/lib/pagination'
 import type { Post } from '@/types'
 
 type BlogListViewProps = {
   posts: Post[]
   tags: Array<[string, number]>
+  languages: Array<[string, number]>
   currentPage: number
   totalPages: number
   totalItems: number
@@ -18,6 +20,7 @@ type BlogListViewProps = {
 export function BlogListView({
   posts,
   tags,
+  languages,
   currentPage,
   totalPages,
   totalItems
@@ -56,24 +59,48 @@ export function BlogListView({
               <Paginator {...pagination} />
             </section>
 
-            {tags.length > 0 && (
+            {(tags.length > 0 || languages.length > 0) && (
               <aside className='animate' id='sidebar'>
-                <h2 className='mb-4 flex items-center text-lg font-medium'>
-                  <Icon name='tag-2' className='me-2' />
-                  Tags
-                </h2>
-                <ul className='flex flex-wrap gap-2'>
-                  {tags.slice(0, 50).map(([tag]) => (
-                    <li key={tag}>
-                      <Button title={tag} href={`/tags/${encodeURIComponent(tag)}`} variant='pill' />
-                    </li>
-                  ))}
-                </ul>
-                <span className='mt-4 block sm:text-end'>
-                  <Link aria-label='View all blog categories' href='/tags'>
-                    View all →
-                  </Link>
-                </span>
+                {tags.length > 0 && (
+                  <>
+                    <h2 className='mb-4 flex items-center text-lg font-medium'>
+                      <Icon name='tag-2' className='me-2' />
+                      Tags
+                    </h2>
+                    <ul className='flex flex-wrap gap-2'>
+                      {tags.slice(0, 50).map(([tag]) => (
+                        <li key={tag}>
+                          <Button title={tag} href={`/tags/${encodeURIComponent(tag)}`} variant='pill' />
+                        </li>
+                      ))}
+                    </ul>
+                    <span className='mt-4 block sm:text-end'>
+                      <Link aria-label='View all blog categories' href='/tags'>
+                        View all →
+                      </Link>
+                    </span>
+                  </>
+                )}
+
+                {languages.length > 0 && (
+                  <div className={tags.length > 0 ? 'mt-8' : ''}>
+                    <h2 className='mb-4 flex items-center text-lg font-medium'>
+                      <Icon name='earth' className='me-2' />
+                      Languages
+                    </h2>
+                    <ul className='flex flex-wrap gap-2'>
+                      {languages.map(([language, count]) => (
+                        <li key={language}>
+                          <Button
+                            title={`${getLanguageLabel(language)} (${count})`}
+                            href={`/blog/language/${encodeURIComponent(language)}`}
+                            variant='pill'
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </aside>
             )}
           </div>

@@ -1,7 +1,7 @@
 import { BlogListView } from '@/components/blog/BlogListView'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
-import { getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
+import { getAllLanguages, getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
 
 export const metadata = buildMetadata({
   title: 'Blog',
@@ -18,6 +18,7 @@ export default async function BlogPage() {
     <BlogListView
       posts={pagination.items}
       tags={tags}
+      languages={getAllLanguages(posts)}
       currentPage={pagination.currentPage}
       totalPages={pagination.totalPages}
       totalItems={pagination.totalItems}

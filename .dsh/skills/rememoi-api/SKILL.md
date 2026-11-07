@@ -53,6 +53,7 @@ node .dsh/skills/rememoi-api/scripts/rememoi.mjs list --limit 5
 ```bash
 node "$SKILL_DIR/scripts/rememoi.mjs" list
 node "$SKILL_DIR/scripts/rememoi.mjs" list --tag design --limit 20
+node "$SKILL_DIR/scripts/rememoi.mjs" list --language zh-CN
 node "$SKILL_DIR/scripts/rememoi.mjs" list --all                 # includes drafts, needs token
 ```
 
@@ -79,7 +80,7 @@ cat > /tmp/rememoi-post.json <<'JSON'
   "format": "mdx",
   "status": "draft",
   "tags": ["notes"],
-  "language": "English",
+  "language": "en",
   "pinned": false,
   "commentsEnabled": true,
   "publishDate": "2026-11-07T12:00:00.000Z"
@@ -132,7 +133,7 @@ Use these if the CLI is unavailable.
 
 | Method | Endpoint | Auth | Purpose |
 | --- | --- | --- | --- |
-| `GET` | `/api/posts?tag=&page=&limit=` | public | Published post list |
+| `GET` | `/api/posts?tag=&language=&page=&limit=` | public | Published post list |
 | `GET` | `/api/posts/<slug>` | public | Published post detail |
 | `POST` | `/api/posts` | write | Create a post |
 | `PATCH` | `/api/posts/<slug>` | write | Partially update a post |
@@ -153,6 +154,7 @@ or an Auth.js admin session cookie. Prefer the bearer token in automation.
 ## Rules
 
 - Default new posts to `status: "draft"`; publish only when the user asks.
+- Use canonical `language` codes: `zh-CN` (中文) or `en` (English). The server also accepts legacy aliases such as `English` / `中文`, but prefer the codes.
 - Always include a meaningful `title`, `description`, and `slug`.
 - Validate before writing: a `422` response contains `issues` with the exact
   fields to fix.

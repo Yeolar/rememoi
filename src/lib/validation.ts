@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { LANGUAGE_CODES, normalizeLanguage } from '@/lib/languages'
+
 export const heroImageSchema = z.object({
   src: z.string().trim().min(1),
   alt: z.string().trim().max(200).optional(),
@@ -9,6 +11,20 @@ export const heroImageSchema = z.object({
 })
 
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+const languageField = z
+  .string()
+  .trim()
+  .max(40)
+  .nullable()
+  .superRefine((value, ctx) => {
+    if (value && !normalizeLanguage(value)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Unsupported language. Use one of: ${LANGUAGE_CODES.join(', ')}.`
+      })
+    }
+  })
 
 export const postInputSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(120),
@@ -24,7 +40,7 @@ export const postInputSchema = z.object({
   status: z.enum(['draft', 'published']).default('draft'),
   pinned: z.boolean().default(false),
   commentsEnabled: z.boolean().default(true),
-  language: z.string().trim().max(40).nullish(),
+  language: languageField.optional(),
   tags: z.array(z.string().trim().min(1).max(40)).max(20).default([]),
   heroImage: heroImageSchema.nullish(),
   publishDate: z.coerce.date(),
@@ -50,7 +66,7 @@ export const postUpdateSchema = z.object({
   status: z.enum(['draft', 'published']).optional(),
   pinned: z.boolean().optional(),
   commentsEnabled: z.boolean().optional(),
-  language: z.string().trim().max(40).nullish(),
+  language: languageField.optional(),
   tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(),
   heroImage: heroImageSchema.nullish(),
   publishDate: z.coerce.date().optional(),

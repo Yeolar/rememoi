@@ -6,7 +6,7 @@ updatedDate: 2026-09-20
 tags:
   - markdown
   - reference
-language: 'English'
+language: 'en'
 heroImage: { src: './cover.jpg', color: '#B4C6DA', width: 1600, height: 1000, alt: 'Pale blue abstract cover' }
 ---
 

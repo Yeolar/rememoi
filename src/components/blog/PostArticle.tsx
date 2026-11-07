@@ -1,5 +1,6 @@
 import { ArticleBottom } from '@/components/content/ArticleBottom'
 import { Copyright } from '@/components/content/Copyright'
+import { DocumentLanguage } from '@/components/content/DocumentLanguage'
 import { Hero } from '@/components/content/Hero'
 import { MediumZoom } from '@/components/content/MediumZoom'
 import { PageInfo } from '@/components/content/PageInfo'
@@ -34,10 +35,12 @@ export function PostArticle({
 
   return (
     <>
+      <DocumentLanguage language={post.language} />
       <Highlight color={post.heroImage?.color} />
       <ContentLayout
         backHref={backHref}
         backTitle={backTitle}
+        lang={post.language}
         sidebar={post.headings.length > 0 ? <Toc headings={post.headings} /> : undefined}
         header={
           <Hero
