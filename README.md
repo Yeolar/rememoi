@@ -55,6 +55,7 @@ The local login is **disabled in production** unless you explicitly set `ENABLE_
 | `DATABASE_URL` | no | libSQL URL. Defaults to `file:./data/rememoi.db`. Use `libsql://...` for Turso. |
 | `DATABASE_AUTH_TOKEN` | for remote | Token for the remote libSQL database. |
 | `AUTH_SECRET` | production | Secret used to sign sessions. Generate with `openssl rand -base64 32`. |
+| `REMEMOI_API_TOKEN` | for API writes | Bearer token for create/update/upload and agent access. Generate with `openssl rand -base64 32`. |
 | `AUTH_GITHUB_ID` | production | GitHub OAuth app client ID. |
 | `AUTH_GITHUB_SECRET` | production | GitHub OAuth app client secret. |
 | `ADMIN_GITHUB_LOGINS` | production | Comma-separated GitHub usernames allowed into `/admin`. |
@@ -173,18 +174,25 @@ const posts = await getVisiblePosts() // [!code highlight]
 | `GET` | `/robots.txt` | Robots rules (admin and admin APIs are disallowed). |
 | `GET` | `/api/media/<id>` | Image uploaded through the admin editor. |
 
-### Admin (session required)
+### Write API (authenticated)
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/admin/posts` | All posts, including drafts. |
-| `POST` | `/api/admin/posts` | Create a post. JSON body validated with Zod. |
+| `POST` | `/api/posts` | Create a post. JSON body validated with Zod. |
+| `PATCH` | `/api/posts/<slug>` | Partially update a post. Omitted fields are preserved. |
+| `GET` | `/api/admin/posts` | All posts, including drafts (summaries). |
 | `GET` | `/api/admin/posts/<id>` | One post with body. |
-| `PATCH` | `/api/admin/posts/<id>` | Update a post. |
+| `PATCH` | `/api/admin/posts/<id>` | Update a post by id. |
 | `DELETE` | `/api/admin/posts/<id>` | Delete a post. |
 | `POST` | `/api/admin/upload` | `multipart/form-data` with a `file` field. JPEG/PNG/WebP/GIF/AVIF, max 8 MB. |
 
-Admin endpoints expect the Auth.js session cookie and return `401` when there is no session, `503` when auth is not configured, and `422` with a list of issues for invalid payloads.
+Write requests accept either the Auth.js admin session cookie (the browser editor) or a server-side bearer token:
+
+```http
+Authorization: Bearer <REMEMOI_API_TOKEN>
+```
+
+Set `REMEMOI_API_TOKEN` in the server environment. Unauthenticated write requests return `401`, and `503` is returned when neither a session provider nor an API token is configured. Invalid payloads return `422` with a list of issues.
 
 Create/patch payload:
 
@@ -208,10 +216,52 @@ Create/patch payload:
 
 `PATCH` accepts any subset of these fields. Slugs are validated against `^[a-z0-9]+(?:-[a-z0-9]+)*$` and made unique automatically.
 
+```bash
+export REMEMOI_API_TOKEN=<long-random-value>
+
+curl -X POST http://localhost:3000/api/posts \
+  -H "Authorization: Bearer $REMEMOI_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @post.json
+
+curl -X PATCH http://localhost:3000/api/posts/a-new-post \
+  -H "Authorization: Bearer $REMEMOI_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"published"}'
+```
+
+Creating or updating a post revalidates the public pages, RSS, search index and sitemap automatically.
+
+## Agent skill (DSH)
+
+The repository ships a DSH-compatible skill at `.dsh/skills/rememoi-api`. It wraps the read/write endpoints in a small CLI so an agent can list, read, create, update and upload assets without constructing requests by hand.
+
+Install it for the current user:
+
+```bash
+mkdir -p ~/.dsh/skills
+ln -s "$PWD/.dsh/skills/rememoi-api" ~/.dsh/skills/rememoi-api
+```
+
+DSH also discovers skills under a project's `.dsh/skills` directory; placing or symlinking the skill there works as well. The skill is loaded as `rememoi-api` in the session catalog.
+
+```bash
+export REMEMOI_BASE_URL=http://localhost:3000
+export REMEMOI_API_TOKEN=<server token>
+
+node ~/.dsh/skills/rememoi-api/scripts/rememoi.mjs list --limit 5
+node ~/.dsh/skills/rememoi-api/scripts/rememoi.mjs get hello-rememoi
+node ~/.dsh/skills/rememoi-api/scripts/rememoi.mjs create --file post.json
+node ~/.dsh/skills/rememoi-api/scripts/rememoi.mjs update hello-rememoi --file patch.json
+```
+
+The full instructions, payload examples and troubleshooting live in [`.dsh/skills/rememoi-api/SKILL.md`](.dsh/skills/rememoi-api/SKILL.md).
+
 ## Project structure
 
 ```
 content/blog/           Markdown/MDX seed posts + their media references
+.dsh/skills/rememoi-api/ DSH agent skill (SKILL.md + API CLI)
 docs/                   README preview images
 public/                 Static assets, seed media, tool icons, favicons
 scripts/
@@ -280,6 +330,8 @@ Set the environment variables from the table above. Uploaded images live in the 
 - The local credentials login is a development convenience. Only enable it in production when you understand the risk (`ENABLE_DEV_LOGIN=true` + a strong `ADMIN_DEV_PASSWORD`).
 - Uploaded files are limited to raster image types, parsed with sharp, and capped at 8 MB. SVG uploads are intentionally rejected.
 - Admin content is trusted: MDX expressions run on the server. Do not grant admin access to untrusted authors.
+- `REMEMOI_API_TOKEN` grants full write access (create, update, upload, delete via admin endpoints). Keep it server-side, send it over HTTPS only, rotate it if leaked, and never expose it in client bundles or committed files.
+- The API has no CORS layer and is intended for server-side automation; browser callers use the session cookie instead.
 
 ## Credits & license
 

@@ -7,15 +7,15 @@ import { formatZodError, postInputSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  const guard = await requireAdmin()
+export async function GET(request: NextRequest) {
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
   const data = await listAdminPosts()
   return Response.json({ data })
 }
 
 export async function POST(request: NextRequest) {
-  const guard = await requireAdmin()
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
 
   const body = await request.json().catch(() => null)

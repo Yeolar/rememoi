@@ -31,7 +31,31 @@ export const postInputSchema = z.object({
   updatedDate: z.coerce.date().nullish()
 })
 
-export const postUpdateSchema = postInputSchema.partial()
+/**
+ * PATCH schema: every field is optional and there are deliberately no
+ * defaults, otherwise an omitted field would be reset to its default value.
+ */
+export const postUpdateSchema = z.object({
+  title: z.string().trim().min(1, 'Title is required').max(120).optional(),
+  slug: z
+    .string()
+    .trim()
+    .min(1, 'Slug is required')
+    .max(120)
+    .regex(SLUG_PATTERN, 'Use lowercase letters, numbers and single dashes')
+    .optional(),
+  description: z.string().trim().max(300).optional(),
+  body: z.string().min(1, 'Content is required').optional(),
+  format: z.enum(['md', 'mdx']).optional(),
+  status: z.enum(['draft', 'published']).optional(),
+  pinned: z.boolean().optional(),
+  commentsEnabled: z.boolean().optional(),
+  language: z.string().trim().max(40).nullish(),
+  tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(),
+  heroImage: heroImageSchema.nullish(),
+  publishDate: z.coerce.date().optional(),
+  updatedDate: z.coerce.date().nullish()
+})
 
 export const previewInputSchema = z.object({
   body: z.string(),

@@ -13,7 +13,7 @@ const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/g
 const MAX_SIZE = 8 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
-  const guard = await requireAdmin()
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
 
   const formData = await request.formData().catch(() => null)

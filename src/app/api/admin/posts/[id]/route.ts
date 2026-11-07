@@ -11,8 +11,8 @@ type RouteContext = {
   params: Promise<{ id: string }>
 }
 
-export async function GET(_request: NextRequest, { params }: RouteContext) {
-  const guard = await requireAdmin()
+export async function GET(request: NextRequest, { params }: RouteContext) {
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
 
   const { id } = await params
@@ -22,7 +22,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  const guard = await requireAdmin()
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
 
   const { id } = await params
@@ -41,8 +41,8 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   return Response.json({ data: post })
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  const guard = await requireAdmin()
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
+  const guard = await requireAdmin(request)
   if ('error' in guard) return guard.error
 
   const { id } = await params
