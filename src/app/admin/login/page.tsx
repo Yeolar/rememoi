@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { auth, isAuthConfigured, isDevLoginEnabled, isGithubConfigured } from '@/auth'
 import { SetupNotice } from '@/components/admin/SetupNotice'
+import { Trans } from '@/components/i18n/Trans'
 import { LoginForm } from './LoginForm'
 
 export const dynamic = 'force-dynamic'
@@ -26,22 +27,24 @@ export default async function LoginPage() {
           <Link href='/' className='text-2xl font-medium'>
             Rememoi
           </Link>
-          <p className='mt-1 text-sm text-muted-foreground'>Sign in to write and publish.</p>
+          <p className='mt-1 text-sm text-muted-foreground'>
+            <Trans en='Sign in to write and publish.' zh='登录后即可写作和发布。' />
+          </p>
         </div>
 
         <LoginForm showGithub={isGithubConfigured} showDev={isDevLoginEnabled} />
 
         {isDevLoginEnabled && (
           <p className='mt-6 rounded-lg border bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground'>
-            Local login: username <code className='font-semibold'>admin</code>, password from{' '}
-            <code className='font-semibold'>ADMIN_DEV_PASSWORD</code> (default{' '}
-            <code className='font-semibold'>rememoi</code>). This login is disabled in production
-            unless <code>ENABLE_DEV_LOGIN=true</code>.
+            <Trans
+              en={<>Local login: username <code className='font-semibold'>admin</code>, password from <code className='font-semibold'>ADMIN_DEV_PASSWORD</code> (default <code className='font-semibold'>rememoi</code>). This login is disabled in production unless <code>ENABLE_DEV_LOGIN=true</code>.</>}
+              zh={<>本地登录：用户名 <code className='font-semibold'>admin</code>，密码来自 <code className='font-semibold'>ADMIN_DEV_PASSWORD</code>（默认 <code className='font-semibold'>rememoi</code>）。除非设置 <code>ENABLE_DEV_LOGIN=true</code>，否则此登录在生产环境不可用。</>}
+            />
           </p>
         )}
 
         <p className='mt-6 text-center text-xs text-muted-foreground'>
-          <Link href='/'>← Back to the site</Link>
+          <Link href='/'><Trans en='← Back to the site' zh='← 返回站点' /></Link>
         </p>
       </div>
     </div>

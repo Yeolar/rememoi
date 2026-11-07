@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 
 import { DeletePostButton } from '@/components/admin/DeletePostButton'
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { LANGUAGE_OPTIONS } from '@/lib/languages'
+import { POST_STATUS_LABELS } from '@/lib/post-status'
 import { fallbackSlug, slugify } from '@/lib/slug'
 import { showToast } from '@/lib/toast'
+import { useLocale } from '@/lib/use-locale'
 import { cn } from '@/lib/utils'
 import type { AdminPostDTO, PostImage, PostStatus } from '@/types'
 
@@ -42,6 +45,8 @@ function toDateInput(iso: string) {
 
 export function PostEditor({ mode, post }: PostEditorProps) {
   const router = useRouter()
+  const locale = useLocale()
+  const t = (en: string, zh: string) => (locale === 'zh' ? zh : en)
   const bodyRef = useRef<HTMLTextAreaElement>(null)
   const heroFileRef = useRef<HTMLInputElement>(null)
   const inlineFileRef = useRef<HTMLInputElement>(null)
@@ -109,7 +114,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
       const response = await fetch('/api/admin/upload', { method: 'POST', body: formData })
       const data = await response.json().catch(() => ({}))
       if (!response.ok) {
-        throw new Error(data.message || data.error || 'Upload failed')
+        throw new Error(data.message || data.error || t('Upload failed', '上传失败'))
       }
       return data.data as UploadResult
     } finally {
@@ -130,9 +135,9 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         alt: previous?.alt || title,
         color: previous?.color
       }))
-      showToast({ message: 'Cover image uploaded.' })
+      showToast({ message: t('Cover image uploaded.', '封面上传成功。') })
     } catch (error) {
-      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Upload failed' })
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : t('Upload failed', '上传失败') })
     }
   }
 
@@ -143,20 +148,20 @@ export function PostEditor({ mode, post }: PostEditorProps) {
     try {
       const uploaded = await uploadFile(file)
       insertAtCursor(`\n![${file.name.replace(/\.[^.]+$/, '')}](${uploaded.url})\n`)
-      showToast({ message: 'Image inserted into the post.' })
+      showToast({ message: t('Image inserted into the post.', '图片已插入文章。') })
     } catch (error) {
-      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Upload failed' })
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : t('Upload failed', '上传失败') })
     }
   }
 
   const save = async (targetStatus: PostStatus) => {
     setMessage(null)
     if (!title.trim()) {
-      setMessage({ type: 'error', text: 'A title is required before saving.' })
+      setMessage({ type: 'error', text: t('A title is required before saving.', '保存前需要填写标题。') })
       return
     }
     if (!body.trim()) {
-      setMessage({ type: 'error', text: 'The post body cannot be empty.' })
+      setMessage({ type: 'error', text: t('The post body cannot be empty.', '文章正文不能为空。') })
       return
     }
 
@@ -164,7 +169,10 @@ export function PostEditor({ mode, post }: PostEditorProps) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(finalSlug)) {
       setMessage({
         type: 'error',
-        text: 'Slug may only contain lowercase letters, numbers and single dashes.'
+        text: t(
+          'Slug may only contain lowercase letters, numbers and single dashes.',
+          'Slug 只能包含小写字母、数字和单个连字符。'
+        )
       })
       return
     }
@@ -202,7 +210,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         const issues = Array.isArray(data.issues)
           ? data.issues.map((issue: { path: string; message: string }) => `${issue.path}: ${issue.message}`)
           : []
-        throw new Error(issues.length > 0 ? issues.join('\n') : data.message || data.error || 'Save failed')
+        throw new Error(issues.length > 0 ? issues.join('\n') : data.message || data.error || t('Save failed', '保存失败'))
       }
 
       const saved = data.data as AdminPostDTO
@@ -210,20 +218,20 @@ export function PostEditor({ mode, post }: PostEditorProps) {
       setPostId(saved.id)
       setSlug(saved.slug)
       setStatus(saved.status)
-      const savedLabel =
+      const savedMessage =
         saved.status === 'published'
-          ? 'Published'
+          ? t('Published successfully.', '发布成功。')
           : saved.status === 'private'
-            ? 'Marked private'
-            : 'Draft saved'
-      setMessage({ type: 'success', text: `${savedLabel} successfully.` })
-      showToast({ message: `${savedLabel}.` })
+            ? t('Marked private.', '已设为私有。')
+            : t('Draft saved.', '草稿已保存。')
+      setMessage({ type: 'success', text: savedMessage })
+      showToast({ message: savedMessage })
       if (created) router.replace(`/admin/posts/${saved.id}`)
       router.refresh()
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error instanceof Error ? error.message : 'Save failed.'
+        text: error instanceof Error ? error.message : t('Save failed.', '保存失败。')
       })
     } finally {
       setSaving(null)
@@ -238,9 +246,15 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         <div className='flex flex-wrap items-end justify-between gap-3'>
           <div className='min-w-0'>
             <p className='text-xs uppercase tracking-wider text-muted-foreground'>
-              {mode === 'create' ? 'New post' : 'Edit post'}
+              {mode === 'create' ? (
+                <Trans en='New post' zh='新建文章' />
+              ) : (
+                <Trans en='Edit post' zh='编辑文章' />
+              )}
             </p>
-            <h1 className='truncate text-2xl font-medium'>{title.trim() || 'Untitled'}</h1>
+            <h1 className='truncate text-2xl font-medium'>
+              {title.trim() || <Trans en='Untitled' zh='无标题' />}
+            </h1>
           </div>
           <span
             className={cn(
@@ -252,7 +266,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
                   : 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300'
             )}
           >
-            {status}
+            <Trans en={POST_STATUS_LABELS[status].en} zh={POST_STATUS_LABELS[status].zh} />
           </span>
         </div>
 
@@ -271,17 +285,17 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         )}
 
         <label className='field'>
-          <span className='field-label'>Title</span>
+          <span className='field-label'><Trans en='Title' zh='标题' /></span>
           <input
             className='field-input text-lg font-medium'
             value={title}
             onChange={(event) => updateTitle(event.target.value)}
-            placeholder='A title worth remembering'
+            placeholder={t('A title worth remembering', '一个值得记住的标题')}
           />
         </label>
 
         <div className='field'>
-          <span className='field-label'>Slug</span>
+          <span className='field-label'><Trans en='Slug' zh='Slug' /></span>
           <div className='flex items-stretch overflow-hidden rounded-lg border bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10'>
             <span className='flex items-center border-r bg-muted px-3 text-sm text-muted-foreground'>
               /blog/
@@ -299,14 +313,17 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         </div>
 
         <label className='field'>
-          <span className='field-label'>Description</span>
+          <span className='field-label'><Trans en='Description' zh='描述' /></span>
           <textarea
             className='field-input'
             rows={2}
             maxLength={300}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder='One or two sentences that appear in previews and search results.'
+            placeholder={t(
+              'One or two sentences that appear in previews and search results.',
+              '一两句话，会出现在预览和搜索结果中。'
+            )}
           />
           <span className='text-xs text-muted-foreground'>{description.length}/300</span>
         </label>
@@ -339,21 +356,21 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               onClick={() => wrapSelection('`')}
               className='cursor-pointer rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background hover:text-foreground'
             >
-              Code
+              <Trans en='Code' zh='代码' />
             </button>
             <button
               type='button'
               onClick={() => wrapSelection('[', '](https://)', 'link text')}
               className='cursor-pointer rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background hover:text-foreground'
             >
-              Link
+              <Trans en='Link' zh='链接' />
             </button>
             <button
               type='button'
               onClick={() => insertAtCursor('\n```ts\n\n```\n')}
               className='cursor-pointer rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background hover:text-foreground'
             >
-              Code block
+              <Trans en='Code block' zh='代码块' />
             </button>
             <button
               type='button'
@@ -362,7 +379,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               className='flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50'
             >
               <Icon name='qrcode' className='size-3.5 rotate-90' />
-              Image
+              <Trans en='Image' zh='图片' />
             </button>
             <input
               id='inline-image-input'
@@ -382,14 +399,22 @@ export function PostEditor({ mode, post }: PostEditorProps) {
             onChange={(event) => setBody(event.target.value)}
             rows={24}
             className='min-h-[480px] w-full resize-y bg-transparent px-4 py-3 font-mono text-sm leading-7 outline-none'
-            placeholder='Write in Markdown or MDX…'
+            placeholder={t('Write in Markdown or MDX…', '使用 Markdown 或 MDX 写作…')}
             spellCheck
           />
           <div className='flex flex-wrap items-center justify-between gap-2 border-t px-3 py-2 text-xs text-muted-foreground'>
             <span>
-              {body.length} characters · {body.split('\n').length} lines
+              <Trans
+                en={<>{body.length} characters · {body.split('\n').length} lines</>}
+                zh={<>{body.length} 个字符 · {body.split('\n').length} 行</>}
+              />
             </span>
-            <span>MDX components: Aside, Collapse, Tabs, Steps, Spoiler, Timeline, Button, Card</span>
+            <span>
+              <Trans
+                en='MDX components: Aside, Collapse, Tabs, Steps, Spoiler, Timeline, Button, Card'
+                zh='MDX 组件：Aside、Collapse、Tabs、Steps、Spoiler、Timeline、Button、Card'
+              />
+            </span>
           </div>
         </div>
       </div>
@@ -397,7 +422,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
       <aside className='flex flex-col gap-5'>
         <section className='rounded-2xl border bg-background p-4'>
           <h2 className='mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground'>
-            Publish
+            <Trans en='Publish' zh='发布' />
           </h2>
           <div className='flex flex-col gap-2'>
             <button
@@ -406,7 +431,13 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               disabled={busy}
               className='flex cursor-pointer items-center justify-center gap-2 rounded-lg border bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {saving === 'published' ? 'Saving…' : status === 'published' ? 'Update' : 'Publish'}
+              {saving === 'published' ? (
+                <Trans en='Saving…' zh='保存中…' />
+              ) : status === 'published' ? (
+                <Trans en='Update' zh='更新' />
+              ) : (
+                <Trans en='Publish' zh='发布' />
+              )}
             </button>
             <button
               type='button'
@@ -414,7 +445,13 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               disabled={busy}
               className='cursor-pointer rounded-lg border bg-muted px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {saving === 'draft' ? 'Saving…' : status === 'published' ? 'Unpublish' : 'Save draft'}
+              {saving === 'draft' ? (
+                <Trans en='Saving…' zh='保存中…' />
+              ) : status === 'published' ? (
+                <Trans en='Unpublish' zh='取消发布' />
+              ) : (
+                <Trans en='Save draft' zh='保存草稿' />
+              )}
             </button>
             <button
               type='button'
@@ -422,10 +459,19 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               disabled={busy}
               className='cursor-pointer rounded-lg border bg-muted px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {saving === 'private' ? 'Saving…' : status === 'private' ? 'Private' : 'Make private'}
+              {saving === 'private' ? (
+                <Trans en='Saving…' zh='保存中…' />
+              ) : status === 'private' ? (
+                <Trans en='Private' zh='私有' />
+              ) : (
+                <Trans en='Make private' zh='设为私有' />
+              )}
             </button>
             <p className='text-xs text-muted-foreground'>
-              Private posts are hidden from the public site and feeds.
+              <Trans
+                en='Private posts are hidden from the public site and feeds.'
+                zh='私有文章不会出现在公开站点和订阅源中。'
+              />
             </p>
             {previewHref ? (
               <Link
@@ -433,11 +479,11 @@ export function PostEditor({ mode, post }: PostEditorProps) {
                 target='_blank'
                 className='text-center text-sm text-muted-foreground underline-offset-4 hover:underline'
               >
-                Open preview ↗
+                <Trans en='Open preview ↗' zh='打开预览 ↗' />
               </Link>
             ) : (
               <span className='text-center text-xs text-muted-foreground'>
-                Save first to preview the post.
+                <Trans en='Save first to preview the post.' zh='请先保存，再预览文章。' />
               </span>
             )}
             {status === 'published' && postId && (
@@ -446,7 +492,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
                 target='_blank'
                 className='text-center text-sm text-muted-foreground underline-offset-4 hover:underline'
               >
-                View live ↗
+                <Trans en='View live ↗' zh='查看线上页面 ↗' />
               </Link>
             )}
           </div>
@@ -454,10 +500,10 @@ export function PostEditor({ mode, post }: PostEditorProps) {
 
         <section className='space-y-3 rounded-2xl border bg-background p-4'>
           <h2 className='text-sm font-medium uppercase tracking-wide text-muted-foreground'>
-            Details
+            <Trans en='Details' zh='详细信息' />
           </h2>
           <label className='field'>
-            <span className='field-label'>Publish date</span>
+            <span className='field-label'><Trans en='Publish date' zh='发布日期' /></span>
             <input
               type='date'
               className='field-input'
@@ -466,34 +512,34 @@ export function PostEditor({ mode, post }: PostEditorProps) {
             />
           </label>
           <label className='field'>
-            <span className='field-label'>Format</span>
+            <span className='field-label'><Trans en='Format' zh='格式' /></span>
             <select
               className='field-input'
               value={format}
               onChange={(event) => setFormat(event.target.value as 'md' | 'mdx')}
             >
-              <option value='mdx'>MDX — Markdown + components</option>
+              <option value='mdx'>{t('MDX — Markdown + components', 'MDX — Markdown + 组件')}</option>
               <option value='md'>Markdown</option>
             </select>
           </label>
           <label className='field'>
-            <span className='field-label'>Tags</span>
+            <span className='field-label'><Trans en='Tags' zh='标签' /></span>
             <input
               className='field-input'
               value={tagsInput}
               onChange={(event) => setTagsInput(event.target.value)}
-              placeholder='design, nextjs, notes'
+              placeholder={t('design, nextjs, notes', '设计, nextjs, 笔记')}
             />
-            <span className='text-xs text-muted-foreground'>Comma separated, lowercased.</span>
+            <span className='text-xs text-muted-foreground'><Trans en='Comma separated, lowercased.' zh='用逗号分隔，会自动转为小写。' /></span>
           </label>
           <label className='field'>
-            <span className='field-label'>Language</span>
+            <span className='field-label'><Trans en='Language' zh='语言' /></span>
             <select
               className='field-input'
               value={language}
               onChange={(event) => setLanguage(event.target.value)}
             >
-              <option value=''>Unspecified</option>
+              <option value=''>{t('Unspecified', '未指定')}</option>
               {LANGUAGE_OPTIONS.map((option) => (
                 <option key={option.code} value={option.code}>
                   {option.label} ({option.code})
@@ -501,7 +547,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               ))}
             </select>
             <span className='text-xs text-muted-foreground'>
-              Used for the language badge and filters.
+              <Trans en='Used for the language badge and filters.' zh='用于语言徽章和筛选。' />
             </span>
           </label>
           <label className='flex items-center gap-2 text-sm'>
@@ -510,7 +556,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               checked={pinned}
               onChange={(event) => setPinned(event.target.checked)}
             />
-            Pin to the top of the blog
+            <Trans en='Pin to the top of the blog' zh='置顶到博客列表' />
           </label>
           <label className='flex items-center gap-2 text-sm'>
             <input
@@ -518,23 +564,23 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               checked={commentsEnabled}
               onChange={(event) => setCommentsEnabled(event.target.checked)}
             />
-            Enable comments
+            <Trans en='Enable comments' zh='开启评论' />
           </label>
         </section>
 
         <section className='space-y-3 rounded-2xl border bg-background p-4'>
           <h2 className='text-sm font-medium uppercase tracking-wide text-muted-foreground'>
-            Cover image
+            <Trans en='Cover image' zh='封面图' />
           </h2>
           {heroImage ? (
             <img
               src={heroImage.src}
-              alt={heroImage.alt || 'Cover preview'}
+              alt={heroImage.alt || t('Cover preview', '封面预览')}
               className='aspect-[16/10] w-full rounded-lg border object-cover'
             />
           ) : (
             <div className='flex aspect-[16/10] w-full items-center justify-center rounded-lg border border-dashed text-xs text-muted-foreground'>
-              No cover image
+              <Trans en='No cover image' zh='暂无封面图' />
             </div>
           )}
           <div className='flex flex-wrap gap-2'>
@@ -545,7 +591,13 @@ export function PostEditor({ mode, post }: PostEditorProps) {
               disabled={uploading}
               className='cursor-pointer rounded-lg border bg-muted px-3 py-1.5 text-xs transition-colors hover:bg-card disabled:opacity-50'
             >
-              {uploading ? 'Uploading…' : heroImage ? 'Replace image' : 'Upload image'}
+              {uploading ? (
+                <Trans en='Uploading…' zh='上传中…' />
+              ) : heroImage ? (
+                <Trans en='Replace image' zh='更换图片' />
+              ) : (
+                <Trans en='Upload image' zh='上传图片' />
+              )}
             </button>
             {heroImage && (
               <button
@@ -553,7 +605,7 @@ export function PostEditor({ mode, post }: PostEditorProps) {
                 onClick={() => setHeroImage(null)}
                 className='cursor-pointer rounded-lg border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted'
               >
-                Remove
+                <Trans en='Remove' zh='移除' />
               </button>
             )}
             <input
@@ -568,18 +620,18 @@ export function PostEditor({ mode, post }: PostEditorProps) {
           {heroImage && (
             <>
               <label className='field'>
-                <span className='field-label'>Alt text</span>
+                <span className='field-label'><Trans en='Alt text' zh='替代文本' /></span>
                 <input
                   className='field-input'
                   value={heroImage.alt ?? ''}
                   onChange={(event) =>
                     setHeroImage({ ...heroImage, alt: event.target.value })
                   }
-                  placeholder='Describe the image'
+                  placeholder={t('Describe the image', '描述这张图片')}
                 />
               </label>
               <label className='field'>
-                <span className='field-label'>Accent color</span>
+                <span className='field-label'><Trans en='Accent color' zh='强调色' /></span>
                 <input
                   type='color'
                   className='h-9 w-full cursor-pointer rounded-lg border bg-background p-1'
@@ -594,14 +646,14 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         {postId && (
           <section className='space-y-2 rounded-2xl border border-red-500/20 bg-red-500/5 p-4'>
             <h2 className='text-sm font-medium uppercase tracking-wide text-red-600 dark:text-red-400'>
-              Danger zone
+              <Trans en='Danger zone' zh='危险操作' />
             </h2>
             <p className='text-xs text-muted-foreground'>
-              Deleting a post also removes its comments page link. This cannot be undone.
+              <Trans en='Deleting a post also removes its comments page link. This cannot be undone.' zh='删除文章会同时移除它的评论页链接，且无法撤销。' />
             </p>
             <DeletePostButton
               id={postId}
-              title={title || 'this post'}
+              title={title || t('this post', '这篇文章')}
               redirectTo='/admin'
               className='w-full py-1.5 text-center'
             />

@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Trans } from '@/components/i18n/Trans'
+import { LocaleButton } from '@/components/i18n/LocaleButton'
 import { Icon } from '@/components/icons/Icon'
-import { LanguagesMark } from '@/components/icons/LanguagesMark'
 import { TornadoMark } from '@/components/icons/TornadoMark'
 import siteConfig from '@/config/site'
 import { showToast } from '@/lib/toast'
@@ -64,19 +64,6 @@ export function Header() {
     }
     media.addEventListener('change', onChange)
     return () => media.removeEventListener('change', onChange)
-  }, [])
-
-  const toggleLocale = useCallback(() => {
-    const root = document.documentElement
-    const next = root.dataset.locale === 'zh' ? 'en' : 'zh'
-    root.dataset.locale = next
-    root.lang = next === 'zh' ? 'zh-CN' : 'en'
-    try {
-      localStorage.setItem('locale', next)
-    } catch {
-      // ignore storage errors
-    }
-    window.dispatchEvent(new Event('rememoi:locale'))
   }, [])
 
   const cycleTheme = useCallback(() => {
@@ -159,15 +146,7 @@ export function Header() {
         </div>
 
         <div className='z-30 flex gap-x-4'>
-          <button
-            type='button'
-            id='toggleLocale'
-            onClick={toggleLocale}
-            aria-label='Switch language'
-            className={ICON_BUTTON_CLASS}
-          >
-            <LanguagesMark className='size-5' />
-          </button>
+          <LocaleButton />
           <button
             ref={themeButtonRef}
             type='button'
