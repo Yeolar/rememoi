@@ -65,7 +65,7 @@ export function Header() {
 
   return (
     <header
-      className='site-header group relative z-50 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl max-md:z-30'
+      className='site-header group relative z-50 mb-12 mt-4 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl max-md:z-30'
     >
       <Link
         className='z-30 flex items-center gap-2 text-xl font-medium'
