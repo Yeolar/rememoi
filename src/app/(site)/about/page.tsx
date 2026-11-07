@@ -3,6 +3,7 @@ import { PageInfo } from '@/components/content/PageInfo'
 import { Waline } from '@/components/content/Waline'
 import { Toc } from '@/components/content/Toc'
 import { ContentLayout } from '@/components/layout/ContentLayout'
+import { Trans } from '@/components/i18n/Trans'
 import { Collapse } from '@/components/mdx/Collapse'
 import { Spoiler } from '@/components/mdx/Spoiler'
 import { Timeline } from '@/components/mdx/Timeline'
@@ -118,7 +119,7 @@ export default function AboutPage() {
         sidebar={<Toc headings={headings} />}
         header={
           <div>
-            <h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'>About</h1>
+            <h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'><Trans en='About' zh='关于' /></h1>
             {walineEnabled && <PageInfo className='italic' />}
           </div>
         }
@@ -133,7 +134,7 @@ export default function AboutPage() {
           Rememoi is a quiet corner of the internet: no algorithm, no infinite feed, just a growing
           archive of things I want to remember. Motto: <Spoiler>make it simple, then make it kind.</Spoiler>
         </p>
-        <Button title='Say hello' className='w-fit' href='/about#say-hello' variant='ahead' />
+        <Button title={<Trans en='Say hello' zh='打个招呼' />} className='w-fit' href='/about#say-hello' variant='ahead' />
 
         <h2 id='hobbies'>Hobbies</h2>
         <ul>
@@ -164,7 +165,7 @@ export default function AboutPage() {
           </Button>
           <Button href='https://github.com/Yeolar/rememoi' target='_blank' variant='pill'>
             <Icon name='github-circle' className='size-5' />
-            This site&apos;s source
+            <Trans en="This site's source" zh='本站源码' />
           </Button>
         </div>
 

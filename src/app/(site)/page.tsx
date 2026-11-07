@@ -4,6 +4,7 @@ import { Quote } from '@/components/content/Quote'
 import { ProjectCard } from '@/components/home/ProjectCard'
 import { Section } from '@/components/home/Section'
 import { SkillLayout } from '@/components/home/SkillLayout'
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { TornadoLogo } from '@/components/icons/TornadoLogo'
 import { Button } from '@/components/ui/Button'
@@ -58,12 +59,12 @@ export default async function HomePage() {
               <span className='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75' />
               <span className='size-2 rounded-full bg-green-400' />
             </span>
-            <p className='font-medium text-muted-foreground'>Building in public</p>
+            <p className='font-medium text-muted-foreground'><Trans en='Building in public' zh='公开构建中' /></p>
           </a>
         </section>
 
         <div id='content' className='animate flex w-full flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-          <Section title='About'>
+          <Section title={<Trans en='About' zh='关于' />}>
             <p className='text-muted-foreground'>
               Rememoi is a small place on the internet for the things worth remembering — notes on
               code, design, music and the slow process of making a life.
@@ -80,21 +81,21 @@ export default async function HomePage() {
               </a>
               .
             </p>
-            <Button title='More about me' className='w-fit self-end' href='/about' variant='ahead' />
+            <Button title={<Trans en='More about me' zh='更多关于我' />} className='w-fit self-end' href='/about' variant='ahead' />
           </Section>
 
           {posts.length > 0 && (
-            <Section title='Posts'>
+            <Section title={<Trans en='Posts' zh='文章' />}>
               <ul className='flex flex-col gap-y-1.5 sm:gap-y-2'>
                 {posts.map((post) => (
                   <PostPreview key={post.id} post={post} />
                 ))}
               </ul>
-              <Button title='More posts' className='w-fit self-end' href='/blog' variant='ahead' />
+              <Button title={<Trans en='More posts' zh='更多文章' />} className='w-fit self-end' href='/blog' variant='ahead' />
             </Section>
           )}
 
-          <Section title='Focus'>
+          <Section title={<Trans en='Focus' zh='焦点' />}>
             <Card
               heading='A quiet, personal publishing space'
               subheading='Writing, editing and shipping on a small Next.js stack. No noise, no infinite feed — just a place to remember.'
@@ -102,7 +103,7 @@ export default async function HomePage() {
             />
           </Section>
 
-          <Section title='Website List'>
+          <Section title={<Trans en='Website List' zh='网站列表' />}>
             <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
               <ProjectCard
                 href='https://github.com/Yeolar/rememoi'
@@ -132,10 +133,10 @@ export default async function HomePage() {
             </div>
           </Section>
 
-          <Section title='Skills'>
-            <SkillLayout title='Languages' skills={languages} />
-            <SkillLayout title='Frontend' skills={frontend} />
-            <SkillLayout title='Backend' skills={backend} />
+          <Section title={<Trans en='Skills' zh='技能' />}>
+            <SkillLayout title={<Trans en='Languages' zh='编程语言' />} skills={languages} />
+            <SkillLayout title={<Trans en='Frontend' zh='前端' />} skills={frontend} />
+            <SkillLayout title={<Trans en='Backend' zh='后端' />} skills={backend} />
           </Section>
         </div>
 

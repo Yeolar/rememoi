@@ -1,4 +1,5 @@
 import { Toc } from '@/components/content/Toc'
+import { Trans } from '@/components/i18n/Trans'
 import { ContentLayout } from '@/components/layout/ContentLayout'
 import { ProjectSection } from '@/components/projects/ProjectSection'
 import { buildMetadata } from '@/lib/metadata'
@@ -80,7 +81,7 @@ export default function ProjectsPage() {
     <ContentLayout
       backHref='/'
       sidebar={<Toc headings={headings} />}
-      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'>Projects</h1>}
+      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'><Trans en='Projects' zh='项目' /></h1>}
     >
       <div className='not-prose flex justify-center'>
         <a
@@ -90,7 +91,7 @@ export default function ProjectsPage() {
           className='flex items-center gap-x-3 rounded-full border bg-background px-4 py-2 text-sm shadow-sm transition-shadow hover:shadow-md'
         >
           <span className='size-2 rounded-full bg-green-400' />
-          <p className='font-medium text-muted-foreground'>Open source on GitHub</p>
+          <p className='font-medium text-muted-foreground'><Trans en='Open source on GitHub' zh='在 GitHub 开源' /></p>
         </a>
       </div>
       <p>

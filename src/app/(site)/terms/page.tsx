@@ -1,4 +1,5 @@
 import { Toc } from '@/components/content/Toc'
+import { Trans } from '@/components/i18n/Trans'
 import { ContentLayout } from '@/components/layout/ContentLayout'
 import siteConfig from '@/config/site'
 import { buildMetadata } from '@/lib/metadata'
@@ -22,7 +23,7 @@ export default function TermsPage() {
     <ContentLayout
       backHref='/'
       sidebar={<Toc headings={headings} />}
-      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'>Site Policy</h1>}
+      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'><Trans en='Site Policy' zh='站点政策' /></h1>}
     >
       <p>
         This page explains how {siteConfig.title} handles data, content and the small print. It is

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
+import { Trans } from '@/components/i18n/Trans'
 import { cn, generateToc } from '@/lib/utils'
 import type { Heading, TocItem } from '@/types'
 
@@ -120,7 +121,7 @@ export function Toc({ headings, className }: { headings: Heading[]; className?: 
 
   return (
     <div ref={containerRef} className={className}>
-      <h2 className='text-base font-medium'>TABLE OF CONTENTS</h2>
+      <h2 className='text-base font-medium'><Trans en='TABLE OF CONTENTS' zh='目录' /></h2>
       <div className='mt-4'>
         <TocLinks items={toc} />
       </div>

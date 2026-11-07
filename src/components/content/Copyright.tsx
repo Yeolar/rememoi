@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import siteConfig from '@/config/site'
 import { getFormattedDate } from '@/lib/utils'
@@ -73,19 +74,19 @@ export function Copyright({ post, url }: CopyrightProps) {
 
         <div className='flex flex-row flex-wrap justify-start gap-x-5 gap-y-1 sm:gap-x-8'>
           <div className='flex gap-x-2 sm:flex-col'>
-            <span>Author</span>
+            <span><Trans en='Author' zh='作者' /></span>
             <span className='text-sm text-foreground max-sm:place-self-center'>
               {siteConfig.author}
             </span>
           </div>
           <div className='flex gap-x-2 sm:min-w-16 sm:flex-col'>
-            <span>Published at</span>
+            <span><Trans en='Published at' zh='发布于' /></span>
             <span className='text-sm text-foreground max-sm:place-self-center'>
               {getFormattedDate(post.publishDate, { month: 'long' })}
             </span>
           </div>
           <div className='flex gap-x-2 sm:flex-col'>
-            <span>Copyright</span>
+            <span><Trans en='Copyright' zh='版权' /></span>
             <a
               className='text-sm text-foreground max-sm:place-self-center'
               href='https://creativecommons.org/licenses/by/4.0/'
@@ -138,7 +139,7 @@ export function Copyright({ post, url }: CopyrightProps) {
               <img src={qrData} alt='QR code for this post' width={176} height={176} />
             ) : (
               <div className='flex h-44 w-44 items-center justify-center text-sm text-muted-foreground'>
-                Generating…
+                <Trans en='Generating…' zh='生成中…' />
               </div>
             )}
           </div>
@@ -150,7 +151,7 @@ export function Copyright({ post, url }: CopyrightProps) {
           href='/about#say-hello'
           className='flex items-center justify-between text-muted-foreground no-underline'
         >
-          <span>Say hello ☕</span>
+          <span><Trans en='Say hello ☕' zh='打个招呼 ☕' /></span>
           <Icon className='box-content size-5 p-1' name='receive-money' />
         </a>
       </div>

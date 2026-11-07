@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export function pageUrl(basePath: string, page: number) {
   if (page <= 1) return basePath
   return `${basePath}/page/${page}`
@@ -7,7 +9,7 @@ export function paginationProps(
   basePath: string,
   currentPage: number,
   totalPages: number,
-  labels: { prev: string; next: string }
+  labels: { prev: ReactNode; next: ReactNode }
 ) {
   return {
     prevUrl:

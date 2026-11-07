@@ -1,6 +1,7 @@
 import { CopyableValue } from '@/components/links/CopyableValue'
 import { FriendList } from '@/components/links/FriendList'
 import { Toc } from '@/components/content/Toc'
+import { Trans } from '@/components/i18n/Trans'
 import { ContentLayout } from '@/components/layout/ContentLayout'
 import { Collapse } from '@/components/mdx/Collapse'
 import { Timeline } from '@/components/mdx/Timeline'
@@ -27,7 +28,7 @@ export default function LinksPage() {
     <ContentLayout
       backHref='/'
       sidebar={<Toc headings={headings} />}
-      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'>Links</h1>}
+      header={<h1 className='text-2xl font-medium sm:mb-2 sm:text-3xl'><Trans en='Links' zh='友链' /></h1>}
     >
       <p>They&apos;re sorted randomly, more or less.</p>
 

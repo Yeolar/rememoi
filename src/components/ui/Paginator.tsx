@@ -1,8 +1,11 @@
 import Link from 'next/link'
+import type { ReactNode } from 'react'
+
+import { Trans } from '@/components/i18n/Trans'
 
 type PaginationLink = {
   url: string
-  text?: string
+  text?: ReactNode
   srLabel?: string
 }
 
@@ -18,13 +21,13 @@ export function Paginator({ nextUrl, prevUrl }: PaginatorProps) {
       {prevUrl && (
         <Link className='me-auto py-2' href={prevUrl.url}>
           {prevUrl.srLabel && <span className='sr-only'>{prevUrl.srLabel}</span>}
-          {prevUrl.text ?? 'Previous'}
+          {prevUrl.text ?? <Trans en='Previous' zh='上一页' />}
         </Link>
       )}
       {nextUrl && (
         <Link className='ms-auto py-2' href={nextUrl.url}>
           {nextUrl.srLabel && <span className='sr-only'>{nextUrl.srLabel}</span>}
-          {nextUrl.text ?? 'Next'}
+          {nextUrl.text ?? <Trans en='Next' zh='下一页' />}
         </Link>
       )}
     </nav>

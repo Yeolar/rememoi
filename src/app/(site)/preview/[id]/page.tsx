@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 
 import { auth, isAuthConfigured } from '@/auth'
 import { PostArticle } from '@/components/blog/PostArticle'
+import { Trans } from '@/components/i18n/Trans'
 import { getAdminPost } from '@/lib/admin-posts'
 import { getPostBySlug } from '@/lib/posts'
 
@@ -37,7 +38,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
         </span>
         <span className='text-xs opacity-80'>Only you can see this page.</span>
       </div>
-      <PostArticle post={post} preview backHref={`/admin/posts/${post.id}`} backTitle='Back to editor' />
+      <PostArticle post={post} preview backHref={`/admin/posts/${post.id}`} backTitle={<Trans en='Back to editor' zh='返回编辑器' />} />
     </>
   )
 }

@@ -95,6 +95,18 @@
     font-family: var(--font-sans);
   }
 
+  .i18n > [data-lang='zh'] {
+    display: none;
+  }
+
+  html[data-locale='zh'] .i18n > [data-lang='en'] {
+    display: none;
+  }
+
+  html[data-locale='zh'] .i18n > [data-lang='zh'] {
+    display: inline;
+  }
+
   a {
     transition: color 0.2s ease;
   }

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { TornadoMark } from '@/components/icons/TornadoMark'
 import siteConfig from '@/config/site'
@@ -11,6 +12,14 @@ import { cn } from '@/lib/utils'
 
 type Theme = 'system' | 'light' | 'dark'
 const THEMES: Theme[] = ['system', 'dark', 'light']
+
+const NAV_LABELS: Record<string, { en: string; zh: string }> = {
+  Blog: { en: 'Blog', zh: '博客' },
+  Archive: { en: 'Archive', zh: '归档' },
+  Projects: { en: 'Projects', zh: '项目' },
+  Links: { en: 'Links', zh: '友链' },
+  About: { en: 'About', zh: '关于' }
+}
 
 function resolveTheme(theme: Theme) {
   if (theme !== 'system') return theme
@@ -54,6 +63,19 @@ export function Header() {
     return () => media.removeEventListener('change', onChange)
   }, [])
 
+  const toggleLocale = useCallback(() => {
+    const root = document.documentElement
+    const next = root.dataset.locale === 'zh' ? 'en' : 'zh'
+    root.dataset.locale = next
+    root.lang = next === 'zh' ? 'zh-CN' : 'en'
+    try {
+      localStorage.setItem('locale', next)
+    } catch {
+      // ignore storage errors
+    }
+    window.dispatchEvent(new Event('rememoi:locale'))
+  }, [])
+
   const cycleTheme = useCallback(() => {
     const current =
       (themeButtonRef.current?.dataset.theme as Theme | undefined) ?? 'system'
@@ -86,7 +108,7 @@ export function Header() {
               onClick={() => setExpanded(false)}
               className='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
             >
-              {item.title}
+              <Trans en={NAV_LABELS[item.title]?.en ?? item.title} zh={NAV_LABELS[item.title]?.zh ?? item.title} />
             </Link>
           ))}
           <Link
@@ -115,7 +137,7 @@ export function Header() {
                   onClick={() => setExpanded(false)}
                   className='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary'
                 >
-                  {item.title}
+                  <Trans en={NAV_LABELS[item.title]?.en ?? item.title} zh={NAV_LABELS[item.title]?.zh ?? item.title} />
                 </Link>
               ))}
               <div className='flex w-full grow flex-row justify-end gap-x-3'>
@@ -134,6 +156,15 @@ export function Header() {
         </div>
 
         <div className='z-30 flex gap-x-4'>
+          <button
+            type='button'
+            id='toggleLocale'
+            onClick={toggleLocale}
+            aria-label='Switch language'
+            className='box-content h-5 cursor-pointer rounded-md border px-2 py-1.5 text-xs font-medium leading-5 transition-colors hover:bg-border'
+          >
+            <Trans en='中文' zh='EN' />
+          </button>
           <button
             ref={themeButtonRef}
             type='button'

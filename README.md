@@ -213,6 +213,13 @@ const posts = await getVisiblePosts() // [!code highlight]
 - `GET /api/posts?language=en` filters the public API; the search page also has a language filter.
 - Article pages render a `lang` attribute and an `openGraph.locale` (`en_US` / `zh_CN`); the document language is synced after hydration.
 
+### UI language
+
+The interface supports English and Chinese. On a first visit it follows the
+browser language (`navigator.languages`); the button in the header toggles the
+locale and stores the choice in `localStorage`. Only UI labels are translated —
+article and page body content keeps its original language.
+
 ## API
 
 ### Public

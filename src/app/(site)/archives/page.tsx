@@ -1,4 +1,5 @@
 import { PostPreview } from '@/components/content/PostPreview'
+import { Trans } from '@/components/i18n/Trans'
 import { Button } from '@/components/ui/Button'
 import { buildMetadata } from '@/lib/metadata'
 import { getVisiblePosts, groupPostsByYear } from '@/lib/posts'
@@ -15,13 +16,13 @@ export default async function ArchivesPage() {
 
   return (
     <>
-      <Button title='Back' href='/blog' variant='back' />
+      <Button title={<Trans en='Back' zh='返回' />} href='/blog' variant='back' />
       <main className='mt-6 lg:mt-10'>
         <div id='content-header' className='animate'>
-          <h1 className='mb-6 text-3xl font-medium'>Archives</h1>
+          <h1 className='mb-6 text-3xl font-medium'><Trans en='Archives' zh='归档' /></h1>
         </div>
 
-        {posts.length === 0 && <p>No posts yet.</p>}
+        {posts.length === 0 && <p><Trans en='No posts yet.' zh='暂无文章。' /></p>}
 
         <section id='content' className='animate' aria-label='Blog post list'>
           {byYear.map(([year, yearPosts]) => (
@@ -36,7 +37,10 @@ export default async function ArchivesPage() {
                 <samp>{year}</samp>
               </h2>
               <p className='px-5 text-muted-foreground'>
-                {yearPosts.length} post{yearPosts.length > 1 && 's'}
+                <Trans
+                  en={`${yearPosts.length} post${yearPosts.length > 1 ? 's' : ''}`}
+                  zh={`${yearPosts.length} 篇文章`}
+                />
               </p>
               <ul className='flex flex-col text-start'>
                 {yearPosts.map((post) => (

@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react'
+
 import { Button } from '@/components/ui/Button'
 
 type SkillLayoutProps = {
-  title: string
+  title: ReactNode
   skills: string[]
 }
 

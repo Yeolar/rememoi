@@ -1,5 +1,8 @@
+import type { ReactNode } from 'react'
+
 import { ArticleBottom } from '@/components/content/ArticleBottom'
 import { Copyright } from '@/components/content/Copyright'
+import { Trans } from '@/components/i18n/Trans'
 import { DocumentLanguage } from '@/components/content/DocumentLanguage'
 import { Hero } from '@/components/content/Hero'
 import { MediumZoom } from '@/components/content/MediumZoom'
@@ -19,7 +22,7 @@ type PostArticleProps = {
   next?: Post
   preview?: boolean
   backHref?: string
-  backTitle?: string
+  backTitle?: ReactNode
 }
 
 export function PostArticle({
@@ -28,7 +31,7 @@ export function PostArticle({
   next,
   preview = false,
   backHref = '/blog',
-  backTitle = 'Back'
+  backTitle = <Trans en='Back' zh='返回' />
 }: PostArticleProps) {
   const walineEnabled = siteConfig.integrations.waline.enable
   const showComments = !preview && !post.draft && post.comment && walineEnabled

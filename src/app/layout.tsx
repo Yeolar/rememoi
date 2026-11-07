@@ -4,6 +4,7 @@ import '@waline/client/style'
 import 'katex/dist/katex.min.css'
 import './globals.css'
 
+import { LocaleScript } from '@/components/site/LocaleScript'
 import { SiteEnhancer } from '@/components/site/SiteEnhancer'
 import { ThemeScript } from '@/components/site/ThemeScript'
 import { Toast } from '@/components/site/Toast'
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           href='https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap'
         />
         <ThemeScript />
+        <LocaleScript />
       </head>
       <body className='flex justify-center bg-background text-foreground'>
         {children}

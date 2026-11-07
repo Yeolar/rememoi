@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { FloatingActions } from '@/components/content/FloatingActions'
+import { Trans } from '@/components/i18n/Trans'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
@@ -10,7 +11,7 @@ type ContentLayoutProps = {
   bottom?: ReactNode
   bottomSidebar?: ReactNode
   backHref?: string
-  backTitle?: string
+  backTitle?: ReactNode
   lang?: string
   className?: string
   children: ReactNode
@@ -22,7 +23,7 @@ export function ContentLayout({
   bottom,
   bottomSidebar,
   backHref = '/',
-  backTitle = 'Back',
+  backTitle = <Trans en='Back' zh='返回' />,
   lang,
   className,
   children

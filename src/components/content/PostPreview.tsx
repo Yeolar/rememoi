@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/Button'
 import { FormattedDate } from '@/components/ui/FormattedDate'
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { getLanguageLabel } from '@/lib/languages'
 import { cn } from '@/lib/utils'
@@ -84,8 +85,8 @@ export function PostPreview({ post, detailed = false, className }: PostPreviewPr
 
           <div className='flex flex-grow justify-between'>
             <div className={cn(detailed && 'font-medium')}>
-              {post.pin && <span className='me-1 text-primary'>[Pin]</span>}
-              {post.draft && <span className='me-1 text-red-500'>(Draft)</span>}
+              {post.pin && <span className='me-1 text-primary'><Trans en='[Pin]' zh='[置顶]' /></span>}
+              {post.draft && <span className='me-1 text-red-500'><Trans en='(Draft)' zh='(草稿)' /></span>}
               <Link
                 href={`/blog/${post.slug}`}
                 className='text-foreground after:absolute after:inset-0 after:z-0 group-hover:text-inherit'
@@ -110,7 +111,7 @@ export function PostPreview({ post, detailed = false, className }: PostPreviewPr
             <div className='relative z-10 flex items-center gap-2 py-2 text-sm italic leading-4 text-muted-foreground'>
               <span className='flex items-center gap-1'>
                 <Icon name='time' className='size-4' />
-                {post.minutesRead}
+                <Trans en={post.minutesRead} zh={post.minutesRead.replace(/\bmin\b/, '分钟')} />
               </span>
               {post.language && (
                 <span className='flex items-center gap-1'>

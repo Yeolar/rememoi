@@ -9,7 +9,7 @@ type ButtonProps = {
   href?: string
   target?: string
   rel?: string
-  title?: string
+  title?: ReactNode
   variant?: ButtonVariant
   className?: string
   children?: ReactNode

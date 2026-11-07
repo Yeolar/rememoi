@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { HeroImage } from '@/components/content/HeroImage'
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import { FormattedDate } from '@/components/ui/FormattedDate'
 import { getLanguageLabel } from '@/lib/languages'
@@ -19,7 +20,7 @@ export function Hero({ post, descriptionSlot }: HeroProps) {
     <>
       {heroImage && <HeroImage image={heroImage} alt={title} />}
 
-      {draft ? <span className='text-red-500'>(Draft)</span> : null}
+      {draft ? <span className='text-red-500'>(<Trans en='Draft' zh='草稿' />)</span> : null}
 
       <div className='article-info max-lg:mx-auto'>
         <div className='flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground'>
@@ -30,14 +31,14 @@ export function Hero({ post, descriptionSlot }: HeroProps) {
               <div className='flex items-center gap-1'>
                 <span> / </span>
                 <span>
-                  Update <FormattedDate date={updatedDate} dateTimeOptions={{ month: 'short' }} />
+                  <Trans en='Update' zh='更新' /> <FormattedDate date={updatedDate} dateTimeOptions={{ month: 'short' }} />
                 </span>
               </div>
             )}
           </div>
           <div className='flex items-center gap-1'>
             <Icon name='time' className='size-5' />
-            {minutesRead}
+            <Trans en={minutesRead} zh={minutesRead.replace(/\bmin\b/, '分钟')} />
           </div>
           {language && (
             <span className='flex items-center gap-1'>

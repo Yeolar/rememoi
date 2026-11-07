@@ -4,8 +4,10 @@ import Fuse from 'fuse.js'
 import Link from 'next/link'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 
+import { Trans } from '@/components/i18n/Trans'
 import { FormattedDate } from '@/components/ui/FormattedDate'
 import { getLanguageLabel } from '@/lib/languages'
+import { useLocale } from '@/lib/use-locale'
 import type { SearchDocument } from '@/types'
 
 export function SearchClient() {
@@ -14,6 +16,7 @@ export function SearchClient() {
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [language, setLanguage] = useState('all')
+  const locale = useLocale()
   const deferredQuery = useDeferredValue(query)
 
   useEffect(() => {
@@ -85,12 +88,12 @@ export function SearchClient() {
   return (
     <div className='not-prose'>
       <label className='block'>
-        <span className='sr-only'>Search posts</span>
+        <span className='sr-only'><Trans en='Search posts' zh='搜索文章' /></span>
         <input
           type='search'
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder='Search titles, tags or content…'
+          placeholder={locale === 'zh' ? '搜索标题、标签或正文…' : 'Search titles, tags or content…'}
           className='field-input px-4 py-2.5 text-base'
           autoFocus
         />
@@ -98,7 +101,7 @@ export function SearchClient() {
 
       {languageOptions.length > 0 && (
         <div className='mt-4 flex flex-wrap items-center gap-2 text-sm' role='group' aria-label='Filter by language'>
-          <span className='text-muted-foreground'>Language:</span>
+          <span className='text-muted-foreground'><Trans en='Language:' zh='语言：' /></span>
           <button
             type='button'
             onClick={() => setLanguage('all')}
@@ -109,7 +112,7 @@ export function SearchClient() {
                 : 'cursor-pointer rounded-full border bg-muted px-3 py-1 text-muted-foreground transition-colors hover:text-foreground'
             }
           >
-            All ({documents.length})
+            <Trans en={`All (${documents.length})`} zh={`全部 (${documents.length})`} />
           </button>
           {languageOptions.map(([code, count]) => (
             <button
@@ -130,17 +133,22 @@ export function SearchClient() {
       )}
 
       <div className='mt-3 min-h-6 text-sm text-muted-foreground'>
-        {loading && <p>Loading the index…</p>}
+        {loading && <p><Trans en='Loading the index…' zh='正在加载索引…' /></p>}
         {error && <p className='text-red-500'>{error}</p>}
         {!loading && !error && query.trim().length > 0 && (
           <p>
-            {results.length} result{results.length === 1 ? '' : 's'} for “{deferredQuery.trim()}”
+            <Trans
+              en={`${results.length} result${results.length === 1 ? '' : 's'} for “${deferredQuery.trim()}”`}
+              zh={`找到 ${results.length} 条关于“${deferredQuery.trim()}”的结果`}
+            />
           </p>
         )}
         {!loading && !error && query.trim().length === 0 && (
           <p>
-            {filteredDocuments.length} post{filteredDocuments.length === 1 ? '' : 's'} indexed. Try
-            a tag, a title or a phrase.
+            <Trans
+              en={`${filteredDocuments.length} post${filteredDocuments.length === 1 ? '' : 's'} indexed. Try a tag, a title or a phrase.`}
+              zh={`已索引 ${filteredDocuments.length} 篇文章，试试标签、标题或短语。`}
+            />
           </p>
         )}
       </div>
@@ -179,7 +187,7 @@ export function SearchClient() {
       )}
 
       {!loading && !error && query.trim().length > 0 && results.length === 0 && (
-        <p className='mt-6 text-muted-foreground'>No posts match that search yet.</p>
+        <p className='mt-6 text-muted-foreground'><Trans en='No posts match that search yet.' zh='暂时没有匹配的文章。' /></p>
       )}
     </div>
   )

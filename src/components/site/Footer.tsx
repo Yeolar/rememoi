@@ -1,10 +1,15 @@
 import Link from 'next/link'
 
+import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import siteConfig from '@/config/site'
 
 export function Footer() {
   const footer = siteConfig.footer
+  const linkLabel = (title: string) =>
+    title === 'Site Policy'
+      ? { en: 'Site Policy', zh: '站点政策' }
+      : { en: title, zh: title }
   const linksPos1 = footer.links.filter((link) => link.pos === 1)
   const linksPos2 = footer.links.filter((link) => link.pos === 2)
 
@@ -18,7 +23,7 @@ export function Footer() {
                 {linksPos1.map(({ title, link, style }, index) => (
                   <span key={link}>
                     <a href={link} target='_blank' rel='noopener noreferrer' className={style}>
-                      {title}
+                      <Trans en={linkLabel(title).en} zh={linkLabel(title).zh} />
                     </a>
                     {index < linksPos1.length - 1 && <span className='mx-1'>•</span>}
                   </span>
@@ -34,7 +39,7 @@ export function Footer() {
                   <span>
                     {linksPos2.map(({ title, link, style }) => (
                       <Link key={link} href={link} className={style}>
-                        {title}
+                        <Trans en={linkLabel(title).en} zh={linkLabel(title).zh} />
                       </Link>
                     ))}
                   </span>
@@ -44,24 +49,52 @@ export function Footer() {
 
             {footer.credits && (
               <span>
-                <a
-                  href='https://nextjs.org/'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='font-medium text-foreground underline hover:text-primary'
-                >
-                  Next.js
-                </a>
-                <span> & </span>
-                <a
-                  href='https://github.com/cworld1/astro-theme-pure'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='font-medium text-foreground underline hover:text-primary'
-                >
-                  Pure theme
-                </a>
-                <span> inspired</span>
+                <Trans
+                  en={
+                    <>
+                      <a
+                        href='https://nextjs.org/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='font-medium text-foreground underline hover:text-primary'
+                      >
+                        Next.js
+                      </a>
+                      <span> & </span>
+                      <a
+                        href='https://github.com/cworld1/astro-theme-pure'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='font-medium text-foreground underline hover:text-primary'
+                      >
+                        Pure theme
+                      </a>
+                      <span> inspired</span>
+                    </>
+                  }
+                  zh={
+                    <>
+                      <span>灵感来自 </span>
+                      <a
+                        href='https://nextjs.org/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='font-medium text-foreground underline hover:text-primary'
+                      >
+                        Next.js
+                      </a>
+                      <span> 与 </span>
+                      <a
+                        href='https://github.com/cworld1/astro-theme-pure'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='font-medium text-foreground underline hover:text-primary'
+                      >
+                        Pure theme
+                      </a>
+                    </>
+                  }
+                />
               </span>
             )}
           </div>
