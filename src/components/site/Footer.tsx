@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { Trans } from '@/components/i18n/Trans'
+import { CurrentYear } from '@/components/site/CurrentYear'
 import { Icon } from '@/components/icons/Icon'
 import siteConfig from '@/config/site'
 
@@ -32,7 +33,7 @@ export function Footer() {
             )}
 
             <div>
-              <span>{footer.year}</span> <span>{siteConfig.author}</span>
+              <span>© <CurrentYear /></span> <span>{siteConfig.title}</span>
               {linksPos2.length > 0 && (
                 <>
                   <span> & </span>

@@ -38,7 +38,6 @@ export type SiteConfig = {
     menu: NavItem[]
   }
   footer: {
-    year: string
     links: FooterLink[]
     credits: boolean
     social: SocialLink[]
@@ -108,7 +107,6 @@ export const siteConfig: SiteConfig = {
 
   // [Footer]
   footer: {
-    year: `© ${new Date().getFullYear()}`,
     links: [{ title: 'Site Policy', link: '/terms', pos: 2 }],
     credits: true,
     social: [
