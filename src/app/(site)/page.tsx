@@ -31,12 +31,6 @@ export default async function HomePage() {
 
           <div className='flex flex-col items-center gap-y-4'>
             <h1 className='text-3xl font-medium'>{siteConfig.title}</h1>
-            <p className='max-w-xl text-center text-sm text-muted-foreground'>
-              <Trans
-                en='A long-term memory for agent conversations.'
-                zh='Agent 会话的长期记忆。'
-              />
-            </p>
             <div className='flex flex-wrap justify-center gap-x-7 gap-y-3'>
               <Label
                 title={<Trans en='Agent memory' zh='Agent 记忆' />}
