@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 
+import { AdminDatePicker } from '@/components/admin/AdminDatePicker'
+import { AdminSelect } from '@/components/admin/AdminSelect'
 import { DeletePostButton } from '@/components/admin/DeletePostButton'
 import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
@@ -239,6 +241,18 @@ export function PostEditor({ mode, post }: PostEditorProps) {
   }
 
   const busy = saving !== null || uploading
+
+  const formatOptions = [
+    { value: 'mdx', label: t('MDX — Markdown + components', 'MDX — Markdown + 组件') },
+    { value: 'md', label: 'Markdown' }
+  ]
+  const languageOptions = [
+    { value: '', label: t('Unspecified', '未指定') },
+    ...LANGUAGE_OPTIONS.map((option) => ({
+      value: option.code,
+      label: `${option.label} (${option.code})`
+    }))
+  ]
 
   return (
     <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]'>
@@ -502,26 +516,23 @@ export function PostEditor({ mode, post }: PostEditorProps) {
           <h2 className='text-sm font-medium uppercase tracking-wide text-muted-foreground'>
             <Trans en='Details' zh='详细信息' />
           </h2>
-          <label className='field'>
+          <div className='field'>
             <span className='field-label'><Trans en='Publish date' zh='发布日期' /></span>
-            <input
-              type='date'
-              className='field-input'
+            <AdminDatePicker
               value={publishDate}
-              onChange={(event) => setPublishDate(event.target.value)}
+              onChange={setPublishDate}
+              ariaLabel={t('Publish date', '发布日期')}
             />
-          </label>
-          <label className='field'>
+          </div>
+          <div className='field'>
             <span className='field-label'><Trans en='Format' zh='格式' /></span>
-            <select
-              className='field-input'
+            <AdminSelect
               value={format}
-              onChange={(event) => setFormat(event.target.value as 'md' | 'mdx')}
-            >
-              <option value='mdx'>{t('MDX — Markdown + components', 'MDX — Markdown + 组件')}</option>
-              <option value='md'>Markdown</option>
-            </select>
-          </label>
+              options={formatOptions}
+              onChange={(value) => setFormat(value as 'md' | 'mdx')}
+              ariaLabel={t('Format', '格式')}
+            />
+          </div>
           <label className='field'>
             <span className='field-label'><Trans en='Tags' zh='标签' /></span>
             <input
@@ -532,24 +543,18 @@ export function PostEditor({ mode, post }: PostEditorProps) {
             />
             <span className='text-xs text-muted-foreground'><Trans en='Comma separated, lowercased.' zh='用逗号分隔，会自动转为小写。' /></span>
           </label>
-          <label className='field'>
+          <div className='field'>
             <span className='field-label'><Trans en='Language' zh='语言' /></span>
-            <select
-              className='field-input'
+            <AdminSelect
               value={language}
-              onChange={(event) => setLanguage(event.target.value)}
-            >
-              <option value=''>{t('Unspecified', '未指定')}</option>
-              {LANGUAGE_OPTIONS.map((option) => (
-                <option key={option.code} value={option.code}>
-                  {option.label} ({option.code})
-                </option>
-              ))}
-            </select>
+              options={languageOptions}
+              onChange={setLanguage}
+              ariaLabel={t('Language', '语言')}
+            />
             <span className='text-xs text-muted-foreground'>
               <Trans en='Used for the language badge and filters.' zh='用于语言徽章和筛选。' />
             </span>
-          </label>
+          </div>
           <label className='flex items-center gap-2 text-sm'>
             <input
               type='checkbox'
