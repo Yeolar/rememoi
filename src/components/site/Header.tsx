@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
+import { LanguagesMark } from '@/components/icons/LanguagesMark'
 import { TornadoMark } from '@/components/icons/TornadoMark'
 import siteConfig from '@/config/site'
 import { showToast } from '@/lib/toast'
@@ -161,9 +162,9 @@ export function Header() {
             id='toggleLocale'
             onClick={toggleLocale}
             aria-label='Switch language'
-            className='box-content h-5 cursor-pointer rounded-md border px-2 py-1.5 text-xs font-medium leading-5 transition-colors hover:bg-border'
+            className='box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border'
           >
-            <Trans en='中文' zh='EN' />
+            <LanguagesMark className='size-5' />
           </button>
           <button
             ref={themeButtonRef}
