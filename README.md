@@ -153,7 +153,7 @@ heroImage: { src: './cover.jpg', color: '#659EB9', width: 1600, height: 1000 }
 Your content starts here.
 ```
 
-Relative image paths (`./cover.jpg`, `./figure.jpg`) resolve to `/blog-media/<slug>/<file>` in `public/`. You can also use absolute URLs or paths.
+Relative image paths (`./cover.jpg`, `./figure.jpg`) resolve to `/memory-media/<slug>/<file>` in `public/`. You can also use absolute URLs or paths.
 
 ### MDX components
 

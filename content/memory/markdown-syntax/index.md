@@ -85,7 +85,7 @@ const latest = posts.slice(0, 5)
 
 return latest.map((post) => ({
   title: post.title,
-  url: `/blog/${post.slug}`,
+  url: `/memory/${post.slug}`,
   minutes: post.minutesRead
 }))
 ```

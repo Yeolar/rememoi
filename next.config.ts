@@ -25,12 +25,6 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: cosHost ? [{ ...cosHost }] : []
-  },
-  async redirects() {
-    return [
-      { source: '/blog', destination: '/memory', permanent: true },
-      { source: '/blog/:path*', destination: '/memory/:path*', permanent: true }
-    ]
   }
 }
 

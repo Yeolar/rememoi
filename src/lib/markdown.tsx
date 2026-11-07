@@ -51,13 +51,13 @@ function remarkCodeMeta() {
   }
 }
 
-/** Rewrite relative image paths to the public blog-media folder. */
+/** Rewrite relative image paths to the public memory-media folder. */
 function remarkContentImages(options: { slug: string }) {
   return (tree: Root) => {
     visit(tree, 'image', (node: MdastImage) => {
       const src = resolveMediaSrc(node.url, options.slug)
       node.url = src
-      if (!src.startsWith('/blog-media/')) return
+      if (!src.startsWith('/memory-media/')) return
       try {
         const filePath = path.join(process.cwd(), 'public', src)
         if (!fs.existsSync(filePath)) return

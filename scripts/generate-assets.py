@@ -18,7 +18,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "public"
-BLOG_MEDIA = PUBLIC / "blog-media"
+MEMORY_MEDIA = PUBLIC / "memory-media"
 
 LATIN_FONT = "/System/Library/Fonts/Avenir Next.ttc"
 CJK_FONT = "/System/Library/Fonts/Hiragino Sans GB.ttc"
@@ -373,12 +373,12 @@ def main() -> None:
     make_favicons()
 
     for slug, (color, variant, dark) in COVERS.items():
-        abstract_cover(BLOG_MEDIA / slug / "cover.png", 1600, 1000, color, variant, dark)
+        abstract_cover(MEMORY_MEDIA / slug / "cover.png", 1600, 1000, color, variant, dark)
 
     # inline article figures
-    abstract_cover(BLOG_MEDIA / "markdown-syntax" / "figure.png", 1600, 900, "#8FA9C4", 11)
-    abstract_cover(BLOG_MEDIA / "design-notes-typography" / "figure.png", 1600, 900, "#D2A08F", 12)
-    abstract_cover(BLOG_MEDIA / "building-rememoi-with-nextjs" / "figure.png", 1600, 900, "#7C9BB5", 13)
+    abstract_cover(MEMORY_MEDIA / "markdown-syntax" / "figure.png", 1600, 900, "#8FA9C4", 11)
+    abstract_cover(MEMORY_MEDIA / "design-notes-typography" / "figure.png", 1600, 900, "#D2A08F", 12)
+    abstract_cover(MEMORY_MEDIA / "building-rememoi-with-nextjs" / "figure.png", 1600, 900, "#7C9BB5", 13)
 
     project_palettes = [("#659EB9", 21), ("#8E8AB8", 22), ("#6BA58F", 23), ("#C08A7A", 24)]
     for index, (color, variant) in enumerate(project_palettes, start=1):
