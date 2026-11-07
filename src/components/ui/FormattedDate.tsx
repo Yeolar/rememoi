@@ -1,4 +1,5 @@
-import { cn, getFormattedDate } from '@/lib/utils'
+import { LocalizedDate } from '@/components/i18n/LocalizedDate'
+import { cn } from '@/lib/utils'
 
 type FormattedDateProps = {
   date: Date | string | number
@@ -10,7 +11,7 @@ export function FormattedDate({ date, dateTimeOptions, className }: FormattedDat
   const value = new Date(date)
   return (
     <span className={cn('text-muted-foreground font-mono', className)}>
-      <time dateTime={value.toISOString()}>{getFormattedDate(value, dateTimeOptions)}</time>
+      <LocalizedDate date={value} dateTimeOptions={dateTimeOptions} />
     </span>
   )
 }

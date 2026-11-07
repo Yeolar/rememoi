@@ -28,6 +28,11 @@ export function getFormattedDate(
   return dateFormat.format(value)
 }
 
+export function getChineseDate(date: Date | string | number) {
+  const value = new Date(date)
+  return `${value.getFullYear()}年${value.getMonth() + 1}月${value.getDate()}日`
+}
+
 export function getDateISO(date: Date | string | number) {
   return new Date(date).toISOString()
 }

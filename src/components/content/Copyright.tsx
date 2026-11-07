@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import siteConfig from '@/config/site'
-import { getFormattedDate } from '@/lib/utils'
+import { LocalizedDate } from '@/components/i18n/LocalizedDate'
 import type { Post } from '@/types'
 
 type CopyrightProps = {
@@ -82,7 +82,7 @@ export function Copyright({ post, url }: CopyrightProps) {
           <div className='flex gap-x-2 sm:min-w-16 sm:flex-col'>
             <span><Trans en='Published at' zh='发布于' /></span>
             <span className='text-sm text-foreground max-sm:place-self-center'>
-              {getFormattedDate(post.publishDate, { month: 'long' })}
+              <LocalizedDate date={post.publishDate} dateTimeOptions={{ month: 'long' }} />
             </span>
           </div>
           <div className='flex gap-x-2 sm:flex-col'>
