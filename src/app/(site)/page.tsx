@@ -123,13 +123,6 @@ export default async function HomePage() {
                 subheading='The framework behind the site'
                 imagePath='/images/projects/3.jpg'
               />
-              <ProjectCard
-                href='/projects'
-                heading='More projects'
-                subheading='Check out more things I have built'
-                imagePath='/images/projects/4.jpg'
-                external={false}
-              />
             </div>
           </Section>
 

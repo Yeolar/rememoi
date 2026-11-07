@@ -67,31 +67,6 @@ export type PostSummary = Omit<
   'body' | 'headings' | 'sourcePath' | 'format' | 'plainText'
 >
 
-export type Friend = {
-  avatar: string
-  name: string
-  intro: string
-  link: string
-}
-
-export type FriendListData = {
-  id_name: string
-  desc: string
-  link_list: Friend[]
-}
-
-export type ProjectLink = {
-  type: 'github' | 'site' | 'doc' | 'release'
-  href: string
-}
-
-export type Project = {
-  name: string
-  description: string
-  image?: string
-  links: ProjectLink[]
-}
-
 export type TimelineEvent = {
   date: string
   content: string
