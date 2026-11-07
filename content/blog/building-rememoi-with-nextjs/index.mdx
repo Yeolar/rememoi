@@ -1,0 +1,148 @@
+---
+title: 'Rebuilding a Pure Astro Theme with Next.js'
+description: 'Notes on porting the Astro Theme Pure design to Next.js, adding a database-backed editor, and keeping the interface quiet.'
+publishDate: 2026-10-30
+updatedDate: 2026-11-06
+tags:
+  - nextjs
+  - design
+  - engineering
+language: 'English'
+heroImage: { src: './cover.jpg', color: '#6C8EA8', width: 1600, height: 1000, alt: 'Blue-grey abstract cover' }
+---
+
+The original [Astro Theme Pure](https://astro-theme-pure.js.org/) is a study in restraint: a narrow column, a sticky header that politely gets out of the way, and typography that trusts the reader. I wanted to keep all of that while moving the site to a stack that could also host an editor.
+
+This post is a field note on the port: what transferred cleanly, what had to be rebuilt, and where Next.js made life easier.
+
+## The shape of the port
+
+The design is not coupled to Astro. Almost everything that makes the theme feel the way it does is ordinary CSS: a small set of design tokens, a 70rem container, a muted palette, and careful spacing.
+
+<Aside type='note'>
+
+The biggest fidelity risk was not layout but *state*: the scroll-aware header, the theme toggle, the table of contents and the code block controls. In Astro these were small custom elements. In React they became client components and a single delegated event listener.
+
+</Aside>
+
+| Layer | Astro original | Next.js port |
+| --- | --- | --- |
+| Pages | file-based routes | App Router routes |
+| Content | content collections | libSQL + Drizzle |
+| MDX | `@astrojs/mdx` | `next-mdx-remote` |
+| Highlighting | Shiki transformers | same transformers, rehosted |
+| Search | Pagefind | generated JSON + Fuse.js |
+| Editing | Markdown files | `/admin` editor |
+
+The table is deliberately boring. A port is successful when the technology disappears and the reading experience remains.
+
+## Reusing the Shiki setup
+
+The theme's code blocks have a very particular shape: a title chip, a language label, a copy button, line numbers, optional collapse, and diff/highlight notation. I ported the transformers almost verbatim.
+
+```ts title="src/lib/rehype-shiki.ts"
+const transformer = (): ShikiTransformer => ({
+  name: 'pure:add-copy-button',
+  pre(node) {
+    node.children.push(
+      h('button', {
+        type: 'button',
+        class: 'copy',
+        'data-code': this.source
+      })
+    )
+  }
+})
+```
+
+Here is the same idea with notation enabled. The highlighted line is marked in the source with a comment; the added and removed lines use the diff notation.
+
+```ts title="app/api/admin/posts/route.ts" showLineNumbers
+import { requireAdmin } from '@/lib/auth-guards'
+import { createAdminPost } from '@/lib/admin-posts'
+import { postInputSchema } from '@/lib/validation'
+
+export async function POST(request: NextRequest) {
+  const guard = await requireAdmin() // [!code highlight]
+  if ('error' in guard) return guard.error
+
+  const parsed = postInputSchema.safeParse(await request.json()) // [!code ++]
+  // const post = await createAdminPost(body) // [!code --]
+
+  if (!parsed.success) {
+    return Response.json({ error: 'validation_error' }, { status: 422 })
+  }
+
+  const post = await createAdminPost(parsed.data)
+  revalidatePath('/', 'layout')
+  return Response.json({ data: post }, { status: 201 })
+}
+```
+
+Long blocks collapse automatically after fifteen lines, which keeps a long post from becoming a wall of code.
+
+## The database-backed editor
+
+This was the real change. The public site still wants a simple `Post` object, so the database schema is shaped to feed it directly: title, description, body, dates, tags, cover image and status.
+
+The editor is intentionally modest:
+
+<Steps>
+
+1. Write in Markdown or MDX with a small formatting toolbar.
+2. Upload a cover image (stored in the database, served from `/api/media/...`).
+3. Save as a draft, preview it on the real site, then publish.
+4. Every save revalidates the public routes.
+
+</Steps>
+
+<Collapse title='Why store images in the database?'>
+
+Because the site is designed to run anywhere — a VPS, a container, a serverless platform — without asking the author to configure object storage first. Images are content-addressed and immutable, so they cache aggressively at the edge.
+
+For a larger site, an S3-compatible bucket would be the right move. For a personal blog, one less service is one less thing to maintain.
+
+</Collapse>
+
+## Two interfaces, one design language
+
+The admin area is not a separate product. It borrows the same tokens, the same radius, the same muted palette. It is a tool, but it should not feel like a different website.
+
+<Tabs syncKey="admin-stack">
+
+<TabItem label="Public site">
+
+Server components, static generation, and a small amount of client-side enhancement for the header, table of contents and code controls.
+
+</TabItem>
+
+<TabItem label="Editor">
+
+A client component with autosave-friendly fields, image uploads, and a preview link that opens the real post layout in a new tab.
+
+</TabItem>
+
+<TabItem label="API">
+
+Route handlers under `/api/admin` for create, update, delete and upload, plus public read endpoints under `/api/posts`.
+
+</TabItem>
+
+</Tabs>
+
+## What I would do differently
+
+A few things I would reach for earlier next time:
+
+- Treat the **date** as data, not a string. Time-zone bugs are quiet and embarrassing.
+- Keep the theme's CSS tokens as the single source of truth. Every time I hard-coded a colour, I regretted it.
+- Build the preview route before the editor. It changes how the editing flow feels.
+- Resist the urge to add a setting for everything. A blog is a small machine.
+
+The site now has the two things it needed: a reading experience worth keeping, and a way to add the next post without opening a terminal.
+
+![A soft blue-grey abstract composition](./figure.jpg)
+
+*The cover art is generated from each post's accent colour.*
+
+That is enough architecture for one post. The next one will be about words.

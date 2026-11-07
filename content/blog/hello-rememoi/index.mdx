@@ -1,0 +1,70 @@
+---
+title: 'A first note'
+description: 'A small place for the things worth remembering — and a note on why this blog exists.'
+publishDate: 2026-11-02
+updatedDate: 2026-11-06
+tags:
+  - notes
+  - personal
+  - nextjs
+language: 'English'
+pin: true
+heroImage: { src: './cover.jpg', color: '#659EB9', width: 1600, height: 1000, alt: 'Soft blue abstract cover' }
+---
+
+Every personal site begins with a small act of optimism: the belief that something is worth writing down.
+
+This is mine. It is called **Rememoi** — a soft collision of *remember* and *moi*. Not a productivity system, not a second brain, not a brand. Just a shelf for the ideas, images and small discoveries that I want to keep within reach.
+
+## Why another blog?
+
+Most of what I make disappears into chats, notes apps and the long tail of browser tabs. A blog is slower than that, and that is precisely the point. Writing something down in public forces a kind of honesty: the sentence has to stand on its own.
+
+<Aside type='tip'>
+
+The site is designed for reading first. No pop-ups, no newsletter modal, no infinite feed. If a page takes a little longer to load because it is busy setting a beautiful code block, that is a trade I am happy to make.
+
+</Aside>
+
+There is also a technical reason. I wanted a place to experiment with the web platform without shipping those experiments into someone else's product. This site is a small, safe laboratory.
+
+## What you will find here
+
+- Notes on **code and design**, often about the seams between them.
+- Small essays about **music, typography and attention**.
+- References and experiments I want to remember later.
+- The occasional unfinished thought, marked as a draft and hidden from the public until it is ready.
+
+<Steps>
+
+1. Write something down before it evaporates.
+2. Edit it until the shape feels natural.
+3. Publish it, then resist the urge to rewrite it immediately.
+4. Come back a month later and see what still holds.
+
+</Steps>
+
+## How this site is built
+
+The visual language comes from [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure), a beautifully restrained theme by CWorld. The original is written in Astro; this version is a careful Next.js port, with a small admin editor and a database behind it.
+
+<Collapse title='A few implementation notes'>
+
+- The public pages are server components, statically rendered and revalidated when a post changes.
+- Markdown and MDX are rendered with a unification pipeline that includes GFM, KaTeX and Shiki.
+- The admin area is protected by GitHub OAuth (or a local development login).
+- Images uploaded through the editor are stored in the database and served from an immutable media route.
+
+</Collapse>
+
+The result should feel like the original theme, with a few extra conveniences that only matter to the person writing.
+
+## A small promise
+
+I will not pretend to have a publishing schedule. Some months will have three posts; others will have none. The goal is not volume. The goal is to keep the habit warm.
+
+<Spoiler>I have a folder of half-written posts that would suggest otherwise.</Spoiler>
+
+> The things we remember become the shape of who we are. Choose them carefully, and then let them be light.
+
+Thanks for stopping by. If something here is useful, or wrong, or worth arguing with, the door is open.

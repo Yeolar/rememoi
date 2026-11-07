@@ -1,0 +1,75 @@
+---
+title: 'Notes on Quiet Typography'
+description: 'What a blog can learn from editorials: rhythm, restraint, and a little bit of air.'
+publishDate: 2026-08-09
+updatedDate: 2026-08-12
+tags:
+  - design
+  - typography
+language: 'English'
+heroImage: { src: './cover.jpg', color: '#C08A7A', width: 1600, height: 1000, alt: 'Warm terracotta abstract cover' }
+---
+
+Good typography is mostly invisible. You notice it when a paragraph feels easier to finish than it should, or when a heading arrives with just the right amount of space above it. The rest of the time, it is doing quiet work in the background.
+
+This theme is built on a few opinions about that work.
+
+## Rhythm before decoration
+
+A blog is a long column of text interrupted by headings, links, code and images. The page needs a rhythm that survives all of those interruptions.
+
+<Aside type='tip'>
+
+If you are unsure about a spacing value, make it larger. Space is the cheapest way to make a page feel considered.
+
+</Aside>
+
+The base unit here is the line height of body copy. Margins, heading offsets and the space above a code block are all multiples or fractions of it. When everything shares a rhythm, the eye stops counting pixels and starts reading.
+
+## Measure
+
+The content column is deliberately narrow. A comfortable measure is roughly 60–75 characters per line; for a 16px sans-serif, that lands somewhere around 45–65 `ch`.
+
+$$
+\text{measure} \approx 66\text{ characters}
+$$
+
+On mobile the column is allowed to fill the screen. On a wide monitor the surrounding space becomes part of the design rather than something to fill.
+
+## A small type scale
+
+| Role | Size | Weight |
+| --- | --- | --- |
+| Body | 1rem | 400 |
+| Small metadata | 0.75rem | 400 |
+| Section heading | 1.25rem | 500 |
+| Page title | 2rem | 500 |
+| Display | 3rem | 500 |
+
+The scale is intentionally flat. A blog is not a magazine spread; too many sizes turn a page into a poster.
+
+## Colour as punctuation
+
+Most of the page is foreground and muted foreground. Colour appears only where it carries meaning: a link on hover, a tag, a highlighted line of code, the accent glow at the top of an article.
+
+<Collapse title='Why the accent colour comes from the cover image'>
+
+Each post can declare a single accent colour alongside its cover. That colour is used for the gradient at the top of the page, the hover states of the post preview, and the progress bar in the table of contents.
+
+The result is subtle but memorable: two posts about different subjects feel like different rooms, without changing the furniture.
+
+</Collapse>
+
+## Images and air
+
+![A generated abstract illustration](./figure.jpg)
+
+Images are given the same radius as cards and code blocks. They are allowed to be wide, but they should never feel like they are shouting. A soft generated cover does less work than a photograph and leaves more room for the title.
+
+## The test
+
+The final test is not aesthetic. It is whether you can read for ten minutes without noticing the interface. If you can, the typography is doing its job.
+
+> Good design is as little design as possible. Less, but better — because it concentrates on the essential aspects, and the products are not burdened with non-essentials.
+
+That quote is usually attributed to Dieter Rams, and it applies to blogs as much as to radios. The fewer decisions the reader has to make, the more attention is left for the words.
