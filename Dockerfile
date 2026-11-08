@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # --- deps: full install, devDependencies included (needed by `next build`) ---
 FROM node:22-bookworm-slim AS deps
 ENV PNPM_HOME="/pnpm"
