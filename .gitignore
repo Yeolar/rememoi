@@ -12,6 +12,9 @@ next-env.d.ts
 # production
 dist/
 
+# exported docker images
+/rememoi-image.tar.gz
+
 # local env
 .env
 .env*.local
