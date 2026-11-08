@@ -29,6 +29,13 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 
+# Cap the V8 heap. Without it Node sizes the heap off total RAM, so a runaway
+# allocation pushes the whole host into reclaim and the kernel's OOM killer picks
+# whichever process is biggest — often sshd or dockerd, i.e. the machine "hangs"
+# instead of one container restarting. docker-compose.yml raises this to match
+# mem_limit; keep heap <= ~2/3 of that limit for off-heap (sharp, SQLite, sockets).
+ENV NODE_OPTIONS="--max-old-space-size=512"
+
 WORKDIR /app
 
 # server.js + traced node_modules, then the assets Next leaves out of standalone.

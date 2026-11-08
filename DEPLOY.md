@@ -35,6 +35,7 @@ Rememoi 容器
 把 `.env.production` 复制到服务器并填写：
 
 - `AUTH_SECRET`
+- `AUTH_URL`（`https://rememoi.com`。不填时会退回到 `NEXT_PUBLIC_SITE_URL`；两者都没有时 Auth.js 只能从请求头猜域名，容器里容易猜成 `https://0.0.0.0:3000`，GitHub 登录会直接失败）
 - `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET`
 - `ADMIN_GITHUB_LOGINS`
 - `COS_SECRET_ID` / `COS_SECRET_KEY`
@@ -238,6 +239,59 @@ sqlite3 data/rememoi.db \
 ```
 
 `.env.production` 请另外单独、安全地备份。
+
+## 10. 内存、swap 与 Docker 守护进程
+
+宿主机是 4G 内存、跑约 5 个容器。预算大致是：
+
+| 项目 | 占用 |
+| --- | --- |
+| 系统 + 内核 slab（overlayfs 的 dentry/inode 缓存） | 400–600MB |
+| `dockerd` + `containerd` + 5 个 shim | 150–200MB |
+| 5 个容器（按 `mem_limit` 分配） | ≤ 2.6G |
+| 留给尖峰的余量 | 400MB 以上 |
+
+**swap**（安全网，不是内存扩容）：
+
+```bash
+sudo sh deploy/setup-swap.sh   # 2G swapfile + /etc/fstab + swappiness=10
+```
+
+**Docker 守护进程**（默认日志轮转、重启 dockerd 时容器不掉线）：
+
+```bash
+sudo cp deploy/daemon.json /etc/docker/daemon.json
+sudo systemctl restart docker
+docker info --format '{{.LoggingDriver}}'   # 期望 json-file
+```
+
+`live-restore` 让容器在 `systemctl restart docker` 期间继续运行；日志默认值只对**新建**的容器生效，已有容器要靠重建才会换成新的轮转策略。
+
+**每个容器都要设上限**，否则一个容器越界会拖着整机一起 thrashing（这正是之前 SSH 也连不上的原因）。本项目的 `docker-compose.yml` 已经设好：
+
+- `mem_limit: 768m` / `memswap_limit: 768m`（该 cgroup 不用 swap，超了只重启自己）
+- `NODE_OPTIONS=--max-old-space-size=512`（V8 堆先 GC，而不是等 cgroup killer 发 SIGKILL）
+- `init: true`（`node server.js` 当 PID 1 时不收 SIGTERM、不回收僵尸）
+
+其余容器按同样的模式分配，合计不要超过 2.6G：
+
+| 容器 | `mem_limit` | 堆上限 |
+| --- | --- | --- |
+| rememoi（Next.js standalone） | 768m | 512 |
+| 另一个 Next.js 类应用 | 512m | 320 |
+| 数据库 / 有状态服务 | 512m | — |
+| 小型工具（监控、面板） | 192–256m | 128 |
+
+`mem_limit` 会把**页缓存**一起算进去，SQLite 和日志写得多的容器要多留 100–150MB，否则写库时就会容器内 OOM。
+
+排查时看真实占用（`docker stats` 的数字含页缓存，偏高）：
+
+```bash
+free -h && swapon --show
+grep -E 'SReclaimable|Cached' /proc/meminfo   # 大 = 可回收的内核缓存，不是真占用
+docker stats --no-stream
+journalctl -k | grep -iE 'oom|killed process' | tail
+```
 
 ## 附注
 

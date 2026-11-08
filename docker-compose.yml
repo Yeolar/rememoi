@@ -11,6 +11,17 @@ services:
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://rememoi.com}
     restart: unless-stopped
+    # Reap zombies and forward SIGTERM: without it `node server.js` is PID 1 and
+    # `docker stop` waits the full grace period before SIGKILL.
+    init: true
+    stop_grace_period: 15s
+    # Budget on a 4G box shared with ~4 other containers. The limit must leave
+    # room for off-heap memory (sharp buffers, SQLite page cache, socket buffers)
+    # on top of the V8 heap, otherwise the cgroup OOM killer fires mid-request.
+    mem_limit: 768m
+    # Equal to mem_limit on purpose: no swap for this cgroup, so latency stays
+    # predictable and an overrun restarts only this container.
+    memswap_limit: 768m
     # Keep container logs from filling the disk on a small VM.
     logging:
       driver: json-file
@@ -19,6 +30,10 @@ services:
         max-file: "3"
     env_file:
       - .env.production
+    environment:
+      # Overrides the Dockerfile default. Keep it at roughly 2/3 of mem_limit so
+      # V8 runs GC instead of the cgroup killer running SIGKILL.
+      - NODE_OPTIONS=--max-old-space-size=512
     ports:
       # Caddy runs on the host and connects through this loopback port.
       - "127.0.0.1:3010:3000"
