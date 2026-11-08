@@ -1,28 +1,28 @@
-import { cn } from '@/lib/utils'
+import type { CSSProperties } from 'react'
 
 /**
  * Languages icon from Lucide (https://lucide.dev/icons/languages), ISC License.
  * See LICENSES/lucide.txt for the full notice.
  */
-export function LanguagesMark({ className }: { className?: string }) {
+export function LanguagesMark() {
   return (
     <svg
-      xmlns='http://www.w3.org/2000/svg'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth={2}
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className={cn('shrink-0', className)}
       aria-hidden
+      width={22}
+      height={22}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      className='icon icon-system'
+      style={{ '--icon-size': '1em' } as CSSProperties}
     >
-      <path d='m5 8 6 6' />
-      <path d='m4 14 6-6 2-3' />
-      <path d='M2 5h12' />
-      <path d='M7 2h1' />
-      <path d='m22 22-5-10-5 10' />
-      <path d='M14 18h6' />
+      <g fill='none' stroke='currentColor' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round'>
+        <path d='m5 8 6 6' />
+        <path d='m4 14 6-6 2-3' />
+        <path d='M2 5h12' />
+        <path d='M7 2h1' />
+        <path d='m22 22-5-10-5 10' />
+        <path d='M14 18h6' />
+      </g>
     </svg>
   )
 }

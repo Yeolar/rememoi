@@ -1,21 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Trans } from '@/components/i18n/Trans'
-import { LocaleButton } from '@/components/i18n/LocaleButton'
 import { Icon } from '@/components/icons/Icon'
 import { TornadoMark } from '@/components/icons/TornadoMark'
+import { UserMenu, type UserMenuUser } from '@/components/site/UserMenu'
 import siteConfig from '@/config/site'
-import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-
-type Theme = 'system' | 'light' | 'dark'
-const THEMES: Theme[] = ['system', 'dark', 'light']
-
-const ICON_BUTTON_CLASS =
-  'box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border sm:rounded-xl'
 
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
   Memory: { en: 'Memory', zh: '记忆' },
@@ -24,56 +17,13 @@ const NAV_LABELS: Record<string, { en: string; zh: string }> = {
   About: { en: 'About', zh: '关于' }
 }
 
-function resolveTheme(theme: Theme) {
-  if (theme !== 'system') return theme
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+type HeaderProps = {
+  /** Signed-in user from the server session; `null` renders the sign-in entry. */
+  user?: UserMenuUser | null
 }
 
-function applyTheme(theme: Theme, persist: boolean) {
-  const resolved = resolveTheme(theme)
-  document.documentElement.classList.toggle('dark', resolved === 'dark')
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', resolved === 'dark' ? '#0B0B10' : '#FCFCFD')
-  if (persist) {
-    try {
-      localStorage.setItem('theme', theme)
-    } catch {
-      // ignore storage errors
-    }
-  }
-}
-
-export function Header() {
-  const themeButtonRef = useRef<HTMLButtonElement>(null)
+export function Header({ user = null }: HeaderProps) {
   const [expanded, setExpanded] = useState(false)
-
-  useEffect(() => {
-    const stored = (localStorage.getItem('theme') as Theme | null) ?? 'system'
-    const next = THEMES.includes(stored) ? stored : 'system'
-    if (themeButtonRef.current) themeButtonRef.current.dataset.theme = next
-    applyTheme(next, false)
-  }, [])
-
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => {
-      if (((localStorage.getItem('theme') as Theme | null) ?? 'system') === 'system') {
-        applyTheme('system', false)
-      }
-    }
-    media.addEventListener('change', onChange)
-    return () => media.removeEventListener('change', onChange)
-  }, [])
-
-  const cycleTheme = useCallback(() => {
-    const current =
-      (themeButtonRef.current?.dataset.theme as Theme | undefined) ?? 'system'
-    const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length]
-    applyTheme(next, true)
-    if (themeButtonRef.current) themeButtonRef.current.dataset.theme = next
-    showToast({ message: `Set theme to ${next}` })
-  }, [])
 
   return (
     <header
@@ -146,20 +96,7 @@ export function Header() {
         </div>
 
         <div className='z-30 flex gap-x-4'>
-          <LocaleButton />
-          <button
-            ref={themeButtonRef}
-            type='button'
-            id='toggleDarkMode'
-            data-theme='system'
-            onClick={cycleTheme}
-            className={`theme-toggle ${ICON_BUTTON_CLASS}`}
-          >
-            <span className='sr-only'>Dark Theme</span>
-            <Icon className='icon-system size-5 hover:text-primary' name='computer' />
-            <Icon className='icon-light size-5 hover:text-primary' name='sun' />
-            <Icon className='icon-dark size-5 hover:text-primary' name='moon' />
-          </button>
+          <UserMenu user={user} />
           <button
             type='button'
             id='toggleMenu'

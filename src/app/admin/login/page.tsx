@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { auth, isAuthConfigured, isDevLoginEnabled, isGithubConfigured } from '@/auth'
 import { SetupNotice } from '@/components/admin/SetupNotice'
 import { Trans } from '@/components/i18n/Trans'
+import { safeLoginRedirect } from '@/lib/auth-redirect'
 import { LoginForm } from './LoginForm'
 
 export const dynamic = 'force-dynamic'
@@ -14,11 +15,17 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 }
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   if (!isAuthConfigured) return <SetupNotice />
 
+  const callbackUrl = safeLoginRedirect((await searchParams).callbackUrl)
+
   const session = await auth()
-  if (session) redirect('/admin')
+  if (session) redirect(callbackUrl)
 
   return (
     <div className='flex min-h-[100dvh] w-full items-center justify-center px-4 py-10'>
@@ -32,13 +39,17 @@ export default async function LoginPage() {
           </p>
         </div>
 
-        <LoginForm showGithub={isGithubConfigured} showDev={isDevLoginEnabled} />
+        <LoginForm
+          showGithub={isGithubConfigured}
+          showDev={isDevLoginEnabled}
+          callbackUrl={callbackUrl}
+        />
 
         {isDevLoginEnabled && (
           <p className='mt-6 rounded-lg border bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground'>
             <Trans
-              en={<>Local login: username <code className='font-semibold'>admin</code>, password from <code className='font-semibold'>ADMIN_DEV_PASSWORD</code> (default <code className='font-semibold'>rememoi</code>). This login is disabled in production unless <code>ENABLE_DEV_LOGIN=true</code>.</>}
-              zh={<>本地登录：用户名 <code className='font-semibold'>admin</code>，密码来自 <code className='font-semibold'>ADMIN_DEV_PASSWORD</code>（默认 <code className='font-semibold'>rememoi</code>）。除非设置 <code>ENABLE_DEV_LOGIN=true</code>，否则此登录在生产环境不可用。</>}
+              en={<>Local login: username <code className='font-semibold'>admin</code>, password from <code className='font-semibold'>ADMIN_DEV_PASSWORD</code> (default <code className='font-semibold'>rememoi</code>). This login is disabled in production unless <code className='font-semibold'>ENABLE_DEV_LOGIN=true</code>.</>}
+              zh={<>本地登录：用户名 <code className='font-semibold'>admin</code>，密码来自 <code className='font-semibold'>ADMIN_DEV_PASSWORD</code>（默认 <code className='font-semibold'>rememoi</code>）。除非设置 <code className='font-semibold'>ENABLE_DEV_LOGIN=true</code>，否则此登录在生产环境不可用。</>}
             />
           </p>
         )}

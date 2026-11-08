@@ -13,17 +13,20 @@ import { Icon } from '@/components/icons/Icon'
 type LoginFormProps = {
   showGithub: boolean
   showDev: boolean
+  /** Where Auth.js sends the browser after a successful sign-in. */
+  callbackUrl?: string
 }
 
 const initialState: LoginState = {}
 
-export function LoginForm({ showGithub, showDev }: LoginFormProps) {
+export function LoginForm({ showGithub, showDev, callbackUrl = '/' }: LoginFormProps) {
   const [state, formAction, pending] = useActionState(loginWithCredentials, initialState)
 
   return (
     <div className='flex flex-col gap-5'>
       {showGithub && (
         <form action={loginWithGithub}>
+          <input type='hidden' name='callbackUrl' value={callbackUrl} />
           <button
             type='submit'
             className='flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border bg-muted px-4 py-2 text-sm font-medium transition-colors hover:bg-card'
@@ -44,6 +47,7 @@ export function LoginForm({ showGithub, showDev }: LoginFormProps) {
 
       {showDev && (
         <form action={formAction} className='flex flex-col gap-3'>
+          <input type='hidden' name='callbackUrl' value={callbackUrl} />
           <label className='field'>
             <span className='field-label'><Trans en='Username' zh='用户名' /></span>
             <input

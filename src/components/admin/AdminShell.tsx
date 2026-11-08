@@ -1,17 +1,16 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { AdminLogOutButton } from '@/components/admin/AdminLogOutButton'
-import { LocaleButton } from '@/components/i18n/LocaleButton'
 import { Trans } from '@/components/i18n/Trans'
+import { HouseMark } from '@/components/icons/HouseMark'
+import { UserMenu, type UserMenuUser } from '@/components/site/UserMenu'
 
 type AdminShellProps = {
-  user: string
-  provider?: string
+  user: UserMenuUser
   children: ReactNode
 }
 
-export function AdminShell({ user, provider, children }: AdminShellProps) {
+export function AdminShell({ user, children }: AdminShellProps) {
   return (
     <div className='mx-auto w-full max-w-6xl px-4 py-6 sm:px-8'>
       <header className='mb-8 flex flex-wrap items-center justify-between gap-4 pb-4'>
@@ -25,15 +24,17 @@ export function AdminShell({ user, provider, children }: AdminShellProps) {
           </nav>
         </div>
         <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground'>
-          <span>
-            {user}
-            {provider === 'credentials' ? <Trans en=' (local)' zh='（本地）' /> : ''}
-          </span>
-          <Link href='/' target='_blank' className='text-foreground'>
-            <Trans en='View site ↗' zh='查看站点 ↗' />
+          <Link
+            href='/'
+            target='_blank'
+            rel='noreferrer'
+            title='Home'
+            className='flex items-center px-1 py-2 text-foreground transition-none hover:text-primary sm:px-2'
+          >
+            <span className='sr-only'><Trans en='View site' zh='查看站点' /></span>
+            <HouseMark className='size-5' />
           </Link>
-          <LocaleButton />
-          <AdminLogOutButton />
+          <UserMenu user={user} logoutRedirectTo='/admin/login' />
         </div>
       </header>
       {children}

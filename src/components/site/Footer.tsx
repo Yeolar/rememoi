@@ -1,8 +1,10 @@
 import Link from 'next/link'
 
 import { Trans } from '@/components/i18n/Trans'
+import { LocaleButton } from '@/components/i18n/LocaleButton'
 import { CurrentYear } from '@/components/site/CurrentYear'
 import { Icon } from '@/components/icons/Icon'
+import { ThemeToggle } from '@/components/site/ThemeToggle'
 import siteConfig from '@/config/site'
 
 export function Footer() {
@@ -107,6 +109,8 @@ export function Footer() {
                 <Icon name={icon} />
               </a>
             ))}
+            <LocaleButton />
+            <ThemeToggle />
           </div>
         </div>
       </div>

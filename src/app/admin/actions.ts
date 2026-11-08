@@ -3,6 +3,7 @@
 import { AuthError } from 'next-auth'
 
 import { signIn, signOut } from '@/auth'
+import { safeCallbackUrl, safeLoginRedirect } from '@/lib/auth-redirect'
 
 export type LoginState = {
   error?: string
@@ -16,7 +17,7 @@ export async function loginWithCredentials(
     await signIn('credentials', {
       username: formData.get('username'),
       password: formData.get('password'),
-      redirectTo: '/admin'
+      redirectTo: safeLoginRedirect(formData.get('callbackUrl'))
     })
   } catch (error) {
     if (error instanceof AuthError) {
@@ -28,10 +29,10 @@ export async function loginWithCredentials(
   return {}
 }
 
-export async function loginWithGithub() {
-  await signIn('github', { redirectTo: '/admin' })
+export async function loginWithGithub(formData: FormData) {
+  await signIn('github', { redirectTo: safeLoginRedirect(formData.get('callbackUrl')) })
 }
 
-export async function logout() {
-  await signOut({ redirectTo: '/admin/login' })
+export async function logout(formData?: FormData) {
+  await signOut({ redirectTo: safeCallbackUrl(formData?.get('redirectTo')) })
 }

@@ -1,3 +1,4 @@
+import { auth, isAuthConfigured } from '@/auth'
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
 
@@ -14,13 +15,22 @@ import { Header } from '@/components/site/Header'
  */
 export const dynamic = 'force-dynamic'
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const session = isAuthConfigured ? await auth() : null
+  const user = session?.user
+    ? {
+        name: session.user.name ?? null,
+        login: session.user.login ?? null,
+        image: session.user.image ?? null
+      }
+    : null
+
   return (
     <div
       id='main-container'
       className='flex min-h-[100dvh] w-full max-w-[70rem] flex-col justify-between'
     >
-      <Header />
+      <Header user={user} />
       <div className='w-full flex-1'>{children}</div>
       <Footer />
     </div>

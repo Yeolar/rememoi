@@ -4,9 +4,6 @@ import { useCallback } from 'react'
 
 import { LanguagesMark } from '@/components/icons/LanguagesMark'
 
-const LOCALE_BUTTON_CLASS =
-  'box-content size-5 cursor-pointer rounded-md border p-1.5 transition-colors hover:bg-border sm:rounded-xl'
-
 export function LocaleButton() {
   const toggleLocale = useCallback(() => {
     const root = document.documentElement
@@ -26,10 +23,10 @@ export function LocaleButton() {
       type='button'
       id='toggleLocale'
       onClick={toggleLocale}
-      aria-label='Switch language'
-      className={LOCALE_BUTTON_CLASS}
+      className='flex cursor-pointer items-center transition-colors hover:text-primary'
     >
-      <LanguagesMark className='size-5' />
+      <span className='sr-only'>Switch language</span>
+      <LanguagesMark />
     </button>
   )
 }

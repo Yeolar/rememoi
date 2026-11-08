@@ -42,6 +42,8 @@ Open <http://localhost:3000>. `pnpm dev` creates the database from `content/memo
 
 The local login is **disabled in production** unless you explicitly set `ENABLE_DEV_LOGIN=true`. Configure GitHub OAuth for production (see below).
 
+The user icon in the site header opens the same login page. After signing in it becomes your avatar (the GitHub profile image for GitHub sign-ins) with a menu linking to `/admin` and to sign-out. Signing in from the header returns you to the homepage; starting at `/admin` brings you back to the admin after signing in.
+
 ### Requirements
 
 - Node.js 20+

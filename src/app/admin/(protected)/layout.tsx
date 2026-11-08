@@ -11,14 +11,14 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
   }
 
   const session = await auth()
-  if (!session) redirect('/admin/login')
+  if (!session) redirect('/admin/login?callbackUrl=/admin')
 
-  const user =
-    session.user?.login || session.user?.name || session.user?.email || 'Signed-in admin'
+  const sessionUser = session.user
+  const user = {
+    name: sessionUser?.name || sessionUser?.login || sessionUser?.email || null,
+    login: sessionUser?.login ?? null,
+    image: sessionUser?.image ?? null
+  }
 
-  return (
-    <AdminShell user={user} provider={session.user?.provider}>
-      {children}
-    </AdminShell>
-  )
+  return <AdminShell user={user}>{children}</AdminShell>
 }
