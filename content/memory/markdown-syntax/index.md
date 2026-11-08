@@ -1,6 +1,6 @@
 ---
 title: 'Markdown Syntax Support'
-description: 'A kitchen-sink tour of the markdown and MDX features supported by this blog.'
+description: 'A kitchen-sink tour of the markdown and MDX features supported by this site.'
 publishDate: 2026-09-14
 updatedDate: 2026-09-20
 tags:
@@ -10,7 +10,7 @@ language: 'en'
 heroImage: { src: './cover.jpg', color: '#B4C6DA', width: 1600, height: 1000, alt: 'Pale blue abstract cover' }
 ---
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. This page is both a reference and a test page: everything below should render correctly in the blog.
+Markdown is a lightweight and easy-to-use syntax for styling your writing. This page is both a reference and a test page: everything below should render correctly on this site.
 
 ## Basic syntax
 
@@ -153,7 +153,7 @@ export function summarize(input: PostInput) {
 
 ## Images
 
-![A generated abstract illustration](./figure.jpg)
+![A generated abstract illustration](/memory-media/markdown-syntax/figure.jpg)
 
 Images are lazy-loaded, get rounded corners from the prose styles, and can be opened in a zoomable lightbox.
 

@@ -100,7 +100,7 @@ The editor is intentionally modest:
 
 Because the site is designed to run anywhere — a VPS, a container, a serverless platform — without asking the author to configure object storage first. Images are content-addressed and immutable, so they cache aggressively at the edge.
 
-For a larger site, an S3-compatible bucket would be the right move. For a personal blog, one less service is one less thing to maintain.
+For a larger site, an S3-compatible bucket would be the right move. For a site this size, one less service is one less thing to maintain.
 
 </Collapse>
 
@@ -112,7 +112,7 @@ The admin area is not a separate product. It borrows the same tokens, the same r
 
 <TabItem label="Public site">
 
-Server components, static generation, and a small amount of client-side enhancement for the header, table of contents and code controls.
+Server components rendered on demand, and a small amount of client-side enhancement for the header, table of contents and code controls.
 
 </TabItem>
 
@@ -137,7 +137,7 @@ A few things I would reach for earlier next time:
 - Treat the **date** as data, not a string. Time-zone bugs are quiet and embarrassing.
 - Keep the theme's CSS tokens as the single source of truth. Every time I hard-coded a colour, I regretted it.
 - Build the preview route before the editor. It changes how the editing flow feels.
-- Resist the urge to add a setting for everything. A blog is a small machine.
+- Resist the urge to add a setting for everything. A site like this is a small machine.
 
 The site now has the two things it needed: a reading experience worth keeping, and a way to add the next post without opening a terminal.
 

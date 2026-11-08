@@ -1,6 +1,6 @@
 ---
 title: 'Markdown 语法支持'
-description: 'Markdown 是一种轻量级的标记语言。这篇文章展示博客支持的常用语法。'
+description: 'Markdown 是一种轻量级的标记语言。这篇文章展示本站支持的常用语法。'
 publishDate: 2026-09-12
 updatedDate: 2026-09-18
 tags:
@@ -82,7 +82,7 @@ $$
 
 ## 图片
 
-![生成的抽象插图](./figure.jpg)
+![生成的抽象插图](/memory-media/markdown-syntax-zh/figure.jpg)
 
 图片会懒加载、带圆角，并支持点击放大。
 

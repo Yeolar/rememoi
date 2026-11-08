@@ -358,8 +358,6 @@ COVERS = {
     "markdown-syntax": ("#B4C6DA", 3, False),
     "markdown-syntax-zh": ("#C3B2C8", 4, False),
     "design-notes-typography": ("#C08A7A", 5, False),
-    "music-and-technology": ("#4891B2", 6, False),
-    "reading-list-autumn": ("#8FA58B", 8, False),
     "small-tools-long-memory": ("#B79A76", 9, False),
     "draft-notes": ("#9A9AB5", 7, True),
 }
@@ -377,6 +375,7 @@ def main() -> None:
 
     # inline article figures
     abstract_cover(MEMORY_MEDIA / "markdown-syntax" / "figure.png", 1600, 900, "#8FA9C4", 11)
+    abstract_cover(MEMORY_MEDIA / "markdown-syntax-zh" / "figure.png", 1600, 900, "#C3B2C8", 14)
     abstract_cover(MEMORY_MEDIA / "design-notes-typography" / "figure.png", 1600, 900, "#D2A08F", 12)
     abstract_cover(MEMORY_MEDIA / "building-rememoi-with-nextjs" / "figure.png", 1600, 900, "#7C9BB5", 13)
 
