@@ -1,30 +1,48 @@
-FROM node:22-bookworm-slim
+# syntax=docker/dockerfile:1
 
+# --- deps: full install, devDependencies included (needed by `next build`) ---
+FROM node:22-bookworm-slim AS deps
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NEXT_TELEMETRY_DISABLED=1
-
 RUN corepack enable && corepack prepare pnpm@11.7.0 --activate
-
 WORKDIR /app
-
-# Install dependencies first for a reproducible layer.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
+# --- builder: produce the self-contained standalone server ---
+FROM deps AS builder
 COPY . .
 
 # NEXT_PUBLIC_* values are baked into the build.
 ARG NEXT_PUBLIC_SITE_URL=https://rememoi.com
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
+# `pnpm build` seeds SQLite from content/memory first: `next build` prerenders
+# the post and tag routes from that database, so the order matters.
 RUN pnpm build
 
-ENV NODE_ENV=production
-ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+# --- runner: standalone output only — no pnpm, no devDependencies ---
+FROM node:22-bookworm-slim AS runner
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    HOSTNAME=0.0.0.0 \
+    PORT=3000
+
+WORKDIR /app
+
+# server.js + traced node_modules, then the assets Next leaves out of standalone.
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Snapshot of the database created during the build, used to seed an empty volume.
+COPY --from=builder /app/data ./seed
+
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && mkdir -p /app/data
 
 EXPOSE 3000
 
-# The database lives on a mounted persistent volume.
-CMD ["sh", "-c", "pnpm db:setup && pnpm start"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["node", "server.js"]
