@@ -4,7 +4,7 @@
 
 rememoi.com {
 	encode zstd gzip
-	reverse_proxy 127.0.0.1:3000
+	reverse_proxy 127.0.0.1:3010
 }
 
 www.rememoi.com {

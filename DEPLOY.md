@@ -3,7 +3,7 @@
 This deployment uses:
 
 - **Caddy on the host** for TLS and reverse proxying.
-- **Rememoi in Docker** on `127.0.0.1:3000`.
+- **Rememoi in Docker** on `127.0.0.1:3010`.
 - **SQLite** on a host bind mount at `./data`.
 - **COS** for media, proxied by the application.
 
@@ -12,7 +12,7 @@ Internet
   │ 80/443
   ▼
 Caddy (host)
-  │ http://127.0.0.1:3000
+  │ http://127.0.0.1:3010
   ▼
 Rememoi container
   ├── ./data/rememoi.db
@@ -75,7 +75,7 @@ docker compose logs -f rememoi
 The app is intentionally bound only to loopback:
 
 ```text
-127.0.0.1:3000
+127.0.0.1:3010
 ```
 
 It is not directly reachable from the internet.
@@ -118,14 +118,14 @@ Caddy will obtain and renew certificates automatically for `rememoi.com` and `ww
 ```bash
 curl -I https://rememoi.com
 curl -I https://www.rememoi.com
-curl -I http://127.0.0.1:3000/
+curl -I http://127.0.0.1:3010/
 ```
 
 Expected:
 
 - `https://rememoi.com` → `200`
 - `https://www.rememoi.com` → redirect to the apex domain
-- Direct port 3000 only works locally
+- Direct port 3010 only works locally
 
 ## 8. Update
 
