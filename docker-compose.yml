@@ -1,3 +1,8 @@
+# Fixed project name: compose otherwise derives it from the directory name,
+# so two apps whose folders share a basename would collide on container and
+# network names.
+name: rememoi
+
 services:
   rememoi:
     image: rememoi:latest
@@ -6,6 +11,12 @@ services:
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://rememoi.com}
     restart: unless-stopped
+    # Keep container logs from filling the disk on a small VM.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     env_file:
       - .env.production
     ports:
