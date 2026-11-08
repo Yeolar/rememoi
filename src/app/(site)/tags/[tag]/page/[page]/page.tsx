@@ -6,6 +6,11 @@ import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
 import { getAllTags, getPostsByTag, getVisiblePosts, paginate } from '@/lib/posts'
 
+// Kept in sync with the (site) layout: this page still gets prerendered by
+// `generateStaticParams` otherwise, which would freeze tag pagination to the
+// build-time database.
+export const dynamic = 'force-dynamic'
+
 type TagPageProps = {
   params: Promise<{ tag: string; page: string }>
 }
