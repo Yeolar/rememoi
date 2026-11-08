@@ -1,0 +1,12 @@
+{
+	email admin@rememoi.com
+}
+
+rememoi.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
+
+www.rememoi.com {
+	redir https://rememoi.com{uri} permanent
+}
