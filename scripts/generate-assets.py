@@ -285,23 +285,10 @@ def make_social_card() -> Image.Image:
 
 
 def make_tornado_icon(size: int = 1024) -> Image.Image:
-    """Lucide tornado (ISC) on the Rememoi blue tile."""
-    yy, xx = np.mgrid[0:size, 0:size]
-    t = (xx + yy) / (2 * (size - 1))
-    start = np.array(hex_to_rgb("#659EB9"), dtype=float)
-    end = np.array(hex_to_rgb("#2E6B85"), dtype=float)
-    rgb = start + (end - start) * t[..., None]
-    image = Image.fromarray(rgb.astype(np.uint8), "RGB").convert("RGBA")
-
+    """Lucide tornado (ISC) as blue gradient lines on a transparent background."""
     mask = Image.new("L", (size, size), 0)
-    ImageDraw.Draw(mask).rounded_rectangle(
-        (0, 0, size - 1, size - 1), radius=round(size * 0.25), fill=255
-    )
-    image.putalpha(mask)
-
-    draw = ImageDraw.Draw(image)
-    pad = size / 8
-    scale = (size - 2 * pad) / 24
+    draw = ImageDraw.Draw(mask)
+    scale = size / 24
     stroke = 2 * scale
     lines = [
         ((21, 4), (3, 4)),
@@ -310,14 +297,21 @@ def make_tornado_icon(size: int = 1024) -> Image.Image:
         ((16, 16), (10, 16)),
         ((11, 20), (9, 20)),
     ]
-    color = "#FCFCFD"
     for (x1, y1), (x2, y2) in lines:
-        a = (pad + x1 * scale, pad + y1 * scale)
-        b = (pad + x2 * scale, pad + y2 * scale)
-        draw.line((a, b), fill=color, width=round(stroke))
+        a = (x1 * scale, y1 * scale)
+        b = (x2 * scale, y2 * scale)
+        draw.line((a, b), fill=255, width=round(stroke))
         radius = stroke / 2
         for x, y in (a, b):
-            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color)
+            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=255)
+
+    yy, xx = np.mgrid[0:size, 0:size]
+    t = (xx + yy) / (2 * (size - 1))
+    start = np.array(hex_to_rgb("#659EB9"), dtype=float)
+    end = np.array(hex_to_rgb("#2E6B85"), dtype=float)
+    rgb = start + (end - start) * t[..., None]
+    image = Image.fromarray(rgb.astype(np.uint8), mode="RGB").convert("RGBA")
+    image.putalpha(mask)
     return image
 
 

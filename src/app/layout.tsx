@@ -30,13 +30,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.svg?v=original', type: 'image/svg+xml' },
-      { url: '/favicon.ico?v=original', sizes: 'any' },
-      { url: '/favicon/favicon-32x32.png?v=original', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon/favicon-16x16.png?v=original', type: 'image/png', sizes: '16x16' }
+      { url: '/icon.svg?v=2', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=2', sizes: 'any' },
+      { url: '/favicon/favicon-32x32.png?v=2', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon/favicon-16x16.png?v=2', type: 'image/png', sizes: '16x16' }
     ],
-    shortcut: '/favicon.ico?v=original',
-    apple: '/favicon/apple-touch-icon.png?v=original'
+    shortcut: '/favicon.ico?v=2',
+    apple: '/favicon/apple-touch-icon.png?v=2'
   },
   manifest: '/favicon/site.webmanifest',
   openGraph: {
