@@ -15,6 +15,22 @@ import GitHub from 'next-auth/providers/github'
  */
 
 const devFallbackSecret = 'rememoi-development-only-secret-change-me'
+
+/**
+ * Auth.js builds the OAuth redirect_uri from the incoming request's Host /
+ * X-Forwarded-Host. Behind a reverse proxy or inside a container that can resolve
+ * to the internal bind address (Dockerfile sets HOSTNAME=0.0.0.0), producing
+ * redirects like https://0.0.0.0:3000/api/auth/callback/github — GitHub rejects
+ * those, and Auth.js surfaces the generic `?error=Configuration` page instead of
+ * the real cause.
+ *
+ * The canonical public URL is already baked into the build, so use it as the
+ * fallback. Setting AUTH_URL explicitly still wins.
+ */
+if (!process.env.AUTH_URL && process.env.NEXT_PUBLIC_SITE_URL) {
+  process.env.AUTH_URL = process.env.NEXT_PUBLIC_SITE_URL
+}
+
 const secret =
   process.env.AUTH_SECRET || (process.env.NODE_ENV !== 'production' ? devFallbackSecret : undefined)
 
