@@ -20,7 +20,6 @@ type CosConfig = {
   secretKey: string
   bucket: string
   region: string
-  publicBase: string
   keyPrefix: string
 }
 
@@ -56,7 +55,7 @@ export function getMediaDriver(): MediaDriver {
   )
 }
 
-function readCosPublicConfig() {
+function readCosBucketConfig() {
   const bucket = process.env.COS_BUCKET?.trim()
   const region = process.env.COS_REGION?.trim()
   const missing = [!bucket && 'COS_BUCKET', !region && 'COS_REGION'].filter(Boolean)
@@ -71,16 +70,12 @@ function readCosPublicConfig() {
 
   return {
     bucket: bucket as string,
-    region: region as string,
-    publicBase: (
-      process.env.COS_PUBLIC_BASE_URL?.trim() ||
-      `https://${bucket}.cos.${region}.myqcloud.com`
-    ).replace(/\/+$/, '')
+    region: region as string
   }
 }
 
 function readCosConfig(): CosConfig {
-  const publicConfig = readCosPublicConfig()
+  const bucketConfig = readCosBucketConfig()
   const secretId = process.env.COS_SECRET_ID?.trim()
   const secretKey = process.env.COS_SECRET_KEY?.trim()
   const missing = [!secretId && 'COS_SECRET_ID', !secretKey && 'COS_SECRET_KEY'].filter(Boolean)
@@ -94,7 +89,7 @@ function readCosConfig(): CosConfig {
   }
 
   return {
-    ...publicConfig,
+    ...bucketConfig,
     secretId: secretId as string,
     secretKey: secretKey as string,
     keyPrefix: (process.env.COS_KEY_PREFIX || 'rememoi/media')
@@ -110,17 +105,6 @@ function buildObjectKey(keyPrefix: string, id: string, mimeType: string) {
   const year = String(now.getUTCFullYear())
   const month = String(now.getUTCMonth() + 1).padStart(2, '0')
   return [keyPrefix, year, month, `${safeId}.${extension}`].filter(Boolean).join('/')
-}
-
-/** Public CDN/bucket URL for an object key. */
-export function mediaPublicUrl(storageKey: string) {
-  const config = readCosPublicConfig()
-  const key = storageKey.replace(/^\/+/, '')
-  const encodedKey = key
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/')
-  return `${config.publicBase}/${encodedKey}`
 }
 
 async function getCosClient(config: CosConfig) {
@@ -183,8 +167,41 @@ export async function storeMedia(input: MediaStoreInput): Promise<MediaStoreResu
   return {
     storage: 'cos',
     storageKey: key,
-    url: mediaPublicUrl(key)
+    // COS objects are private; serve them through the authenticated app proxy.
+    url: `/api/media/${input.id}`
   }
+}
+
+export type CosObject = {
+  body: Buffer
+  etag?: string
+}
+
+/** Read a private COS object for the media proxy. */
+export async function getCosObject(storageKey: string): Promise<CosObject> {
+  const config = readCosConfig()
+  const client = await getCosClient(config)
+
+  return new Promise<CosObject>((resolve, reject) => {
+    client.getObject(
+      {
+        Bucket: config.bucket,
+        Region: config.region,
+        Key: storageKey
+      },
+      (error, data) => {
+        if (error) {
+          reject(error)
+          return
+        }
+
+        resolve({
+          body: data.Body as Buffer,
+          etag: data.ETag
+        })
+      }
+    )
+  })
 }
 
 /** Used when a DB insert fails after an object has already been uploaded. */

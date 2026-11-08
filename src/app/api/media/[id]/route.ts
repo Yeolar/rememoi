@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm'
 
 import { ensureSchema, getDb } from '@/lib/db'
 import { images } from '@/lib/db/schema'
-import { MediaStorageError, mediaPublicUrl } from '@/lib/media-storage'
+import { getCosObject, MediaStorageError } from '@/lib/media-storage'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,18 +19,26 @@ export async function GET(_request: Request, { params }: RouteContext) {
   if (row.storage === 'cos') {
     if (!row.storageKey) return new Response('Not found', { status: 404 })
     try {
-      return new Response(null, {
-        status: 307,
+      const object = await getCosObject(row.storageKey)
+      return new Response(new Uint8Array(object.body), {
         headers: {
-          Location: mediaPublicUrl(row.storageKey),
-          'Cache-Control': 'public, max-age=31536000, immutable'
+          'Content-Type': row.mimeType,
+          'Content-Length': String(row.size),
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          ...(object.etag ? { ETag: object.etag } : {})
         }
       })
     } catch (error) {
       if (error instanceof MediaStorageError) {
         return new Response(error.message, { status: error.status })
       }
-      throw error
+      const code = (error as { code?: string }).code
+      const status = (error as { statusCode?: number }).statusCode
+      if (code === 'NoSuchKey' || status === 404) {
+        return new Response('Not found', { status: 404 })
+      }
+      console.error(`[media] COS read failed: ${error instanceof Error ? error.message : 'unknown error'}`)
+      return new Response('Media storage error', { status: 502 })
     }
   }
 

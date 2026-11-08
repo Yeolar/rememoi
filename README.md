@@ -66,7 +66,6 @@ The local login is **disabled in production** unless you explicitly set `ENABLE_
 | `COS_SECRET_KEY` | for COS | Tencent Cloud secret key. Server-only. |
 | `COS_BUCKET` | for COS | Bucket name including APPID, e.g. `rememoi-1250000000`. |
 | `COS_REGION` | for COS | Bucket region, e.g. `ap-guangzhou`. |
-| `COS_PUBLIC_BASE_URL` | recommended for COS | CDN/public base URL for objects. Falls back to the bucket's default URL. |
 | `COS_KEY_PREFIX` | no | Object key prefix. Defaults to `rememoi/media`. |
 | `NEXT_PUBLIC_WALINE_SERVER` | no | Waline server URL. Comments stay hidden when empty. |
 
@@ -90,7 +89,7 @@ Go to `/admin`, create a post, write in Markdown or MDX, upload a cover image, s
 - **Drafts** are excluded from the public site in production. During development they are visible on the public site with a `(Draft)` badge, matching the original theme's behavior.
 - **Private posts** are hidden everywhere public: site lists, article URLs, feeds, search and sitemap. They remain available in the admin area and through the protected preview.
 - **Preview** (`/preview/[id]`) is protected and renders the real article layout, including interactions.
-- **Uploads** use the database by default and are served through `/api/media/[id]` with immutable caching. Set `MEDIA_DRIVER=cos` to put new images in Tencent COS and serve them from a CDN; old database-backed images keep working. See [Object storage (COS)](#object-storage-cos).
+- **Uploads** use the database by default and are served through `/api/media/[id]` with immutable caching. Set `MEDIA_DRIVER=cos` to put new images in a private Tencent COS bucket; the app proxies them through `/api/media/[id]` without a public bucket or CDN. Old database-backed images keep working.
 - **Publishing** invalidates the public pages, RSS, search index and sitemap with `revalidatePath`.
 
 ### Object storage (COS)
@@ -103,26 +102,24 @@ COS_SECRET_ID=...
 COS_SECRET_KEY=...
 COS_BUCKET=rememoi-1250000000
 COS_REGION=ap-guangzhou
-COS_PUBLIC_BASE_URL=https://cdn.example.com
 COS_KEY_PREFIX=rememoi/media
 ```
 
 Setup:
 
-1. Create a COS bucket and, preferably, a CDN domain in front of it.
-2. Keep the bucket private and use a CDN with origin authentication, or use a public-read bucket only for public media.
-3. Grant the server identity only `cos:PutObject` and `cos:DeleteObject` on the configured prefix.
-4. Set the environment variables **before `pnpm build`** — `next.config.ts` derives the allowed `next/image` host from `COS_PUBLIC_BASE_URL` (or `COS_BUCKET` + `COS_REGION`) at build time.
-5. Restart the app; new uploads return a COS/CDN URL and are written to the `images` table with `storage='cos'` and the object key.
+1. Create a COS bucket and keep it **private read/write**.
+2. Grant the server identity only `cos:PutObject`, `cos:DeleteObject` and `cos:GetObject` on the configured prefix.
+3. Set the environment variables and restart the app. New uploads return `/api/media/<id>` and are written to the `images` table with `storage='cos'` and the object key.
+4. The app reads private objects with the server credentials and streams them through `/api/media/<id>`; no public bucket, CDN or origin authentication is required.
 
 Notes:
 
-- Object keys use `COS_KEY_PREFIX/<year>/<month>/<uuid>.<ext>`; keys are immutable, so CDN caching is safe.
-- `GET /api/media/<id>` continues to work for all images: database-backed rows return the blob, COS-backed rows redirect to the CDN URL.
+- Object keys use `COS_KEY_PREFIX/<year>/<month>/<uuid>.<ext>`; keys are immutable, so browser caching is safe.
+- `GET /api/media/<id>` serves both database-backed blobs and private COS objects. COS-backed rows are proxied, not redirected to a public URL.
 - Existing database images are **not** moved automatically. They continue to be served from the database; add a backfill script if you want to migrate them.
-- With a private bucket, the fallback URL is not publicly readable; set `COS_PUBLIC_BASE_URL` to the CDN domain.
 - Uploads are server-side; COS CORS is only needed if you later add direct browser-to-COS uploads.
 - There is no image-delete endpoint yet, so objects are not automatically removed. Use COS lifecycle rules or a cleanup script if needed.
+- The proxy consumes application-server bandwidth; add a CDN in front only when traffic justifies it.
 
 ### Seeding from Markdown
 
@@ -389,7 +386,7 @@ Set the environment variables from the table above. By default uploaded images l
 - Keep `AUTH_SECRET` secret and always set `ADMIN_GITHUB_LOGINS`; without an allowlist GitHub sign-in is denied.
 - The local credentials login is a development convenience. Only enable it in production when you understand the risk (`ENABLE_DEV_LOGIN=true` + a strong `ADMIN_DEV_PASSWORD`).
 - Uploaded files are limited to raster image types, parsed with sharp, and capped at 8 MB. SVG uploads are intentionally rejected.
-- COS credentials are server-only. Use a least-privilege key, keep the bucket private behind a CDN, and never expose `COS_SECRET_ID` / `COS_SECRET_KEY` to the browser or commit them.
+- COS credentials are server-only. Use a least-privilege key, keep the bucket private, and never expose `COS_SECRET_ID` / `COS_SECRET_KEY` to the browser or commit them.
 - Admin content is trusted: MDX expressions run on the server. Do not grant admin access to untrusted authors.
 - `REMEMOI_API_TOKEN` grants full write access (create, update, upload, delete via admin endpoints). Keep it server-side, send it over HTTPS only, rotate it if leaked, and never expose it in client bundles or committed files.
 - The API has no CORS layer and is intended for server-side automation; browser callers use the session cookie instead.
