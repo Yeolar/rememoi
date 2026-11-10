@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { TagPostList } from '@/components/memory/TagPostList'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
 import { getAllTags, getPostsByTag, getVisiblePosts, paginate } from '@/lib/posts'
@@ -44,7 +45,8 @@ export default async function TagPageN({ params }: TagPageProps) {
   const pageNumber = Number(page)
   if (!Number.isInteger(pageNumber) || pageNumber < 2) notFound()
 
-  const posts = await getPostsByTag(decoded)
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getPostsByTag(decoded, { includePrivate })
   if (posts.length === 0) notFound()
 
   const pagination = paginate(posts, pageNumber, siteConfig.content.memoryPageSize)

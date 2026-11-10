@@ -1,6 +1,7 @@
 import { PostPreview } from '@/components/content/PostPreview'
 import { Trans } from '@/components/i18n/Trans'
 import { Button } from '@/components/ui/Button'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { getVisiblePosts, groupPostsByYear } from '@/lib/posts'
 
@@ -11,7 +12,8 @@ export const metadata = buildMetadata({
 })
 
 export default async function ArchivesPage() {
-  const posts = await getVisiblePosts()
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getVisiblePosts({ includePrivate })
   const byYear = groupPostsByYear(posts)
 
   return (

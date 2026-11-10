@@ -9,7 +9,11 @@ import { MediumZoom } from '@/components/content/MediumZoom'
 import { PageInfo } from '@/components/content/PageInfo'
 import { Toc } from '@/components/content/Toc'
 import { Waline } from '@/components/content/Waline'
+import { LockMark } from '@/components/icons/LockMark'
+import { PencilLineMark } from '@/components/icons/PencilLineMark'
+import { PencilMark } from '@/components/icons/PencilMark'
 import { ContentLayout } from '@/components/layout/ContentLayout'
+import { Button } from '@/components/ui/Button'
 import { Highlight } from '@/components/site/Highlight'
 import siteConfig from '@/config/site'
 import { MdxBody } from '@/lib/markdown'
@@ -21,6 +25,7 @@ type PostArticleProps = {
   prev?: Post
   next?: Post
   preview?: boolean
+  canEdit?: boolean
   backHref?: string
   backTitle?: ReactNode
 }
@@ -30,11 +35,33 @@ export function PostArticle({
   prev,
   next,
   preview = false,
+  canEdit = false,
   backHref = '/memory',
   backTitle = <Trans en='Back' zh='返回' />
 }: PostArticleProps) {
   const walineEnabled = siteConfig.integrations.waline.enable
   const showComments = !preview && !post.draft && post.comment && walineEnabled
+  const privateMark = post.private ? (
+    <span className='inline-flex items-center text-muted-foreground' title='Private'>
+      <LockMark className='size-4' />
+      <span className='sr-only'><Trans en='Private' zh='私有' /></span>
+    </span>
+  ) : undefined
+  const backAside =
+    post.private || canEdit ? (
+      <>
+        {canEdit && (
+          <Button href={`/admin/posts/${post.id}`} className='gap-x-1.5'>
+            <span className='relative inline-flex size-4 items-center justify-center'>
+              <PencilMark className='size-4 transition-opacity group-hover:opacity-0' />
+              <PencilLineMark className='absolute inset-0 size-4 text-primary opacity-0 transition-opacity group-hover:opacity-100' />
+            </span>
+            <Trans en='Edit' zh='编辑' />
+          </Button>
+        )}
+        {privateMark}
+      </>
+    ) : undefined
 
   return (
     <>
@@ -43,6 +70,7 @@ export function PostArticle({
       <ContentLayout
         backHref={backHref}
         backTitle={backTitle}
+        backAside={backAside}
         lang={post.language}
         sidebar={post.headings.length > 0 ? <Toc headings={post.headings} /> : undefined}
         header={

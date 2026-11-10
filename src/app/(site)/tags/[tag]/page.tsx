@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { TagPostList } from '@/components/memory/TagPostList'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
 import { getAllTags, getPostsByTag, getVisiblePosts, paginate } from '@/lib/posts'
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: TagPageProps) {
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
   const decoded = safeDecode(tag)
-  const posts = await getPostsByTag(decoded)
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getPostsByTag(decoded, { includePrivate })
   if (posts.length === 0) notFound()
 
   const pagination = paginate(posts, 1, siteConfig.content.memoryPageSize)

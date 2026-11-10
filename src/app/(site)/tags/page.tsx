@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Trans } from '@/components/i18n/Trans'
 import { Button } from '@/components/ui/Button'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { cn } from '@/lib/utils'
 import { buildMetadata } from '@/lib/metadata'
 import { getAllTags, getVisiblePosts } from '@/lib/posts'
@@ -13,7 +14,8 @@ export const metadata = buildMetadata({
 })
 
 export default async function TagsPage() {
-  const posts = await getVisiblePosts()
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getVisiblePosts({ includePrivate })
   const tags = getAllTags(posts)
 
   return (

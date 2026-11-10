@@ -1,5 +1,6 @@
 import { MemoryListView } from '@/components/memory/MemoryListView'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { getAllLanguages, getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
 
@@ -10,7 +11,8 @@ export const metadata = buildMetadata({
 })
 
 export default async function MemoryPage() {
-  const posts = await getVisiblePosts()
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getVisiblePosts({ includePrivate })
   const tags = getAllTags(posts)
   const pagination = paginate(posts, 1, siteConfig.content.memoryPageSize)
 

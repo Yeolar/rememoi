@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { PostArticle } from '@/components/memory/PostArticle'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { getOpenGraphLocale } from '@/lib/languages'
 import { buildMetadata } from '@/lib/metadata'
 import { getAdjacentPosts, getPostBySlug, getVisiblePosts } from '@/lib/posts'
@@ -22,7 +23,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = await getPostBySlug(toSlug(slug))
+  const includePrivate = await canViewPrivatePosts()
+  const post = await getPostBySlug(toSlug(slug), { includePrivate })
   if (!post) return buildMetadata({ title: 'Post not found', path: '/memory' })
 
   return buildMetadata({
@@ -43,11 +45,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params
-  const post = await getPostBySlug(toSlug(slug))
+  const includePrivate = await canViewPrivatePosts()
+  const post = await getPostBySlug(toSlug(slug), { includePrivate })
   if (!post) notFound()
   if (process.env.NODE_ENV === 'production' && post.draft) notFound()
 
-  const { prev, next } = await getAdjacentPosts(post.slug)
+  const { prev, next } = await getAdjacentPosts(post.slug, { includePrivate })
 
-  return <PostArticle post={post} prev={prev} next={next} />
+  return <PostArticle post={post} prev={prev} next={next} canEdit={includePrivate} />
 }

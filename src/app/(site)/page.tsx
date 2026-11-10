@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Label } from '@/components/ui/Label'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { getVisiblePosts } from '@/lib/posts'
 
@@ -20,7 +21,8 @@ export const metadata = buildMetadata({
 const MAX_POSTS = 10
 
 export default async function HomePage() {
-  const posts = (await getVisiblePosts()).slice(0, MAX_POSTS)
+  const includePrivate = await canViewPrivatePosts()
+  const posts = (await getVisiblePosts({ includePrivate })).slice(0, MAX_POSTS)
 
   return (
     <>

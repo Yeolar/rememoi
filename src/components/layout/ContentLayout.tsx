@@ -12,6 +12,7 @@ type ContentLayoutProps = {
   bottomSidebar?: ReactNode
   backHref?: string
   backTitle?: ReactNode
+  backAside?: ReactNode
   lang?: string
   className?: string
   children: ReactNode
@@ -24,13 +25,17 @@ export function ContentLayout({
   bottomSidebar,
   backHref = '/',
   backTitle = <Trans en='Back' zh='返回' />,
+  backAside,
   lang,
   className,
   children
 }: ContentLayoutProps) {
   return (
     <>
-      <Button title={backTitle} href={backHref} variant='back' />
+      <div className='flex items-center gap-4'>
+        <Button title={backTitle} href={backHref} variant='back' />
+        {backAside}
+      </div>
 
       <main className='mt-6 items-start gap-x-10 md:flex'>
         {sidebar && (

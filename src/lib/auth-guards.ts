@@ -34,6 +34,11 @@ export async function getAdminSession() {
   return auth()
 }
 
+/** True when the current request is signed in as the admin (may see private posts). */
+export async function canViewPrivatePosts() {
+  return Boolean(await getAdminSession())
+}
+
 export type AdminAuth =
   | { session: Awaited<ReturnType<typeof auth>>; via: 'session' }
   | { session: null; via: 'token' }

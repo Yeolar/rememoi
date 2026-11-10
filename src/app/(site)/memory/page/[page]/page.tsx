@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { MemoryListView } from '@/components/memory/MemoryListView'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { buildMetadata } from '@/lib/metadata'
 import { getAllLanguages, getAllTags, getVisiblePosts, paginate } from '@/lib/posts'
 
@@ -31,7 +32,8 @@ export default async function MemoryPageN({ params }: PageProps) {
   const pageNumber = Number(page)
   if (!Number.isInteger(pageNumber) || pageNumber < 2) notFound()
 
-  const posts = await getVisiblePosts()
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getVisiblePosts({ includePrivate })
   const pagination = paginate(posts, pageNumber, siteConfig.content.memoryPageSize)
   if (pagination.currentPage !== pageNumber) notFound()
 

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { FormattedDate } from '@/components/ui/FormattedDate'
 import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
+import { LockMark } from '@/components/icons/LockMark'
 import { getLanguageLabel } from '@/lib/languages'
 import { cn } from '@/lib/utils'
 import type { PostSummary } from '@/types'
@@ -45,6 +46,14 @@ function PreviewArrow() {
 export function PostPreview({ post, detailed = false, className }: PostPreviewProps) {
   const postDate = post.updatedDate ?? post.publishDate
   const hero = post.heroImage
+  const titleLink = (
+    <Link
+      href={`/memory/${post.slug}`}
+      className='text-foreground after:absolute after:inset-0 after:z-0 group-hover:text-inherit'
+    >
+      {post.title}
+    </Link>
+  )
 
   return (
     <li
@@ -87,12 +96,17 @@ export function PostPreview({ post, detailed = false, className }: PostPreviewPr
             <div className={cn(detailed && 'font-medium')}>
               {post.pin && <span className='me-1 text-primary'><Trans en='[Pin]' zh='[置顶]' /></span>}
               {post.draft && <span className='me-1 text-red-500'><Trans en='(Draft)' zh='(草稿)' /></span>}
-              <Link
-                href={`/memory/${post.slug}`}
-                className='text-foreground after:absolute after:inset-0 after:z-0 group-hover:text-inherit'
-              >
-                {post.title}
-              </Link>
+              {post.private ? (
+                <span className='inline-flex items-center gap-1'>
+                  {titleLink}
+                  <span className='inline-flex items-center' title='Private'>
+                    <LockMark className='size-3.5' />
+                    <span className='sr-only'><Trans en='Private' zh='私有' /></span>
+                  </span>
+                </span>
+              ) : (
+                titleLink
+              )}
             </div>
             <PreviewArrow />
           </div>

@@ -5,7 +5,7 @@ import { ensureSchema, getDb } from '@/lib/db'
 import { posts, type PostRow } from '@/lib/db/schema'
 import { derivePostContent } from '@/lib/markdown-utils'
 import { getLanguageLabel, normalizeLanguage } from '@/lib/languages'
-import type { Post, PostSummary } from '@/types'
+import type { Post, PostStatus, PostSummary } from '@/types'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -43,17 +43,30 @@ export function toPostSummary(post: Post): PostSummary {
   return rest
 }
 
-/** Public posts. Drafts are visible while developing, like the Astro theme. */
-export async function getVisiblePosts(): Promise<Post[]> {
+export type PostVisibilityOptions = {
+  /** Include private posts for a signed-in admin. */
+  includePrivate?: boolean
+}
+
+/**
+ * Posts visible to the current viewer. Drafts are visible while developing,
+ * and private posts are added for a signed-in admin.
+ */
+export async function getVisiblePosts(
+  options: PostVisibilityOptions = {}
+): Promise<Post[]> {
   await ensureSchema()
+  const statuses: PostStatus[] = options.includePrivate
+    ? isDevelopment
+      ? ['draft', 'published', 'private']
+      : ['published', 'private']
+    : isDevelopment
+      ? ['draft', 'published']
+      : ['published']
   const rows = await getDb()
     .select()
     .from(posts)
-    .where(
-      isDevelopment
-        ? inArray(posts.status, ['draft', 'published'])
-        : eq(posts.status, 'published')
-    )
+    .where(inArray(posts.status, statuses))
     .orderBy(desc(posts.pinned), desc(posts.publishDate))
   return rows.map(rowToPost)
 }
@@ -116,10 +129,15 @@ export function getAllLanguages(postList: Post[]) {
   )
 }
 
-export async function getPostsByLanguage(language: string) {
+export async function getPostsByLanguage(
+  language: string,
+  options: PostVisibilityOptions = {}
+) {
   const code = normalizeLanguage(language)
   if (!code) return []
-  return (await getVisiblePosts()).filter((post) => normalizeLanguage(post.language) === code)
+  return (await getVisiblePosts(options)).filter(
+    (post) => normalizeLanguage(post.language) === code
+  )
 }
 
 export function getAllTags(postList: Post[]) {
@@ -130,8 +148,8 @@ export function getAllTags(postList: Post[]) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 }
 
-export async function getPostsByTag(tag: string) {
-  const postsList = await getVisiblePosts()
+export async function getPostsByTag(tag: string, options: PostVisibilityOptions = {}) {
+  const postsList = await getVisiblePosts(options)
   return postsList.filter((post) => post.tags.includes(tag.toLowerCase()))
 }
 
@@ -145,8 +163,11 @@ export function groupPostsByYear(postList: Post[]) {
   return [...groups.entries()].sort((a, b) => b[0] - a[0])
 }
 
-export async function getAdjacentPosts(slug: string) {
-  const postsList = await getVisiblePosts()
+export async function getAdjacentPosts(
+  slug: string,
+  options: PostVisibilityOptions = {}
+) {
+  const postsList = await getVisiblePosts(options)
   const index = postsList.findIndex((post) => post.slug === slug)
   return {
     prev: index > 0 ? postsList[index - 1] : undefined,

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { LanguagePostList } from '@/components/memory/LanguagePostList'
 import siteConfig from '@/config/site'
+import { canViewPrivatePosts } from '@/lib/auth-guards'
 import { getLanguageLabel, normalizeLanguage } from '@/lib/languages'
 import { buildMetadata } from '@/lib/metadata'
 import { safeDecode } from '@/lib/pagination'
@@ -47,7 +48,8 @@ export default async function LanguagePageN({ params }: LanguagePageProps) {
   const pageNumber = Number(page)
   if (!Number.isInteger(pageNumber) || pageNumber < 2) notFound()
 
-  const posts = await getPostsByLanguage(code)
+  const includePrivate = await canViewPrivatePosts()
+  const posts = await getPostsByLanguage(code, { includePrivate })
   if (posts.length === 0) notFound()
 
   const pagination = paginate(posts, pageNumber, siteConfig.content.memoryPageSize)
