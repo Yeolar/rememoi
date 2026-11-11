@@ -1,5 +1,6 @@
 import { auth, isAuthConfigured } from '@/auth'
 import { Footer } from '@/components/site/Footer'
+import { GoogleAnalytics } from '@/components/site/GoogleAnalytics'
 import { Header } from '@/components/site/Header'
 
 /**
@@ -30,6 +31,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       id='main-container'
       className='flex min-h-[100dvh] w-full max-w-[70rem] flex-col justify-between'
     >
+      <GoogleAnalytics />
       <Header user={user} />
       <div className='w-full flex-1'>{children}</div>
       <Footer />

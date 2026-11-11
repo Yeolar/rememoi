@@ -6,6 +6,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 
 import { Trans } from '@/components/i18n/Trans'
 import { FormattedDate } from '@/components/ui/FormattedDate'
+import { trackEvent } from '@/lib/analytics'
 import { getLanguageLabel } from '@/lib/languages'
 import { useLocale } from '@/lib/use-locale'
 import type { SearchDocument } from '@/types'
@@ -84,6 +85,20 @@ export function SearchClient() {
     if (!value) return []
     return fuse.search(value, { limit: 20 }).map((result) => result.item)
   }, [deferredQuery, fuse])
+
+  // Report a search once the term has settled, not on every keystroke.
+  useEffect(() => {
+    const term = deferredQuery.trim()
+    if (term.length < 2 || loading || error) return
+    const timer = window.setTimeout(() => {
+      trackEvent('view_search_results', {
+        search_term: term.slice(0, 100),
+        results: results.length,
+        language
+      })
+    }, 1000)
+    return () => window.clearTimeout(timer)
+  }, [deferredQuery, error, language, loading, results.length])
 
   return (
     <div className='not-prose'>

@@ -42,6 +42,7 @@ Rememoi 容器
 - `COS_BUCKET` / `COS_REGION`
 - `DATABASE_URL`（不使用本地数据库文件时才需要填）
 - `REMEMOI_API_TOKEN`
+- `NEXT_PUBLIC_GA_ID`（可选，Google Analytics 4 的 `G-XXXXXXXXXX`；留空则不启用统计。它是**构建时**注入的，必须写在 Mac 构建机上的 `.env.production` 里，`make build` 会自动读取并传给 `docker build`）
 
 这个文件务必保持私有：
 
@@ -85,8 +86,11 @@ make build
 docker build \
   --platform linux/amd64 \
   --build-arg NEXT_PUBLIC_SITE_URL=https://rememoi.com \
+  --build-arg NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX \
   -t rememoi:latest .
 ```
+
+`make build` 会从 `.env.production` 读取 `NEXT_PUBLIC_SITE_URL` 和 `NEXT_PUBLIC_GA_ID`，不需要手动加参数；上面只是等价的原始命令。
 
 构建走 Docker 的跨架构模拟，在 M 系列芯片上会慢一些，属于正常现象。第一次构建要下载 amd64 的基础镜像，并按 amd64 拉取 `sharp`、`@libsql` 的原生依赖包，通常几分钟；之后命中层缓存会快很多。
 
@@ -99,7 +103,7 @@ docker image inspect rememoi:latest --format '{{.Os}}/{{.Architecture}}'
 
 镜像分三段构建：`deps` 装上包含 devDependencies 的完整依赖，`builder` 执行 `pnpm build`，`runner` 只保留 `output: 'standalone'` 的产物——所以最终镜像没有 `pnpm`、`tsx` 和 devDependencies，体积约 300MB（改造前的单阶段镜像在 1.1GB 左右）。
 
-`.env.production` 不会进镜像（`.dockerignore` 已排除），密钥只在运行时由 compose 注入。
+`.env.production` 不会进镜像（`.dockerignore` 已排除），密钥只在运行时由 compose 注入。`NEXT_PUBLIC_*` 是构建时值：`make build` 从 `.env.production` 读取后作为 build args 传给 `docker build`，所以改完必须重新构建镜像，只重启容器不会生效。
 
 ### 4.2 把镜像传到服务器
 

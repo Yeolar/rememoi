@@ -42,8 +42,32 @@ export default function TermsPage() {
       <h2 id='privacy-policy'><Trans en='Privacy Policy' zh='隐私政策' /></h2>
       <p>
         <Trans
-          en='This site does not set advertising cookies or use third-party tracking pixels. The only persisted browser state is your theme and language preference, stored locally in your browser.'
-          zh='本站不设置广告 Cookie，也不使用第三方追踪像素。唯一保存在浏览器本地的状态是你的主题和语言偏好。'
+          en={
+            <>
+              When analytics is enabled, this site uses Google Analytics 4 to understand which pages are
+              read. Google Analytics sets
+              first-party cookies (<code>_ga</code>, <code>_ga_*</code>) and receives the page you visit,
+              the referring page, an approximate location derived from your IP address, and device/browser
+              details. Search terms and share-button clicks are reported as analytics events. The data is
+              used only in aggregate to improve the site, never for advertising and never sold. You can
+              block it with a content blocker, browser settings, or{' '}
+              <a href='https://tools.google.com/dlpage/gaoptout' target='_blank' rel='noopener noreferrer'>
+                Google&apos;s opt-out add-on
+              </a>
+              . Your theme and language preferences stay in this browser.
+            </>
+          }
+          zh={
+            <>
+              启用统计时，本站使用 Google Analytics 4 了解哪些页面被阅读。Google Analytics 会设置第一方 Cookie（
+              <code>_ga</code>、<code>_ga_*</code>），并接收你访问的页面、来源页面、由 IP
+              推算的粗略位置以及设备/浏览器信息；搜索词和分享按钮点击也会作为事件上报。这些数据仅以汇总形式用于改进站点，不用于广告，也不会被出售。你可以通过内容拦截器、浏览器设置或{' '}
+              <a href='https://tools.google.com/dlpage/gaoptout' target='_blank' rel='noopener noreferrer'>
+                Google 的停用插件
+              </a>
+              阻止统计。主题和语言偏好仍然只保存在你的浏览器本地。
+            </>
+          }
         />
       </p>
       <p>

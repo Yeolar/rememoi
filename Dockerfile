@@ -14,7 +14,9 @@ COPY . .
 
 # NEXT_PUBLIC_* values are baked into the build.
 ARG NEXT_PUBLIC_SITE_URL=https://rememoi.com
+ARG NEXT_PUBLIC_GA_ID=
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 
 # `pnpm build` seeds SQLite from content/memory first: `next build` prerenders
 # the post and tag routes from that database, so the order matters.

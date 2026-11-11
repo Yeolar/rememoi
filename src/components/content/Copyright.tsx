@@ -6,6 +6,7 @@ import { Trans } from '@/components/i18n/Trans'
 import { Icon } from '@/components/icons/Icon'
 import siteConfig from '@/config/site'
 import { LocalizedDate } from '@/components/i18n/LocalizedDate'
+import { trackEvent } from '@/lib/analytics'
 import type { Post } from '@/types'
 
 type CopyrightProps = {
@@ -31,11 +32,20 @@ export function Copyright({ post, url }: CopyrightProps) {
     bluesky: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${post.title}\n${url}`)}`
   }
 
+  const trackShare = (method: string) => {
+    trackEvent('share', {
+      method,
+      content_type: 'article',
+      item_id: post.slug
+    })
+  }
+
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+      trackShare('copy_link')
       window.dispatchEvent(
         new CustomEvent('rememoi:toast', { detail: { message: 'Link copied!' } })
       )
@@ -51,6 +61,7 @@ export function Copyright({ post, url }: CopyrightProps) {
   const toggleQr = async () => {
     const next = !qrOpen
     setQrOpen(next)
+    if (next) trackShare('qr_code')
     if (next && !qrData) {
       const QRCode = await import('qrcode')
       const data = await QRCode.toDataURL(url, {
@@ -124,6 +135,7 @@ export function Copyright({ post, url }: CopyrightProps) {
                 target='_blank'
                 rel='noopener noreferrer'
                 aria-label={`Share to ${shareLabels[share]}`}
+                onClick={() => trackShare(share)}
                 className='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
               >
                 <Icon className='size-5' name={share} />

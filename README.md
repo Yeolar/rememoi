@@ -13,6 +13,7 @@ A long-term memory site for agent conversations, built with **Next.js 16** and i
 - **Search** — a generated JSON index searched client-side with Fuse.js.
 - **SEO plumbing** — canonical URLs, Open Graph/Twitter metadata, RSS, sitemap, robots.txt and a web manifest.
 - **Optional comments** — Waline, disabled until you provide a server URL.
+- **Optional analytics** — GA4 page views plus search and share events, enabled by setting `NEXT_PUBLIC_GA_ID`.
 
 | Layer | Choice |
 | --- | --- |
@@ -54,6 +55,7 @@ The user icon in the site header opens the same login page. After signing in it 
 | Variable | Required | Description |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | production | Canonical site URL, e.g. `https://rememoi.example.com`. Defaults to `http://localhost:3000`. |
+| `NEXT_PUBLIC_GA_ID` | no | Google Analytics 4 measurement ID (`G-XXXXXXXXXX`). Analytics stays off when empty. Inlined at build time. |
 | `DATABASE_URL` | no | libSQL URL. Defaults to `file:./data/rememoi.db`. Use `libsql://...` for Turso. |
 | `DATABASE_AUTH_TOKEN` | for remote | Token for the remote libSQL database. |
 | `AUTH_SECRET` | production | Secret used to sign sessions. Generate with `openssl rand -base64 32`. |
@@ -81,6 +83,21 @@ The user icon in the site header opens the same login page. After signing in it 
 4. Restart the app and open `/admin`.
 
 If the auth variables are missing, `/admin` shows a setup card instead of the editor. The public site is unaffected.
+
+### Google Analytics
+
+Analytics is opt-in: leave `NEXT_PUBLIC_GA_ID` empty and the site never contacts Google.
+
+1. Create a GA4 property and copy its measurement ID (`G-XXXXXXXXXX`).
+2. Set `NEXT_PUBLIC_GA_ID` in `.env.local`, or in `.env.production` before a production build, then rebuild — `NEXT_PUBLIC_*` values are baked in at build time.
+3. Open the site and watch Realtime in GA4.
+
+The integration sends one `page_view` per route, including client-side navigations and query strings, a debounced `view_search_results` event from `/search`, and `share` events for the copy-link, QR-code and social share buttons. `/admin`, `/preview` and `/api` are excluded.
+
+Two things to keep in mind:
+
+- gtag.js is served from `googletagmanager.com`. Visitors whose network cannot reach Google (for example mainland China without a proxy) are not counted.
+- For the Docker deployment, `make build` reads `NEXT_PUBLIC_GA_ID` from `.env.production` and passes it to the build. Setting it only in the server's runtime environment is too late, because the value is compiled into the client bundle.
 
 ## Writing
 
