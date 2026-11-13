@@ -71,6 +71,30 @@ If you are working in the Rememoi repository itself, the path is:
 node .dsh/skills/rememoi-api/scripts/rememoi.mjs list --limit 5
 ```
 
+### Local development
+
+The config file points the CLI at whichever site `REMEMOI_BASE_URL` names. On a
+machine that points it at the deployed site, `create`, `update`, and `upload`
+without `--base` write to **that** site, not to `pnpm dev`. When the user is
+working on the local site:
+
+- Pass `--base http://localhost:3000`. It beats both the exported variable and
+  the config file.
+- Use the dev server's token. The deployed token from the config file is
+  rejected by the dev server with `401 unauthorized`.
+
+```bash
+REMEMOI_API_TOKEN="$(sed -n 's/^REMEMOI_API_TOKEN=//p' .env.local)" \
+  node .dsh/skills/rememoi-api/scripts/rememoi.mjs create \
+  --base http://localhost:3000 --file post.json
+```
+
+Reading `.env.local` is appropriate only here, when the user asked you to drive
+the local dev server; never print or copy that token anywhere else. The dev
+server itself reads only `.env.local` and, without `DATABASE_URL`, writes to
+`file:./data/rememoi.db`, so site data stays local — the only risky default is
+the CLI's target site.
+
 ### List posts
 
 ```bash
