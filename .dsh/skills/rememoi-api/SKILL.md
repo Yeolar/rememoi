@@ -29,8 +29,31 @@ export REMEMOI_API_TOKEN=<the server's REMEMOI_API_TOKEN>
 REMEMOI_API_TOKEN=a-long-random-value
 ```
 
-Never print, log, or commit the token. If it is not available, ask the user to
-set it; do not attempt to read `.env.local` unless the user asks you to.
+### Config file
+
+Instead of exporting them, the two values can live in a dotenv-style file that
+the CLI loads on startup. This is handy when the CLI runs repeatedly and the
+token should stay out of the shell and the conversation:
+
+```dotenv
+# ~/.config/rememoi/env
+export REMEMOI_BASE_URL=https://rememoi.com
+REMEMOI_API_TOKEN='a-long-random-value'
+```
+
+- The default path is `~/.config/rememoi/env`; set `REMEMOI_ENV_FILE` to use a
+  different file.
+- The process environment always wins. Variables that are already set are never
+  overwritten, so `REMEMOI_API_TOKEN=... node rememoi.mjs ...` and shell exports
+  keep working, and `--base` still beats both.
+- The file is read only if it exists. If `REMEMOI_ENV_FILE` points at an
+  unreadable path, the default location is tried instead.
+- `export` prefixes, `#` comment lines, trailing comments, and single- or
+  double-quoted values are supported.
+
+Never print, log, or commit the token, and do not paste the config file into the
+conversation. If it is not available, ask the user to set it; do not attempt to
+read `.env.local` unless the user asks you to.
 
 ## Run the CLI
 

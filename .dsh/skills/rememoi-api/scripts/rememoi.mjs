@@ -11,9 +11,11 @@
  * Configuration:
  *   REMEMOI_BASE_URL   default http://localhost:3000
  *   REMEMOI_API_TOKEN  required for create/update/upload and --all
+ *   REMEMOI_ENV_FILE   optional env file, defaults to ~/.config/rememoi/env
  */
 
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 
 const args = process.argv.slice(2)
@@ -43,6 +45,52 @@ for (let index = 0; index < rest.length; index += 1) {
     positional.push(value)
   }
 }
+
+/**
+ * Fill in credentials from an env file when the process environment has not
+ * already provided them. Candidates are tried in order:
+ *   1. the path in REMEMOI_ENV_FILE
+ *   2. ~/.config/rememoi/env
+ * Values already present in process.env always win, so shell exports and
+ * `REMEMOI_API_TOKEN=... node rememoi.mjs` keep working unchanged.
+ */
+function loadEnvFile() {
+  const candidates = [
+    process.env.REMEMOI_ENV_FILE,
+    path.join(os.homedir(), '.config', 'rememoi', 'env')
+  ]
+  for (const candidate of candidates) {
+    if (!candidate) continue
+    let raw
+    try {
+      raw = fs.readFileSync(candidate, 'utf8')
+    } catch {
+      continue
+    }
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const match = trimmed.match(/^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/)
+      if (!match) continue
+      const [, key, rawValue] = match
+      let value = rawValue.trim()
+      const quote = value[0] === '"' || value[0] === "'" ? value[0] : ''
+      if (quote) {
+        // Take the quoted part only, so an inline comment after the closing
+        // quote is not appended to the value.
+        const closing = value.indexOf(quote, 1)
+        value = closing === -1 ? value.slice(1) : value.slice(1, closing)
+      } else {
+        const commentStart = value.search(/\s#/)
+        if (commentStart !== -1) value = value.slice(0, commentStart).trim()
+      }
+      if (!process.env[key]) process.env[key] = value
+    }
+    return
+  }
+}
+
+loadEnvFile()
 
 const BASE = (flags.base || process.env.REMEMOI_BASE_URL || 'http://localhost:3000').replace(
   /\/+$/,
@@ -78,6 +126,11 @@ Options:
 Environment:
   REMEMOI_BASE_URL   site URL, default http://localhost:3000
   REMEMOI_API_TOKEN  write token, must match the server environment
+  REMEMOI_ENV_FILE   env file to read when the above are unset
+
+Config file:
+  ~/.config/rememoi/env   loaded only for variables missing from the
+                          environment, so exports always take precedence.
 `)
 }
 
@@ -85,7 +138,7 @@ function requireToken(action) {
   if (!TOKEN) {
     fail(
       `REMEMOI_API_TOKEN is required to ${action}.`,
-      'Set it to the same value as the server .env.local and make sure the server was restarted.'
+      'Export it, or put it in ~/.config/rememoi/env, using the same value as the server environment.'
     )
   }
 }
